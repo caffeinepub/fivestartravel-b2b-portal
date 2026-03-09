@@ -1,12 +1,4 @@
-import {
-  Car,
-  FileText,
-  Package,
-  Ship,
-  Train,
-  TrendingUp,
-  User,
-} from "lucide-react";
+import { FileText, Package, Ship, Train, TrendingUp, User } from "lucide-react";
 import { useState } from "react";
 import { AgentLoginPage, AgentRegisterPage } from "./components/AuthPages";
 import type { DashboardPage } from "./components/DashboardLayout";
@@ -21,15 +13,16 @@ import {
   type Page,
   TopBar,
 } from "./components/PublicPages";
+import { TourSearch } from "./components/TourSearch";
+import { TransferBooking } from "./components/TransferBooking";
 
-// ── App Root ──────────────────────────────────────────────────────────────────
+// ── App Root ──────────────────────────────────────────────────────────────────────────
 export default function App() {
   const [page, setPage] = useState<Page>("home");
   const [dashNav, setDashNav] = useState<DashboardPage>("dashboard");
 
   function navigate(p: Page) {
     setPage(p);
-    // sync dashboard nav when entering from outside
     if (
       p === "flights" ||
       p === "hotels" ||
@@ -60,7 +53,7 @@ export default function App() {
     navigate("home");
   }
 
-  // ── Public pages ──────────────────────────────────────────────────────────
+  // ── Public pages ──────────────────────────────────────────────────────────────────
   if (page === "home") {
     return (
       <div className="min-h-screen flex flex-col">
@@ -100,13 +93,13 @@ export default function App() {
     );
   }
 
-  // ── Agent Dashboard ───────────────────────────────────────────────────────
+  // ── Agent Dashboard ───────────────────────────────────────────────────────────────────
   const dashboardTitles: Record<DashboardPage, string> = {
     dashboard: "Agent Dashboard",
     flights: "Flight Booking",
     hotels: "Hotel Booking",
     tours: "Tour Packages",
-    transfers: "Transfers",
+    transfers: "Transfers & Cabs",
     visa: "Visa Services",
     cruises: "Cruise Booking",
     railway: "Railway Booking",
@@ -128,20 +121,8 @@ export default function App() {
       {dashNav === "dashboard" && <DashboardHome onNavChange={handleDashNav} />}
       {dashNav === "flights" && <FlightSearch />}
       {dashNav === "hotels" && <HotelSearch />}
-      {dashNav === "tours" && (
-        <ComingSoonPage
-          title="Tour Packages"
-          icon={Package}
-          onNavigateFlights={() => handleDashNav("flights")}
-        />
-      )}
-      {dashNav === "transfers" && (
-        <ComingSoonPage
-          title="Transfers"
-          icon={Car}
-          onNavigateFlights={() => handleDashNav("flights")}
-        />
-      )}
+      {dashNav === "tours" && <TourSearch />}
+      {dashNav === "transfers" && <TransferBooking />}
       {dashNav === "visa" && (
         <ComingSoonPage
           title="Visa Services"
