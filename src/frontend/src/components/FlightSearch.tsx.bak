@@ -15,8 +15,7 @@ import {
   Star,
   Zap,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { FlightReview, type FlightReviewFlight } from "./FlightReview";
+import { useState } from "react";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type TripType = "oneway" | "roundtrip" | "multicity";
@@ -29,16 +28,8 @@ interface PassengerCount {
   infants: number;
 }
 
-interface MultiCityRoute {
-  id: string;
-  from: string;
-  to: string;
-  date: string;
-}
-
 interface FlightResult {
   id: string;
-  priceId: string;
   airline: string;
   airlineCode: string;
   flightNo: string;
@@ -52,21 +43,9 @@ interface FlightResult {
   price: number;
   baseFare: number;
   taxes: number;
-  mf: number;
-  mft: number;
   seatsLeft: number;
   refundable: boolean;
-  rT: number;
-  fareIdentifier: string;
-  cabinClass: string;
-  fareBasis: string;
-  mealIncluded: boolean;
-  checkInBaggage: string;
-  cabinBaggage: string;
   badge?: string;
-  isReturn?: boolean;
-  sri?: string;
-  msri?: string[];
 }
 
 // ── Mock Data ─────────────────────────────────────────────────────────────────
@@ -119,7 +98,6 @@ function getMockFlights(from: string, to: string): FlightResult[] {
   return [
     {
       id: "f1",
-      priceId: "f1",
       airline: "IndiGo",
       airlineCode: "6E",
       flightNo: `6E-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -132,22 +110,12 @@ function getMockFlights(from: string, to: string): FlightResult[] {
       price: 5840,
       baseFare: 4200,
       taxes: 1640,
-      mf: 0,
-      mft: 0,
       seatsLeft: 8,
       refundable: false,
-      rT: 0,
-      fareIdentifier: "PUBLISHED",
-      cabinClass: "ECONOMY",
-      fareBasis: "",
-      mealIncluded: false,
-      checkInBaggage: "15 kg",
-      cabinBaggage: "7 kg",
       badge: "CHEAPEST",
     },
     {
       id: "f2",
-      priceId: "f2",
       airline: "Air India",
       airlineCode: "AI",
       flightNo: `AI-${Math.floor(100 + Math.random() * 900)}`,
@@ -160,49 +128,30 @@ function getMockFlights(from: string, to: string): FlightResult[] {
       price: 6200,
       baseFare: 4800,
       taxes: 1400,
-      mf: 0,
-      mft: 0,
       seatsLeft: 14,
       refundable: true,
-      rT: 1,
-      fareIdentifier: "PUBLISHED",
-      cabinClass: "ECONOMY",
-      fareBasis: "",
-      mealIncluded: true,
-      checkInBaggage: "23 kg",
-      cabinBaggage: "8 kg",
       badge: "FASTEST",
     },
     {
       id: "f3",
-      priceId: "f3",
       airline: "Vistara",
       airlineCode: "UK",
       flightNo: `UK-${Math.floor(100 + Math.random() * 900)}`,
       departure: fromCode,
-      depTime: "11:15",
+      depTime: "11:10",
       arrival: toCode,
-      arrTime: "13:30",
-      duration: "2h 15m",
-      stops: 0,
-      price: 7100,
-      baseFare: 5500,
+      arrTime: "14:55",
+      duration: "3h 45m",
+      stops: 1,
+      stopCity: "BLR",
+      price: 4950,
+      baseFare: 3600,
       taxes: 1350,
-      mf: 200,
-      mft: 50,
       seatsLeft: 5,
       refundable: false,
-      rT: 0,
-      fareIdentifier: "TJ_FLEX",
-      cabinClass: "ECONOMY",
-      fareBasis: "VFLEX",
-      mealIncluded: true,
-      checkInBaggage: "15 kg",
-      cabinBaggage: "7 kg",
     },
     {
       id: "f4",
-      priceId: "f4",
       airline: "SpiceJet",
       airlineCode: "SG",
       flightNo: `SG-${Math.floor(100 + Math.random() * 900)}`,
@@ -215,21 +164,11 @@ function getMockFlights(from: string, to: string): FlightResult[] {
       price: 5390,
       baseFare: 4100,
       taxes: 1290,
-      mf: 0,
-      mft: 0,
       seatsLeft: 22,
       refundable: false,
-      rT: 0,
-      fareIdentifier: "PUBLISHED",
-      cabinClass: "ECONOMY",
-      fareBasis: "",
-      mealIncluded: false,
-      checkInBaggage: "15 kg",
-      cabinBaggage: "7 kg",
     },
     {
       id: "f5",
-      priceId: "f5",
       airline: "AirAsia India",
       airlineCode: "I5",
       flightNo: `I5-${Math.floor(100 + Math.random() * 900)}`,
@@ -243,22 +182,12 @@ function getMockFlights(from: string, to: string): FlightResult[] {
       price: 4200,
       baseFare: 3200,
       taxes: 1000,
-      mf: 0,
-      mft: 0,
       seatsLeft: 3,
       refundable: false,
-      rT: 0,
-      fareIdentifier: "PUBLISHED",
-      cabinClass: "ECONOMY",
-      fareBasis: "",
-      mealIncluded: false,
-      checkInBaggage: "15 kg",
-      cabinBaggage: "7 kg",
       badge: "BEST VALUE",
     },
     {
       id: "f6",
-      priceId: "f6",
       airline: "Go First",
       airlineCode: "G8",
       flightNo: `G8-${Math.floor(100 + Math.random() * 900)}`,
@@ -271,17 +200,8 @@ function getMockFlights(from: string, to: string): FlightResult[] {
       price: 5100,
       baseFare: 3900,
       taxes: 1200,
-      mf: 0,
-      mft: 0,
       seatsLeft: 19,
       refundable: true,
-      rT: 1,
-      fareIdentifier: "PUBLISHED",
-      cabinClass: "ECONOMY",
-      fareBasis: "",
-      mealIncluded: false,
-      checkInBaggage: "15 kg",
-      cabinBaggage: "7 kg",
     },
   ];
 }
@@ -515,33 +435,8 @@ function PassengerSelector({
 function FlightCard({
   flight,
   index,
-  onSelect,
-}: {
-  flight: FlightResult;
-  index: number;
-  onSelect: (f: FlightResult) => void;
-}) {
+}: { flight: FlightResult; index: number }) {
   const [expanded, setExpanded] = useState(false);
-
-  const refundBadge = () => {
-    if (flight.rT === 1)
-      return (
-        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-green-50 text-green-700">
-          Refundable
-        </span>
-      );
-    if (flight.rT === 2)
-      return (
-        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-amber-50 text-amber-700">
-          Partial Refund
-        </span>
-      );
-    return (
-      <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-muted text-muted-foreground">
-        Non-Refundable
-      </span>
-    );
-  };
 
   return (
     <div
@@ -630,17 +525,6 @@ function FlightCard({
                 {flight.badge}
               </Badge>
             )}
-            {/* fareIdentifier badges */}
-            {flight.fareIdentifier === "TJ_FLEX" && (
-              <Badge className="text-[10px] mb-1.5 bg-amber-100 text-amber-700 border-amber-200 block">
-                TJ FLEX
-              </Badge>
-            )}
-            {flight.fareIdentifier === "SPECIAL_RETURN" && (
-              <Badge className="text-[10px] mb-1.5 bg-blue-100 text-blue-700 border-blue-200 block">
-                Special Return
-              </Badge>
-            )}
             <p className="font-display text-2xl font-bold text-foreground">
               ₹{flight.price.toLocaleString("en-IN")}
             </p>
@@ -649,7 +533,6 @@ function FlightCard({
               size="sm"
               className="bg-primary text-primary-foreground font-semibold text-xs px-4"
               data-ocid={`flight.book.button.${index + 1}`}
-              onClick={() => onSelect(flight)}
             >
               Book Now
             </Button>
@@ -662,20 +545,18 @@ function FlightCard({
         </div>
 
         {/* Expandable details row */}
-        <div className="flex items-center gap-4 mt-3 pt-3 border-t border-border flex-wrap">
-          {refundBadge()}
+        <div className="flex items-center gap-4 mt-3 pt-3 border-t border-border">
+          <span
+            className={`text-xs px-2 py-0.5 rounded-full font-medium ${flight.refundable ? "bg-green-50 text-green-700" : "bg-muted text-muted-foreground"}`}
+          >
+            {flight.refundable ? "Refundable" : "Non-Refundable"}
+          </span>
           <span className="text-xs text-muted-foreground">
             Taxes: ₹{flight.taxes.toLocaleString("en-IN")}
           </span>
           <span className="text-xs text-muted-foreground">
             Base: ₹{flight.baseFare.toLocaleString("en-IN")}
           </span>
-          {(flight.mf > 0 || flight.mft > 0) && (
-            <span className="text-xs text-muted-foreground">
-              MF: ₹{flight.mf.toLocaleString("en-IN")} · MFT: ₹
-              {flight.mft.toLocaleString("en-IN")}
-            </span>
-          )}
           <button
             type="button"
             className="ml-auto text-xs text-primary hover:underline flex items-center gap-1"
@@ -695,28 +576,20 @@ function FlightCard({
           <div className="mt-3 pt-3 border-t border-border bg-muted/30 rounded-lg p-3">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
               <div>
-                <p className="text-muted-foreground mb-0.5">Cabin Class</p>
-                <p className="font-medium text-foreground">
-                  {flight.cabinClass}
-                </p>
+                <p className="text-muted-foreground mb-0.5">Aircraft</p>
+                <p className="font-medium text-foreground">Airbus A320neo</p>
               </div>
               <div>
-                <p className="text-muted-foreground mb-0.5">Check-in Baggage</p>
-                <p className="font-medium text-foreground">
-                  {flight.checkInBaggage || "15 kg"}
-                </p>
+                <p className="text-muted-foreground mb-0.5">Baggage</p>
+                <p className="font-medium text-foreground">15 kg check-in</p>
               </div>
               <div>
                 <p className="text-muted-foreground mb-0.5">Cabin Baggage</p>
-                <p className="font-medium text-foreground">
-                  {flight.cabinBaggage || "7 kg"}
-                </p>
+                <p className="font-medium text-foreground">7 kg carry-on</p>
               </div>
               <div>
                 <p className="text-muted-foreground mb-0.5">Meal</p>
-                <p className="font-medium text-foreground">
-                  {flight.mealIncluded ? "Meal included" : "Paid meal"}
-                </p>
+                <p className="font-medium text-foreground">Paid meal</p>
               </div>
             </div>
           </div>
@@ -730,17 +603,9 @@ function FlightCard({
 function FlightResults({
   flights,
   onBack,
-  onSelect,
-  sessionTimer,
-  sessionExpired,
-  onNewSearch,
 }: {
   flights: FlightResult[];
   onBack: () => void;
-  onSelect: (f: FlightResult) => void;
-  sessionTimer: number;
-  sessionExpired: boolean;
-  onNewSearch: () => void;
 }) {
   const [sortBy, setSortBy] = useState<"price" | "duration" | "departure">(
     "price",
@@ -892,29 +757,12 @@ function FlightResults({
       {/* Results */}
       <div className="flex-1 min-w-0">
         {/* Sort bar */}
-        <div className="flex items-center justify-between mb-3 bg-card border border-border rounded-xl px-4 py-3 flex-wrap gap-2">
+        <div className="flex items-center justify-between mb-4 bg-card border border-border rounded-xl px-4 py-3">
           <p className="text-sm font-medium text-foreground">
             <span className="font-bold text-primary">{sorted.length}</span>{" "}
             flights found
           </p>
-          <div className="flex items-center gap-2 flex-wrap">
-            {/* Session timer */}
-            {sessionTimer > 0 && (
-              <div
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border ${
-                  sessionTimer < 300
-                    ? "bg-red-50 text-red-700 border-red-200"
-                    : sessionTimer < 600
-                      ? "bg-amber-50 text-amber-700 border-amber-200"
-                      : "bg-blue-50 text-blue-700 border-blue-200"
-                }`}
-                data-ocid="flight.session.timer"
-              >
-                <Clock className="w-3.5 h-3.5" />
-                Price valid: {Math.floor(sessionTimer / 60)}:
-                {String(sessionTimer % 60).padStart(2, "0")}
-              </div>
-            )}
+          <div className="flex items-center gap-2">
             <Filter className="w-4 h-4 text-muted-foreground" />
             <span className="text-xs text-muted-foreground hidden sm:block">
               Sort by:
@@ -941,25 +789,6 @@ function FlightResults({
           </div>
         </div>
 
-        {/* Session expired banner */}
-        {sessionExpired && (
-          <div
-            className="p-3 mb-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-700 flex items-center justify-between"
-            data-ocid="flight.session.error_state"
-          >
-            <span>Search session expired. Prices may have changed.</span>
-            <Button
-              size="sm"
-              variant="outline"
-              className="text-xs h-7 border-amber-300 text-amber-700"
-              onClick={onNewSearch}
-              data-ocid="flight.session.new_search.button"
-            >
-              New Search
-            </Button>
-          </div>
-        )}
-
         {sorted.length === 0 ? (
           <div
             className="bg-card border border-border rounded-xl p-12 text-center"
@@ -976,12 +805,7 @@ function FlightResults({
         ) : (
           <div className="space-y-3">
             {sorted.map((flight, i) => (
-              <FlightCard
-                key={flight.id}
-                flight={flight}
-                index={i}
-                onSelect={onSelect}
-              />
+              <FlightCard key={flight.id} flight={flight} index={i} />
             ))}
           </div>
         )}
@@ -1014,10 +838,6 @@ export function FlightSearch() {
     d.setDate(d.getDate() + 14);
     return d.toISOString().split("T")[0];
   });
-  const [multiCityRoutes, setMultiCityRoutes] = useState<MultiCityRoute[]>([
-    { id: "r0", from: "", to: "", date: "" },
-    { id: "r1", from: "", to: "", date: "" },
-  ]);
   const [passengers, setPassengers] = useState<PassengerCount>({
     adults: 1,
     children: 0,
@@ -1030,29 +850,6 @@ export function FlightSearch() {
   const [smartPnr, setSmartPnr] = useState(false);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<FlightResult[] | null>(null);
-  const [selectedFlight, setSelectedFlight] = useState<FlightResult | null>(
-    null,
-  );
-  const [confirmedFlightId, setConfirmedFlightId] = useState<string | null>(
-    null,
-  );
-  const [sessionTimer, setSessionTimer] = useState(0);
-  const [sessionExpired, setSessionExpired] = useState(false);
-
-  // 30-minute session countdown
-  useEffect(() => {
-    if (sessionTimer <= 0) return;
-    const interval = setInterval(() => {
-      setSessionTimer((prev) => {
-        if (prev <= 1) {
-          setSessionExpired(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [sessionTimer]);
 
   const RECENT_SEARCHES = [
     {
@@ -1084,259 +881,22 @@ export function FlightSearch() {
     setTo(tmp);
   }
 
-  const handleSearch = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (tripType !== "multicity" && (!from || !to)) return;
-      setLoading(true);
-      setResults(null);
-      setSessionExpired(false);
-      setSessionTimer(30 * 60);
-
-      const extractCode = (s: string) =>
-        s.match(/\(([A-Z]{3})\)/)?.[1] ?? s.trim().slice(0, 3).toUpperCase();
-
-      const cabinMap: Record<CabinClass, string> = {
-        economy: "ECONOMY",
-        premium_economy: "PREMIUM_ECONOMY",
-        business: "BUSINESS",
-        first: "FIRST",
-      };
-
-      const pftMap: Record<FareType, string> = {
-        regular: "REGULAR",
-        student: "STUDENT",
-        senior: "SENIOR_CITIZEN",
-        soto: "REGULAR",
-        ndc: "REGULAR",
-      };
-
-      const routeInfos: Array<{
-        fromCityOrAirport: { code: string };
-        toCityOrAirport: { code: string };
-        travelDate: string;
-      }> = [];
-
-      if (tripType === "oneway") {
-        routeInfos.push({
-          fromCityOrAirport: { code: extractCode(from) },
-          toCityOrAirport: { code: extractCode(to) },
-          travelDate: depDate,
-        });
-      } else if (tripType === "roundtrip") {
-        routeInfos.push({
-          fromCityOrAirport: { code: extractCode(from) },
-          toCityOrAirport: { code: extractCode(to) },
-          travelDate: depDate,
-        });
-        routeInfos.push({
-          fromCityOrAirport: { code: extractCode(to) },
-          toCityOrAirport: { code: extractCode(from) },
-          travelDate: retDate,
-        });
-      } else {
-        for (const r of multiCityRoutes) {
-          if (r.from && r.to && r.date) {
-            routeInfos.push({
-              fromCityOrAirport: { code: extractCode(r.from) },
-              toCityOrAirport: { code: extractCode(r.to) },
-              travelDate: r.date,
-            });
-          }
-        }
-      }
-
-      const body = {
-        searchQuery: {
-          cabinClass: cabinMap[cabin],
-          paxInfo: {
-            ADULT: passengers.adults,
-            ...(passengers.children > 0 ? { CHILD: passengers.children } : {}),
-            ...(passengers.infants > 0 ? { INFANT: passengers.infants } : {}),
-          },
-          routeInfos,
-          searchModifiers: {
-            ...(directOnly
-              ? { isDirectFlight: true, isConnectingFlight: false }
-              : {}),
-            ...(fareType === "student" || fareType === "senior"
-              ? { pft: pftMap[fareType] }
-              : {}),
-          },
-          ...(preferredAirline
-            ? { preferredAirline: [{ code: preferredAirline }] }
-            : {}),
-        },
-      };
-
-      try {
-        const res = await fetch(
-          "https://apitest.tripjack.com/fms/v1/air-search-all",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              apikey: "7114315c476d94-4ef2-4e21-83e8-527d56a0c529",
-            },
-            body: JSON.stringify(body),
-          },
-        );
-        const json = await res.json();
-
-        const mapped: FlightResult[] = [];
-        const tripInfos = json?.searchResult?.tripInfos;
-
-        function mapTrip(
-          tripList: Array<{
-            sI: Array<{
-              fD?: {
-                aI?: { code?: string; name?: string };
-                fN?: string;
-              };
-              dt?: string;
-              at?: string;
-              da?: { code?: string };
-              aa?: { code?: string };
-              duration?: number;
-              stops?: number;
-              so?: Array<{ code?: string }>;
-              id?: string;
-            }>;
-            totalPriceList: Array<{
-              id?: string;
-              fareIdentifier?: string;
-              sri?: string;
-              msri?: string[];
-              fD?: Record<
-                string,
-                {
-                  fC?: { BF?: number; TAF?: number; TF?: number; NCM?: number };
-                  afc?: { TAF?: { MF?: number; MFT?: number } };
-                  sR?: number;
-                  bI?: { iB?: string; cB?: string };
-                  rT?: number;
-                  cc?: string;
-                  fB?: string;
-                  mi?: boolean;
-                }
-              >;
-            }>;
-          }>,
-          isReturn = false,
-        ) {
-          if (!Array.isArray(tripList)) return;
-          for (const trip of tripList) {
-            const segs = trip.sI ?? [];
-            const firstSeg = segs[0] ?? {};
-            const lastSeg = segs[segs.length - 1] ?? {};
-            const prices = trip.totalPriceList ?? [];
-            for (const price of prices) {
-              const adultFare = price.fD?.ADULT ?? {};
-              const fc = adultFare.fC ?? {};
-              const afcTaf = adultFare.afc?.TAF ?? {};
-              const bI = adultFare.bI ?? {};
-              const durationMins = segs.reduce(
-                (acc: number, s: { duration?: number }) =>
-                  acc + (s.duration ?? 0),
-                0,
-              );
-              const hours = Math.floor(durationMins / 60);
-              const mins = durationMins % 60;
-              mapped.push({
-                id: price.id ?? `f${mapped.length}`,
-                priceId: price.id ?? "",
-                airline: firstSeg.fD?.aI?.name ?? "Unknown",
-                airlineCode: firstSeg.fD?.aI?.code ?? "??",
-                flightNo: `${firstSeg.fD?.aI?.code ?? ""}${firstSeg.fD?.fN ?? ""}`,
-                departure: firstSeg.da?.code ?? from.slice(0, 3).toUpperCase(),
-                depTime: firstSeg.dt?.split("T")[1]?.slice(0, 5) ?? "",
-                arrival: lastSeg.aa?.code ?? to.slice(0, 3).toUpperCase(),
-                arrTime: lastSeg.at?.split("T")[1]?.slice(0, 5) ?? "",
-                duration: durationMins > 0 ? `${hours}h ${mins}m` : "",
-                stops: firstSeg.stops ?? segs.length - 1,
-                stopCity: firstSeg.so?.[0]?.code,
-                price: fc.TF ?? 0,
-                baseFare: fc.BF ?? 0,
-                taxes: fc.TAF ?? 0,
-                mf: afcTaf.MF ?? 0,
-                mft: afcTaf.MFT ?? 0,
-                seatsLeft: adultFare.sR ?? 9,
-                refundable: (adultFare.rT ?? 0) === 1,
-                rT: adultFare.rT ?? 0,
-                fareIdentifier: price.fareIdentifier ?? "PUBLISHED",
-                cabinClass: adultFare.cc ?? "ECONOMY",
-                fareBasis: adultFare.fB ?? "",
-                mealIncluded: adultFare.mi ?? false,
-                checkInBaggage: bI.iB ?? "",
-                cabinBaggage: bI.cB ?? "",
-                isReturn,
-                sri: price.sri,
-                msri: price.msri,
-              });
-            }
-          }
-        }
-
-        if (tripInfos?.ONWARD) mapTrip(tripInfos.ONWARD);
-        if (tripInfos?.RETURN) mapTrip(tripInfos.RETURN, true);
-        if (tripInfos?.COMBO) mapTrip(tripInfos.COMBO);
-
-        if (mapped.length > 0) {
-          setResults(mapped);
-        } else {
-          setResults(getMockFlights(from, to));
-        }
-      } catch {
-        setResults(getMockFlights(from, to));
-      } finally {
-        setLoading(false);
-      }
-    },
-    [
-      from,
-      to,
-      depDate,
-      retDate,
-      tripType,
-      cabin,
-      passengers,
-      directOnly,
-      fareType,
-      preferredAirline,
-      multiCityRoutes,
-    ],
-  );
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    if (!from || !to) return;
+    setLoading(true);
+    setResults(null);
+    setTimeout(() => {
+      setLoading(false);
+      setResults(getMockFlights(from, to));
+    }, 1200);
+  }
 
   const tripLabels: Record<TripType, string> = {
     oneway: "One Way",
     roundtrip: "Round Trip",
     multicity: "Multi City",
   };
-
-  function updateMultiCityRoute(
-    idx: number,
-    field: keyof MultiCityRoute,
-    value: string,
-  ) {
-    setMultiCityRoutes((prev) =>
-      prev.map((r, i) => (i === idx ? { ...r, [field]: value } : r)),
-    );
-  }
-
-  function addMultiCityRoute() {
-    if (multiCityRoutes.length < 6) {
-      setMultiCityRoutes((prev) => [
-        ...prev,
-        { id: `r${Date.now()}`, from: "", to: "", date: "" },
-      ]);
-    }
-  }
-
-  function removeMultiCityRoute(idx: number) {
-    if (multiCityRoutes.length > 2) {
-      setMultiCityRoutes((prev) => prev.filter((_, i) => i !== idx));
-    }
-  }
 
   return (
     <div className="space-y-5" data-ocid="flight.search.panel">
@@ -1363,14 +923,10 @@ export function FlightSearch() {
           >
             <span className="text-white/80 text-xs font-medium">Smart PNR</span>
             <div
-              className={`w-10 h-5 rounded-full transition-colors relative ${
-                smartPnr ? "bg-accent" : "bg-white/20"
-              }`}
+              className={`w-10 h-5 rounded-full transition-colors relative ${smartPnr ? "bg-accent" : "bg-white/20"}`}
             >
               <div
-                className={`w-4 h-4 rounded-full bg-white shadow absolute top-0.5 transition-transform ${
-                  smartPnr ? "translate-x-5" : "translate-x-0.5"
-                }`}
+                className={`w-4 h-4 rounded-full bg-white shadow absolute top-0.5 transition-transform ${smartPnr ? "translate-x-5" : "translate-x-0.5"}`}
               />
             </div>
           </button>
@@ -1404,167 +960,87 @@ export function FlightSearch() {
           className="p-5 space-y-4"
           data-ocid="flight.search.form"
         >
-          {tripType === "multicity" ? (
-            /* Multi-city rows */
-            <div className="space-y-3">
-              {multiCityRoutes.map((route, idx) => (
-                <div
-                  key={route.id}
-                  className="flex gap-2 items-end p-3 bg-muted/30 rounded-xl border border-border"
-                  data-ocid={`flight.multicity.item.${idx + 1}`}
-                >
-                  <div className="flex-1 space-y-1">
-                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      From
-                    </Label>
-                    <Input
-                      placeholder="Origin city or code"
-                      value={route.from}
-                      onChange={(e) =>
-                        updateMultiCityRoute(idx, "from", e.target.value)
-                      }
-                      className="h-10"
-                      data-ocid={`flight.multicity.from.input.${idx + 1}`}
-                    />
-                  </div>
-                  <div className="flex-1 space-y-1">
-                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      To
-                    </Label>
-                    <Input
-                      placeholder="Destination city or code"
-                      value={route.to}
-                      onChange={(e) =>
-                        updateMultiCityRoute(idx, "to", e.target.value)
-                      }
-                      className="h-10"
-                      data-ocid={`flight.multicity.to.input.${idx + 1}`}
-                    />
-                  </div>
-                  <div className="flex-1 space-y-1">
-                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      Date
-                    </Label>
-                    <Input
-                      type="date"
-                      value={route.date}
-                      onChange={(e) =>
-                        updateMultiCityRoute(idx, "date", e.target.value)
-                      }
-                      className="h-10"
-                      data-ocid={`flight.multicity.date.input.${idx + 1}`}
-                    />
-                  </div>
-                  {multiCityRoutes.length > 2 && (
-                    <button
-                      type="button"
-                      className="h-10 px-3 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 transition-colors flex-shrink-0"
-                      onClick={() => removeMultiCityRoute(idx)}
-                      data-ocid={`flight.multicity.delete_button.${idx + 1}`}
-                    >
-                      Remove
-                    </button>
-                  )}
-                </div>
-              ))}
-              {multiCityRoutes.length < 6 && (
-                <button
-                  type="button"
-                  className="text-sm text-primary hover:underline flex items-center gap-1"
-                  onClick={addMultiCityRoute}
-                  data-ocid="flight.multicity.add.button"
-                >
-                  + Add another city
-                </button>
-              )}
-            </div>
-          ) : (
-            /* One-way / Round-trip From/To row */
-            <div className="flex gap-2 items-start">
-              <div className="flex-1 space-y-1">
-                <Label
-                  htmlFor="flight-from"
-                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
-                >
-                  From
-                </Label>
-                <CityInput
-                  id="flight-from"
-                  placeholder="Origin city or airport"
-                  value={from}
-                  onChange={setFrom}
-                  ocid="flight.from.input"
-                />
-              </div>
-
-              {/* Swap button */}
-              <button
-                type="button"
-                className="mt-7 w-10 h-10 rounded-full border border-border bg-card hover:bg-primary/10 hover:border-primary/30 flex items-center justify-center transition-colors flex-shrink-0"
-                onClick={swapCities}
-                data-ocid="flight.swap.button"
+          {/* From / To row */}
+          <div className="flex gap-2 items-start">
+            <div className="flex-1 space-y-1">
+              <Label
+                htmlFor="flight-from"
+                className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
               >
-                <ArrowLeftRight className="w-4 h-4 text-muted-foreground" />
-              </button>
-
-              <div className="flex-1 space-y-1">
-                <Label
-                  htmlFor="flight-to"
-                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
-                >
-                  To
-                </Label>
-                <CityInput
-                  id="flight-to"
-                  placeholder="Destination city or airport"
-                  value={to}
-                  onChange={setTo}
-                  ocid="flight.to.input"
-                />
-              </div>
+                From
+              </Label>
+              <CityInput
+                id="flight-from"
+                placeholder="Origin city or airport"
+                value={from}
+                onChange={setFrom}
+                ocid="flight.from.input"
+              />
             </div>
-          )}
 
-          {/* Dates row (not shown for multicity since dates are per-row) */}
-          {tripType !== "multicity" && (
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <Label
-                  htmlFor="dep-date"
-                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
-                >
-                  Departure
-                </Label>
-                <Input
-                  id="dep-date"
-                  type="date"
-                  value={depDate}
-                  onChange={(e) => setDepDate(e.target.value)}
-                  className="h-12"
-                  data-ocid="flight.departure_date.input"
-                />
-              </div>
-              <div className="space-y-1">
-                <Label
-                  htmlFor="ret-date"
-                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
-                >
-                  {tripType === "roundtrip" ? "Return" : "Return (Optional)"}
-                </Label>
-                <Input
-                  id="ret-date"
-                  type="date"
-                  value={retDate}
-                  onChange={(e) => setRetDate(e.target.value)}
-                  className={`h-12 ${
-                    tripType === "oneway" ? "opacity-50" : ""
-                  }`}
-                  disabled={tripType === "oneway"}
-                  data-ocid="flight.return_date.input"
-                />
-              </div>
+            {/* Swap button */}
+            <button
+              type="button"
+              className="mt-7 w-10 h-10 rounded-full border border-border bg-card hover:bg-primary/10 hover:border-primary/30 flex items-center justify-center transition-colors flex-shrink-0"
+              onClick={swapCities}
+              data-ocid="flight.swap.button"
+            >
+              <ArrowLeftRight className="w-4 h-4 text-muted-foreground" />
+            </button>
+
+            <div className="flex-1 space-y-1">
+              <Label
+                htmlFor="flight-to"
+                className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+              >
+                To
+              </Label>
+              <CityInput
+                id="flight-to"
+                placeholder="Destination city or airport"
+                value={to}
+                onChange={setTo}
+                ocid="flight.to.input"
+              />
             </div>
-          )}
+          </div>
+
+          {/* Dates row */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label
+                htmlFor="dep-date"
+                className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+              >
+                Departure
+              </Label>
+              <Input
+                id="dep-date"
+                type="date"
+                value={depDate}
+                onChange={(e) => setDepDate(e.target.value)}
+                className="h-12"
+                data-ocid="flight.departure_date.input"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label
+                htmlFor="ret-date"
+                className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+              >
+                {tripType === "roundtrip" ? "Return" : "Return (Optional)"}
+              </Label>
+              <Input
+                id="ret-date"
+                type="date"
+                value={retDate}
+                onChange={(e) => setRetDate(e.target.value)}
+                className={`h-12 ${tripType === "oneway" ? "opacity-50" : ""}`}
+                disabled={tripType === "oneway"}
+                data-ocid="flight.return_date.input"
+              />
+            </div>
+          </div>
 
           {/* Passengers & class row */}
           <div className="grid grid-cols-2 gap-4">
@@ -1632,11 +1108,7 @@ export function FlightSearch() {
                     className="accent-primary"
                   />
                   <span
-                    className={`text-sm ${
-                      fareType === key
-                        ? "font-semibold text-primary"
-                        : "text-foreground/70"
-                    }`}
+                    className={`text-sm ${fareType === key ? "font-semibold text-primary" : "text-foreground/70"}`}
                   >
                     {label}
                   </span>
@@ -1664,7 +1136,7 @@ export function FlightSearch() {
               type="submit"
               size="lg"
               className="bg-primary text-primary-foreground font-semibold px-8"
-              disabled={loading || (tripType !== "multicity" && (!from || !to))}
+              disabled={loading || !from || !to}
               data-ocid="flight.search.primary_button"
             >
               {loading ? (
@@ -1796,84 +1268,9 @@ export function FlightSearch() {
         </div>
       )}
 
-      {/* Flight confirmed */}
-      {confirmedFlightId && (
-        <div
-          className="space-y-5 text-center py-16"
-          data-ocid="flight.confirm.panel"
-        >
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-            <svg
-              aria-labelledby="flight-confirmed-title"
-              className="w-8 h-8 text-green-600"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <title id="flight-confirmed-title">Booking confirmed</title>
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold mb-2">Flight Booked!</h2>
-            <p className="text-muted-foreground">Your booking reference is</p>
-            <p
-              className="text-xl font-mono font-bold text-primary mt-1"
-              data-ocid="flight.confirm.bookingid"
-            >
-              {confirmedFlightId}
-            </p>
-            <p className="text-sm text-muted-foreground mt-3">
-              Confirmation sent to your registered email.
-            </p>
-          </div>
-          <button
-            type="button"
-            className="mt-4 px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
-            onClick={() => {
-              setConfirmedFlightId(null);
-              setSelectedFlight(null);
-              setResults(null);
-            }}
-            data-ocid="flight.confirm.new_search.button"
-          >
-            New Search
-          </button>
-        </div>
-      )}
-
-      {/* Flight Review */}
-      {!confirmedFlightId && selectedFlight && (
-        <FlightReview
-          flight={{
-            ...selectedFlight,
-            cabinClass: cabin,
-            priceId: selectedFlight.priceId,
-          }}
-          passengers={passengers}
-          onBack={() => setSelectedFlight(null)}
-          onConfirmed={(id) => setConfirmedFlightId(id)}
-        />
-      )}
-
       {/* Results */}
-      {!confirmedFlightId && !selectedFlight && results && (
-        <FlightResults
-          flights={results}
-          onBack={() => setResults(null)}
-          onSelect={(f) => setSelectedFlight(f)}
-          sessionTimer={sessionTimer}
-          sessionExpired={sessionExpired}
-          onNewSearch={() => {
-            setResults(null);
-            setSessionExpired(false);
-          }}
-        />
+      {results && (
+        <FlightResults flights={results} onBack={() => setResults(null)} />
       )}
     </div>
   );

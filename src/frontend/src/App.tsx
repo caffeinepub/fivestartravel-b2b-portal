@@ -1,11 +1,13 @@
-import { Package, Ship, Train, TrendingUp, User } from "lucide-react";
+import { Package, TrendingUp, User } from "lucide-react";
 import { useState } from "react";
 import { AgentLoginPage, AgentRegisterPage } from "./components/AuthPages";
+import { CruiseBooking } from "./components/CruiseBooking";
 import type { DashboardPage } from "./components/DashboardLayout";
 import { ComingSoonPage, DashboardLayout } from "./components/DashboardLayout";
 import { DashboardHome } from "./components/DashboardPage";
 import { FlightSearch } from "./components/FlightSearch";
 import { HotelSearch } from "./components/HotelSearch";
+import { MyBookings } from "./components/MyBookings";
 import {
   Footer,
   Header,
@@ -13,11 +15,12 @@ import {
   type Page,
   TopBar,
 } from "./components/PublicPages";
+import { RailwayBooking } from "./components/RailwayBooking";
 import { TourSearch } from "./components/TourSearch";
 import { TransferBooking } from "./components/TransferBooking";
-import { VisaServices } from "./components/VisaServices";
+import VisaServices from "./components/VisaServices";
 
-// ── App Root ──────────────────────────────────────────────────────────────────────
+// ── App Root ──────────────────────────────────────────────────────────────────────────────
 export default function App() {
   const [page, setPage] = useState<Page>("home");
   const [dashNav, setDashNav] = useState<DashboardPage>("dashboard");
@@ -54,7 +57,7 @@ export default function App() {
     navigate("home");
   }
 
-  // ── Public pages ──────────────────────────────────────────────────────────────────────
+  // ── Public pages ──────────────────────────────────────────────────────────────────────────────────
   if (page === "home") {
     return (
       <div className="min-h-screen flex flex-col">
@@ -94,7 +97,7 @@ export default function App() {
     );
   }
 
-  // ── Agent Dashboard ────────────────────────────────────────────────────────────────────────────
+  // ── Agent Dashboard ──────────────────────────────────────────────────────────────────────────────────────
   const dashboardTitles: Record<DashboardPage, string> = {
     dashboard: "Agent Dashboard",
     flights: "Flight Booking",
@@ -125,20 +128,8 @@ export default function App() {
       {dashNav === "tours" && <TourSearch />}
       {dashNav === "transfers" && <TransferBooking />}
       {dashNav === "visa" && <VisaServices />}
-      {dashNav === "cruises" && (
-        <ComingSoonPage
-          title="Cruise Booking"
-          icon={Ship}
-          onNavigateFlights={() => handleDashNav("flights")}
-        />
-      )}
-      {dashNav === "railway" && (
-        <ComingSoonPage
-          title="Railway Booking"
-          icon={Train}
-          onNavigateFlights={() => handleDashNav("flights")}
-        />
-      )}
+      {dashNav === "cruises" && <CruiseBooking />}
+      {dashNav === "railway" && <RailwayBooking />}
       {dashNav === "packages" && (
         <ComingSoonPage
           title="Package Builder"
@@ -146,13 +137,7 @@ export default function App() {
           onNavigateFlights={() => handleDashNav("flights")}
         />
       )}
-      {dashNav === "bookings" && (
-        <ComingSoonPage
-          title="My Bookings"
-          icon={User}
-          onNavigateFlights={() => handleDashNav("flights")}
-        />
-      )}
+      {dashNav === "bookings" && <MyBookings />}
       {dashNav === "wallet" && (
         <ComingSoonPage
           title="Wallet"

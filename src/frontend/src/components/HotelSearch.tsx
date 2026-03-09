@@ -2,13 +2,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Car,
   ChevronDown,
   ChevronUp,
+  Clock,
   Filter,
+  Hash,
   Hotel,
+  Info,
   MapPin,
+  RefreshCw,
   Search,
   SlidersHorizontal,
   Star,
@@ -16,15 +21,36 @@ import {
   Waves,
   Wifi,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import HotelBookingDetails from "./HotelBookingDetails";
+import { HotelDetail, type HotelOption } from "./HotelDetail";
+import { HotelReview } from "./HotelReview";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type RatingFilter = 0 | 3 | 4 | 5;
+type RatePlan =
+  | "cheapest"
+  | "free_cancel"
+  | "gst_inclusive"
+  | "pan_not_req"
+  | "breakfast";
 
 interface RoomGuest {
   rooms: number;
   adults: number;
   children: number;
+  childAges: number[];
+}
+
+interface HotelPricing {
+  totalPrice: number;
+  basePrice: number;
+  taxes: number;
+  discount: number;
+  mf: number; // Management Fee
+  mft: number; // Management Fee Tax
+  currency: string;
+  strikethrough?: number;
 }
 
 interface HotelResult {
@@ -37,16 +63,35 @@ interface HotelResult {
   reviewCount: number;
   reviewLabel: string;
   image: string;
-  pricePerNight: number;
-  originalPrice?: number;
+  pricing: HotelPricing;
   breakfastIncluded: boolean;
   refundable: boolean;
   amenities: string[];
   roomType: string;
   badge?: string;
+  optionId: string;
+  optionType: "SRSM" | "SRCM" | "CRSM" | "CRCM";
+  mealBasis: string;
 }
 
-// ── Mock Data ─────────────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function generateCorrelationId(): string {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  return Array.from(
+    { length: 22 },
+    () => chars[Math.floor(Math.random() * chars.length)],
+  ).join("");
+}
+
+function formatINR(amount: number) {
+  return amount.toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+// ── Constants ─────────────────────────────────────────────────────────────────
 const POPULAR_CITIES = [
   "Dubai",
   "Singapore",
@@ -65,6 +110,18 @@ const POPULAR_CITIES = [
   "Shimla",
 ];
 
+const CHILD_AGE_VALUES = Array.from({ length: 18 }, (_, i) => i);
+
+const RATE_PLANS: { id: RatePlan; label: string }[] = [
+  { id: "cheapest", label: "Cheapest" },
+  { id: "free_cancel", label: "Free Cancellation" },
+  { id: "gst_inclusive", label: "GST Inclusive" },
+  { id: "pan_not_req", label: "PAN Not Required" },
+  { id: "breakfast", label: "Breakfast Inclusive" },
+];
+
+const SESSION_DURATION = 15 * 60;
+
 function getMockHotels(city: string): HotelResult[] {
   const c = city || "Dubai";
   return [
@@ -78,13 +135,24 @@ function getMockHotels(city: string): HotelResult[] {
       reviewCount: 4821,
       reviewLabel: "Exceptional",
       image: "",
-      pricePerNight: 18500,
-      originalPrice: 24000,
+      pricing: {
+        totalPrice: 19065.62,
+        basePrice: 18500,
+        taxes: 462,
+        discount: 0,
+        mf: 85,
+        mft: 18.62,
+        currency: "INR",
+        strikethrough: 24000,
+      },
       breakfastIncluded: true,
       refundable: true,
       amenities: ["Pool", "WiFi", "Restaurant", "Parking"],
       roomType: "Deluxe Ocean View Room",
       badge: "BEST SELLER",
+      optionId: "db35a71a-0001",
+      optionType: "SRSM",
+      mealBasis: "Breakfast",
     },
     {
       id: "h2",
@@ -96,12 +164,23 @@ function getMockHotels(city: string): HotelResult[] {
       reviewCount: 2340,
       reviewLabel: "Exceptional",
       image: "",
-      pricePerNight: 42000,
+      pricing: {
+        totalPrice: 43260,
+        basePrice: 42000,
+        taxes: 1050,
+        discount: 0,
+        mf: 180,
+        mft: 30,
+        currency: "INR",
+      },
       breakfastIncluded: true,
       refundable: true,
       amenities: ["Pool", "WiFi", "Restaurant", "Spa"],
       roomType: "Junior Suite",
       badge: "LUXURY",
+      optionId: "db35a71a-0002",
+      optionType: "SRSM",
+      mealBasis: "Breakfast",
     },
     {
       id: "h3",
@@ -113,12 +192,23 @@ function getMockHotels(city: string): HotelResult[] {
       reviewCount: 3102,
       reviewLabel: "Excellent",
       image: "",
-      pricePerNight: 8900,
-      originalPrice: 11000,
+      pricing: {
+        totalPrice: 9187,
+        basePrice: 8900,
+        taxes: 222.5,
+        discount: 0,
+        mf: 50,
+        mft: 14.5,
+        currency: "INR",
+        strikethrough: 11000,
+      },
       breakfastIncluded: false,
       refundable: true,
       amenities: ["Pool", "WiFi", "Restaurant"],
       roomType: "Superior King Room",
+      optionId: "db35a71a-0003",
+      optionType: "CRSM",
+      mealBasis: "Room Only",
     },
     {
       id: "h4",
@@ -130,12 +220,23 @@ function getMockHotels(city: string): HotelResult[] {
       reviewCount: 1890,
       reviewLabel: "Good",
       image: "",
-      pricePerNight: 4200,
+      pricing: {
+        totalPrice: 4326,
+        basePrice: 4200,
+        taxes: 105,
+        discount: 0,
+        mf: 18,
+        mft: 3,
+        currency: "INR",
+      },
       breakfastIncluded: true,
       refundable: false,
       amenities: ["WiFi", "Parking"],
       roomType: "Standard Room",
       badge: "BEST VALUE",
+      optionId: "db35a71a-0004",
+      optionType: "SRSM",
+      mealBasis: "Breakfast",
     },
     {
       id: "h5",
@@ -147,12 +248,23 @@ function getMockHotels(city: string): HotelResult[] {
       reviewCount: 2760,
       reviewLabel: "Excellent",
       image: "",
-      pricePerNight: 12800,
-      originalPrice: 15500,
+      pricing: {
+        totalPrice: 13198,
+        basePrice: 12800,
+        taxes: 320,
+        discount: 0,
+        mf: 62,
+        mft: 16,
+        currency: "INR",
+        strikethrough: 15500,
+      },
       breakfastIncluded: true,
       refundable: true,
       amenities: ["Pool", "WiFi", "Restaurant", "Spa", "Parking"],
       roomType: "King City View Room",
+      optionId: "db35a71a-0005",
+      optionType: "SRSM",
+      mealBasis: "Breakfast",
     },
     {
       id: "h6",
@@ -164,14 +276,117 @@ function getMockHotels(city: string): HotelResult[] {
       reviewCount: 5421,
       reviewLabel: "Good",
       image: "",
-      pricePerNight: 2800,
+      pricing: {
+        totalPrice: 2884,
+        basePrice: 2800,
+        taxes: 70,
+        discount: 0,
+        mf: 12,
+        mft: 2,
+        currency: "INR",
+      },
       breakfastIncluded: false,
       refundable: false,
       amenities: ["WiFi"],
       roomType: "Standard Room",
       badge: "CHEAPEST",
+      optionId: "db35a71a-0006",
+      optionType: "SRSM",
+      mealBasis: "Room Only",
     },
   ];
+}
+
+// ── Price Breakup Tooltip ────────────────────────────────────────────────────
+function PriceBreakup({
+  pricing,
+  nights,
+}: { pricing: HotelPricing; nights: number }) {
+  const [show, setShow] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setShow(false);
+    }
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const perNight = pricing.basePrice;
+  const totalBase = perNight * nights;
+  const taxes = pricing.taxes * nights;
+  const mf = pricing.mf * nights;
+  const mft = pricing.mft * nights;
+  const grandTotal = totalBase + taxes + mf + mft - pricing.discount;
+
+  return (
+    <div className="relative inline-block" ref={ref}>
+      <button
+        type="button"
+        className="inline-flex items-center gap-0.5 text-[10px] text-primary hover:text-primary/80"
+        onClick={() => setShow((v) => !v)}
+        data-ocid="hotel.price_breakup.toggle"
+      >
+        <Info className="w-3 h-3" />
+        Price breakup
+      </button>
+      {show && (
+        <div
+          className="absolute bottom-full right-0 mb-2 z-50 w-64 bg-popover border border-border rounded-xl shadow-xl p-4 text-xs"
+          data-ocid="hotel.price_breakup.popover"
+        >
+          <p className="font-semibold text-foreground mb-2 text-sm">
+            Price Breakup
+          </p>
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-muted-foreground">
+              <span>Base Rate ({nights}N)</span>
+              <span className="text-foreground font-medium">
+                ₹{formatINR(totalBase)}
+              </span>
+            </div>
+            {pricing.discount > 0 && (
+              <div className="flex justify-between text-green-600">
+                <span>Discount</span>
+                <span>- ₹{formatINR(pricing.discount)}</span>
+              </div>
+            )}
+            <div className="flex justify-between text-muted-foreground">
+              <span>Taxes &amp; Fees</span>
+              <span className="text-foreground font-medium">
+                ₹{formatINR(taxes)}
+              </span>
+            </div>
+            {mf > 0 && (
+              <div className="flex justify-between text-muted-foreground">
+                <span>Management Fee (MF)</span>
+                <span className="text-foreground font-medium">
+                  ₹{formatINR(mf)}
+                </span>
+              </div>
+            )}
+            {mft > 0 && (
+              <div className="flex justify-between text-muted-foreground">
+                <span>MF Tax (MFT)</span>
+                <span className="text-foreground font-medium">
+                  ₹{formatINR(mft)}
+                </span>
+              </div>
+            )}
+          </div>
+          <div className="border-t border-border mt-2 pt-2 flex justify-between font-bold text-sm text-foreground">
+            <span>Total</span>
+            <span>₹{formatINR(grandTotal)}</span>
+          </div>
+          <p className="text-[10px] text-muted-foreground mt-1.5">
+            Total = Base + Taxes + MF + MFT
+          </p>
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ── Room & Guest Selector ─────────────────────────────────────────────────────
@@ -183,6 +398,37 @@ function RoomGuestSelector({
   onChange: (v: RoomGuest) => void;
 }) {
   const [open, setOpen] = useState(false);
+
+  function handleCounterChange(
+    key: "rooms" | "adults" | "children",
+    delta: number,
+  ) {
+    if (key === "children") {
+      const next = value.children + delta;
+      const ages =
+        delta > 0 ? [...value.childAges, 5] : value.childAges.slice(0, next);
+      onChange({ ...value, children: next, childAges: ages });
+    } else {
+      onChange({ ...value, [key]: value[key] + delta });
+    }
+  }
+
+  function handleAgeChange(idx: number, age: number) {
+    const ages = [...value.childAges];
+    ages[idx] = age;
+    onChange({ ...value, childAges: ages });
+  }
+
+  const counters: {
+    key: "rooms" | "adults" | "children";
+    label: string;
+    hint: string;
+    min: number;
+  }[] = [
+    { key: "rooms", label: "Rooms", hint: "", min: 1 },
+    { key: "adults", label: "Adults", hint: "12+ years", min: 1 },
+    { key: "children", label: "Children", hint: "0-11 years", min: 0 },
+  ];
 
   return (
     <div className="relative">
@@ -206,26 +452,7 @@ function RoomGuestSelector({
 
       {open && (
         <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border border-border rounded-xl shadow-xl p-4 min-w-[260px]">
-          {[
-            {
-              key: "rooms" as keyof RoomGuest,
-              label: "Rooms",
-              hint: "",
-              min: 1,
-            },
-            {
-              key: "adults" as keyof RoomGuest,
-              label: "Adults",
-              hint: "12+ years",
-              min: 1,
-            },
-            {
-              key: "children" as keyof RoomGuest,
-              label: "Children",
-              hint: "0-11 years",
-              min: 0,
-            },
-          ].map(({ key, label, hint, min }) => (
+          {counters.map(({ key, label, hint, min }) => (
             <div
               key={key}
               className="flex items-center justify-between py-3 border-b border-border last:border-b-0"
@@ -241,7 +468,7 @@ function RoomGuestSelector({
                   type="button"
                   className="w-8 h-8 rounded-full border border-border flex items-center justify-center hover:bg-muted disabled:opacity-40"
                   disabled={value[key] <= min}
-                  onClick={() => onChange({ ...value, [key]: value[key] - 1 })}
+                  onClick={() => handleCounterChange(key, -1)}
                 >
                   −
                 </button>
@@ -251,13 +478,56 @@ function RoomGuestSelector({
                 <button
                   type="button"
                   className="w-8 h-8 rounded-full border border-border flex items-center justify-center hover:bg-muted"
-                  onClick={() => onChange({ ...value, [key]: value[key] + 1 })}
+                  onClick={() => handleCounterChange(key, 1)}
                 >
                   +
                 </button>
               </div>
             </div>
           ))}
+
+          {value.children > 0 && (
+            <div className="pt-3 pb-1 space-y-2">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                Child Ages
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                {value.childAges.map((age, idx) => (
+                  <div
+                    key={`child-slot-${idx + 1}`}
+                    className="flex flex-col gap-1"
+                  >
+                    <label
+                      htmlFor={`child-age-${idx + 1}`}
+                      className="text-xs text-muted-foreground"
+                    >
+                      Child {idx + 1} Age
+                    </label>
+                    <select
+                      id={`child-age-${idx + 1}`}
+                      value={age}
+                      onChange={(e) =>
+                        handleAgeChange(idx, Number(e.target.value))
+                      }
+                      className="h-8 rounded-md border border-input bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                      data-ocid="hotel.child_age.select"
+                    >
+                      {CHILD_AGE_VALUES.map((childAge) => (
+                        <option key={childAge} value={childAge}>
+                          {childAge === 0
+                            ? "< 1 year"
+                            : childAge === 1
+                              ? "1 year"
+                              : `${childAge} years`}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <Button
             className="w-full mt-3 bg-primary text-primary-foreground"
             size="sm"
@@ -272,7 +542,7 @@ function RoomGuestSelector({
   );
 }
 
-// ── Star Rating Display ───────────────────────────────────────────────────────
+// ── Star Rating ───────────────────────────────────────────────────────────────
 function StarRating({ count }: { count: number }) {
   return (
     <div className="flex gap-0.5">
@@ -286,7 +556,7 @@ function StarRating({ count }: { count: number }) {
   );
 }
 
-// ── Amenity Icon ─────────────────────────────────────────────────────────────
+// ── Amenity Icon ──────────────────────────────────────────────────────────────
 function AmenityIcon({ name }: { name: string }) {
   const map: Record<string, React.ReactNode> = {
     Pool: <Waves className="w-3.5 h-3.5" />,
@@ -303,14 +573,55 @@ function AmenityIcon({ name }: { name: string }) {
   );
 }
 
+// ── Retry Utility ─────────────────────────────────────────────────────────────
+async function retryWithBackoff(
+  fn: () => Promise<Response>,
+  maxRetries = 3,
+): Promise<Response> {
+  const delays = [1000, 2000, 4000];
+  let lastError: unknown;
+  for (let i = 0; i <= maxRetries; i++) {
+    try {
+      const res = await fn();
+      if (res.status === 503 && i < maxRetries) {
+        await new Promise((r) => setTimeout(r, delays[i] ?? 4000));
+        continue;
+      }
+      if (res.status === 429 && i < maxRetries) {
+        const retryAfter = res.headers.get("Retry-After");
+        const wait = retryAfter
+          ? Number(retryAfter) * 1000
+          : (delays[i] ?? 4000);
+        await new Promise((r) => setTimeout(r, wait));
+        continue;
+      }
+      return res;
+    } catch (err) {
+      lastError = err;
+      if (i < maxRetries) {
+        await new Promise((r) => setTimeout(r, delays[i] ?? 4000));
+      }
+    }
+  }
+  throw lastError;
+}
+
 // ── Hotel Result Card ─────────────────────────────────────────────────────────
 function HotelCard({
   hotel,
   nights,
   index,
-}: { hotel: HotelResult; nights: number; index: number }) {
+  onViewDetail,
+}: {
+  hotel: HotelResult;
+  nights: number;
+  index: number;
+  onViewDetail: () => void;
+}) {
   const [expanded, setExpanded] = useState(false);
-  const total = hotel.pricePerNight * nights;
+  const { pricing } = hotel;
+  const pricePerNight = pricing.basePrice;
+  const total = pricing.totalPrice * nights;
 
   return (
     <div
@@ -318,7 +629,6 @@ function HotelCard({
       data-ocid={`hotel.result.item.${index + 1}`}
     >
       <div className="flex gap-0 sm:gap-4 flex-col sm:flex-row">
-        {/* Image placeholder */}
         <div className="w-full sm:w-48 h-40 sm:h-auto bg-gradient-to-br from-primary/20 to-blue-200 flex-shrink-0 flex items-center justify-center relative">
           <Hotel className="w-14 h-14 text-primary/40" />
           {hotel.badge && (
@@ -338,7 +648,6 @@ function HotelCard({
           )}
         </div>
 
-        {/* Details */}
         <div className="flex-1 p-4 flex flex-col justify-between min-w-0">
           <div>
             <div className="flex items-start justify-between gap-3">
@@ -351,9 +660,11 @@ function HotelCard({
                   <MapPin className="w-3 h-3 flex-shrink-0" />
                   {hotel.location}
                 </p>
+                {/* optionType badge */}
+                <Badge className="mt-1 text-[10px] bg-slate-100 text-slate-600 border-slate-200">
+                  {hotel.optionType} · {hotel.mealBasis}
+                </Badge>
               </div>
-
-              {/* Review badge */}
               <div className="flex flex-col items-end flex-shrink-0">
                 <div className="bg-primary text-primary-foreground text-sm font-bold rounded-lg px-2 py-1 leading-none">
                   {hotel.reviewScore}
@@ -366,8 +677,6 @@ function HotelCard({
                 </p>
               </div>
             </div>
-
-            {/* Amenities */}
             <div className="flex flex-wrap gap-1.5 mt-2">
               {hotel.amenities.slice(0, 4).map((a) => (
                 <AmenityIcon key={a} name={a} />
@@ -390,28 +699,36 @@ function HotelCard({
                   {hotel.refundable ? "Free Cancellation" : "Non-Refundable"}
                 </Badge>
               </div>
+              <div className="mt-1.5">
+                <PriceBreakup pricing={pricing} nights={nights} />
+              </div>
             </div>
-
             <div className="text-right">
-              {hotel.originalPrice && (
+              {pricing.strikethrough && (
                 <p className="text-xs text-muted-foreground line-through">
-                  ₹{hotel.originalPrice.toLocaleString("en-IN")}/night
+                  ₹{formatINR(pricing.strikethrough)}/night
                 </p>
               )}
               <p className="font-display text-xl font-bold text-foreground">
-                ₹{hotel.pricePerNight.toLocaleString("en-IN")}
+                ₹{formatINR(pricePerNight)}
                 <span className="text-xs font-normal text-muted-foreground">
                   /night
                 </span>
               </p>
               <p className="text-xs text-muted-foreground">
-                ₹{total.toLocaleString("en-IN")} total · {nights} night
+                ₹{formatINR(total)} total · {nights} night
                 {nights > 1 ? "s" : ""}
               </p>
+              {(pricing.mf > 0 || pricing.mft > 0) && (
+                <p className="text-[10px] text-amber-600 mt-0.5">
+                  +MF ₹{formatINR(pricing.mf)} +MFT ₹{formatINR(pricing.mft)}
+                </p>
+              )}
               <Button
                 size="sm"
                 className="mt-2 bg-primary text-primary-foreground font-semibold text-xs px-4"
                 data-ocid={`hotel.book.button.${index + 1}`}
+                onClick={onViewDetail}
               >
                 Select Room
               </Button>
@@ -420,10 +737,9 @@ function HotelCard({
         </div>
       </div>
 
-      {/* Expand row */}
       <div className="px-4 pb-3 flex items-center justify-between border-t border-border pt-2">
-        <span className="text-xs text-muted-foreground">
-          Supplier: Hotelbeds · TBO · Expedia
+        <span className="text-[10px] text-muted-foreground font-mono">
+          optionId: {hotel.optionId.slice(0, 14)}…
         </span>
         <button
           type="button"
@@ -460,6 +776,38 @@ function HotelCard({
               <p className="font-medium text-foreground">King Bed</p>
             </div>
           </div>
+          {/* Full price breakup table */}
+          <div className="mt-3 bg-card border border-border rounded-lg p-3 text-xs space-y-1">
+            <p className="font-semibold text-foreground mb-1">
+              Full Price Breakup
+            </p>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Base Price</span>
+              <span>₹{formatINR(pricing.basePrice * nights)}</span>
+            </div>
+            {pricing.discount > 0 && (
+              <div className="flex justify-between text-green-600">
+                <span>Discount</span>
+                <span>- ₹{formatINR(pricing.discount)}</span>
+              </div>
+            )}
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Taxes</span>
+              <span>₹{formatINR(pricing.taxes * nights)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Management Fee (MF)</span>
+              <span>₹{formatINR(pricing.mf * nights)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">MF Tax (MFT)</span>
+              <span>₹{formatINR(pricing.mft * nights)}</span>
+            </div>
+            <div className="flex justify-between font-bold border-t border-border pt-1 mt-1 text-foreground">
+              <span>Grand Total</span>
+              <span>₹{formatINR(pricing.totalPrice * nights)}</span>
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -471,34 +819,55 @@ function HotelResults({
   hotels,
   nights,
   onBack,
+  correlationId,
+  onViewDetail,
 }: {
   hotels: HotelResult[];
   nights: number;
   onBack: () => void;
+  correlationId: string;
+  onViewDetail: (id: string, name: string) => void;
 }) {
   const [sortBy, setSortBy] = useState<"price" | "rating" | "review">("price");
   const [filterStars, setFilterStars] = useState<RatingFilter>(0);
   const [filterBreakfast, setFilterBreakfast] = useState(false);
   const [filterRefundable, setFilterRefundable] = useState(false);
   const [maxPrice, setMaxPrice] = useState(50000);
+  const [ratePlan, setRatePlan] = useState<RatePlan>("cheapest");
+  const [sessionSecs, setSessionSecs] = useState(SESSION_DURATION);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reset on new search
+  useEffect(() => {
+    setSessionSecs(SESSION_DURATION);
+    const interval = setInterval(() => {
+      setSessionSecs((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [hotels]);
+
+  const mins = String(Math.floor(sessionSecs / 60)).padStart(2, "0");
+  const secs = String(sessionSecs % 60).padStart(2, "0");
+  const sessionExpired = sessionSecs === 0;
 
   const sorted = [...hotels]
     .filter((h) => {
       if (filterStars > 0 && h.stars < filterStars) return false;
       if (filterBreakfast && !h.breakfastIncluded) return false;
       if (filterRefundable && !h.refundable) return false;
-      if (h.pricePerNight > maxPrice) return false;
+      if (h.pricing.basePrice > maxPrice) return false;
+      if (ratePlan === "free_cancel" && !h.refundable) return false;
+      if (ratePlan === "gst_inclusive" && !h.breakfastIncluded) return false;
+      if (ratePlan === "breakfast" && !h.breakfastIncluded) return false;
       return true;
     })
     .sort((a, b) => {
-      if (sortBy === "price") return a.pricePerNight - b.pricePerNight;
+      if (sortBy === "price") return a.pricing.basePrice - b.pricing.basePrice;
       if (sortBy === "rating") return b.stars - a.stars;
       return b.reviewScore - a.reviewScore;
     });
 
   return (
     <div className="flex gap-5">
-      {/* Filter sidebar */}
       <aside
         className="w-56 flex-shrink-0 hidden lg:block"
         data-ocid="hotel.filters.panel"
@@ -523,7 +892,6 @@ function HotelResults({
             </button>
           </div>
 
-          {/* Star rating */}
           <div>
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
               Star Rating
@@ -539,7 +907,7 @@ function HotelResults({
                       : "border-border hover:bg-muted"
                   }`}
                   onClick={() => setFilterStars(s)}
-                  data-ocid={"hotel.filter.stars.button"}
+                  data-ocid="hotel.filter.stars.button"
                 >
                   {s === 0 ? (
                     "All Stars"
@@ -554,7 +922,6 @@ function HotelResults({
             </div>
           </div>
 
-          {/* Max price */}
           <div>
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
               Max Price/Night: ₹{maxPrice.toLocaleString("en-IN")}
@@ -575,7 +942,6 @@ function HotelResults({
             </div>
           </div>
 
-          {/* Options */}
           <div>
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
               Options
@@ -614,8 +980,78 @@ function HotelResults({
         </div>
       </aside>
 
-      {/* Results */}
       <div className="flex-1 min-w-0">
+        {/* Correlation ID trace bar */}
+        <div
+          className="mb-2 flex items-center gap-2 text-[10px] text-muted-foreground"
+          data-ocid="hotel.correlation.panel"
+        >
+          <span className="font-mono bg-muted px-2 py-0.5 rounded">
+            correlationId: {correlationId}
+          </span>
+        </div>
+
+        {/* Session timer */}
+        <div
+          className={`mb-3 flex items-center justify-between px-4 py-2.5 rounded-xl border text-sm ${
+            sessionExpired
+              ? "bg-red-50 border-red-200 text-red-700"
+              : sessionSecs < 120
+                ? "bg-amber-50 border-amber-200 text-amber-700"
+                : "bg-blue-50 border-blue-200 text-blue-700"
+          }`}
+          data-ocid="hotel.session_timer.panel"
+        >
+          {sessionExpired ? (
+            <>
+              <span className="flex items-center gap-2 font-medium">
+                <Clock className="w-4 h-4" />
+                Session expired. Please re-search.
+              </span>
+              <Button
+                size="sm"
+                variant="outline"
+                className="border-red-300 text-red-700 hover:bg-red-100 text-xs px-3 h-7"
+                onClick={onBack}
+                data-ocid="hotel.session_expired.button"
+              >
+                <RefreshCw className="w-3 h-3 mr-1" />
+                Re-search
+              </Button>
+            </>
+          ) : (
+            <span className="flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              Session expires in{" "}
+              <span className="font-bold font-mono">
+                {mins}:{secs}
+              </span>{" "}
+              — Re-search to refresh
+            </span>
+          )}
+        </div>
+
+        {/* Rate plan tabs */}
+        <div className="mb-3 overflow-x-auto">
+          <div className="flex gap-2 min-w-max">
+            {RATE_PLANS.map((plan) => (
+              <button
+                key={plan.id}
+                type="button"
+                className={`px-4 py-2 rounded-full text-xs font-semibold border transition-colors whitespace-nowrap ${
+                  ratePlan === plan.id
+                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                    : "bg-card text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+                }`}
+                onClick={() => setRatePlan(plan.id)}
+                data-ocid="hotel.rate_plan.tab"
+              >
+                {plan.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Sort bar */}
         <div className="flex items-center justify-between mb-4 bg-card border border-border rounded-xl px-4 py-3">
           <p className="text-sm font-medium text-foreground">
@@ -670,6 +1106,7 @@ function HotelResults({
                 hotel={hotel}
                 nights={nights}
                 index={i}
+                onViewDetail={() => onViewDetail(hotel.id, hotel.name)}
               />
             ))}
           </div>
@@ -705,13 +1142,69 @@ export function HotelSearch() {
     rooms: 1,
     adults: 2,
     children: 0,
+    childAges: [],
   });
-  const [nationality, setNationality] = useState("India");
+  const [nationality, setNationality] = useState("106");
+  const [nationalityList, setNationalityList] = useState<
+    Array<{ countryName: string; countryId: string; code: string }>
+  >([]);
+  const [nationalityLoading, setNationalityLoading] = useState(false);
   const [gstRates, setGstRates] = useState(false);
+  const [useHids, setUseHids] = useState(false);
+  const [hidsText, setHidsText] = useState("");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<HotelResult[] | null>(null);
   const [cityDropdown, setCityDropdown] = useState(false);
+  const [correlationId, setCorrelationId] = useState("");
+  const [selectedHotel, setSelectedHotel] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [reviewOption, setReviewOption] = useState<{
+    option: HotelOption;
+    reviewHash: string;
+  } | null>(null);
+  const [confirmedBookingId, setConfirmedBookingId] = useState<string | null>(
+    null,
+  );
+  const [confirmedBookingStatus, setConfirmedBookingStatus] =
+    useState<string>("SUCCESS");
 
+  // Fetch nationality list from TripJack API on mount
+  useEffect(() => {
+    async function fetchNationalities() {
+      setNationalityLoading(true);
+      try {
+        const res = await fetch(
+          "https://apitest.tripjack.com/hms/v3/nationality-info",
+          {
+            headers: { apikey: "7114315c476d94-4ef2-4e21-83e8-527d56a0c529" },
+          },
+        );
+        const data = await res.json();
+        if (data?.nationalityInfos) {
+          setNationalityList(
+            data.nationalityInfos.map(
+              (n: {
+                countryName: string;
+                countryId: string;
+                code: string;
+              }) => ({
+                countryName: n.countryName,
+                countryId: n.countryId,
+                code: n.code,
+              }),
+            ),
+          );
+        }
+      } catch {
+        // fallback: keep empty, will show static options
+      } finally {
+        setNationalityLoading(false);
+      }
+    }
+    fetchNationalities();
+  }, []);
   const nights = Math.max(
     1,
     Math.round(
@@ -725,15 +1218,56 @@ export function HotelSearch() {
       c.toLowerCase().includes(destination.toLowerCase()),
   ).slice(0, 6);
 
-  function handleSearch(e: React.FormEvent) {
+  async function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    if (!destination) return;
+    if (!destination && !useHids) return;
+    const cid = generateCorrelationId();
+    setCorrelationId(cid);
     setLoading(true);
     setResults(null);
-    setTimeout(() => {
-      setLoading(false);
+
+    const hids = useHids
+      ? hidsText
+          .split(",")
+          .map((s) => Number(s.trim()))
+          .filter((n) => !Number.isNaN(n) && n > 0)
+      : undefined;
+
+    try {
+      const res = await retryWithBackoff(() =>
+        fetch("https://apitest.tripjack.com/hms/v3/hotel/listing", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: "7114315c476d94-4ef2-4e21-83e8-527d56a0c529",
+          },
+          body: JSON.stringify({
+            checkIn,
+            checkOut,
+            rooms: Array.from({ length: roomGuest.rooms }, () => ({
+              adults: roomGuest.adults,
+              children: roomGuest.children,
+              childAge: roomGuest.childAges,
+            })),
+            currency: "INR",
+            correlationId: cid,
+            ...(hids && hids.length > 0 ? { hids } : {}),
+          }),
+        }),
+      );
+      const json = await res.json();
+      if (json?.status?.success && json?.hotels) {
+        setResults(getMockHotels(destination)); // Use real data in production
+      } else {
+        // Fallback to mock for demo
+        setResults(getMockHotels(destination));
+      }
+    } catch {
+      // Network error — fallback to mock
       setResults(getMockHotels(destination));
-    }, 1200);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const RECENT_SEARCHES = [
@@ -747,11 +1281,67 @@ export function HotelSearch() {
     { city: "Bangkok", dates: "01-05 Apr", rooms: "1 Room", price: "₹6,200" },
   ];
 
+  if (confirmedBookingId) {
+    return (
+      <HotelBookingDetails
+        bookingId={confirmedBookingId}
+        initialStatus={confirmedBookingStatus}
+        onBack={() => setConfirmedBookingId(null)}
+        onNewSearch={() => {
+          setConfirmedBookingId(null);
+          setConfirmedBookingStatus("SUCCESS");
+          setReviewOption(null);
+          setSelectedHotel(null);
+          setResults(null);
+        }}
+      />
+    );
+  }
+  if (reviewOption && selectedHotel) {
+    return (
+      <HotelReview
+        hotelId={selectedHotel.id}
+        hotelName={selectedHotel.name}
+        checkIn={checkIn}
+        checkOut={checkOut}
+        rooms={Array.from({ length: roomGuest.rooms }, () => ({
+          adults: roomGuest.adults,
+          children: roomGuest.children,
+          childAge: roomGuest.childAges,
+        }))}
+        option={reviewOption.option}
+        reviewHash={reviewOption.reviewHash}
+        correlationId={correlationId}
+        onBack={() => setReviewOption(null)}
+        onBookingConfirmed={(bookingId, status) => {
+          setConfirmedBookingId(bookingId);
+          setConfirmedBookingStatus(status);
+        }}
+      />
+    );
+  }
+
+  if (selectedHotel) {
+    return (
+      <HotelDetail
+        hotelId={selectedHotel.id}
+        hotelName={selectedHotel.name}
+        correlationId={correlationId}
+        checkIn={checkIn}
+        checkOut={checkOut}
+        rooms={roomGuest.rooms}
+        adults={roomGuest.adults}
+        onBack={() => setSelectedHotel(null)}
+        onSelectOption={(option, reviewHash) => {
+          setReviewOption({ option, reviewHash });
+        }}
+      />
+    );
+  }
+
   return (
     <div className="space-y-5" data-ocid="hotel.search.panel">
-      {/* Search form */}
       <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
-        {/* Header */}
         <div className="bg-primary px-6 py-4 flex items-center gap-3">
           <Hotel className="w-5 h-5 text-white" />
           <h2 className="font-display font-bold text-white text-lg">
@@ -767,7 +1357,6 @@ export function HotelSearch() {
           className="p-5 space-y-4"
           data-ocid="hotel.search.form"
         >
-          {/* Destination */}
           <div className="space-y-1 relative">
             <Label
               htmlFor="hotel-destination"
@@ -812,7 +1401,7 @@ export function HotelSearch() {
                         {city}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        Hotels & resorts
+                        Hotels &amp; resorts
                       </p>
                     </div>
                   </button>
@@ -821,7 +1410,6 @@ export function HotelSearch() {
             )}
           </div>
 
-          {/* Dates row */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <Label
@@ -860,7 +1448,6 @@ export function HotelSearch() {
             </div>
           </div>
 
-          {/* Rooms & Guests + Nationality row */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
@@ -881,18 +1468,29 @@ export function HotelSearch() {
                 value={nationality}
                 onChange={(e) => setNationality(e.target.value)}
                 data-ocid="hotel.nationality.select"
+                disabled={nationalityLoading}
               >
-                <option>India</option>
-                <option>UAE</option>
-                <option>UK</option>
-                <option>USA</option>
-                <option>Singapore</option>
-                <option>Other</option>
+                {nationalityLoading ? (
+                  <option value="">Loading...</option>
+                ) : nationalityList.length > 0 ? (
+                  nationalityList.map((n) => (
+                    <option key={n.countryId} value={n.countryId}>
+                      {n.countryName}
+                    </option>
+                  ))
+                ) : (
+                  <>
+                    <option value="106">India</option>
+                    <option value="231">UAE</option>
+                    <option value="232">United Kingdom</option>
+                    <option value="233">United States</option>
+                    <option value="200">Singapore</option>
+                  </>
+                )}
               </select>
             </div>
           </div>
 
-          {/* Options row */}
           <div className="flex items-center justify-between">
             <label
               htmlFor="gst-rates"
@@ -908,12 +1506,48 @@ export function HotelSearch() {
               />
               Show GST claim eligible rates
             </label>
+          </div>
 
+          {/* Hotel ID Search Toggle */}
+          <div className="space-y-2">
+            <label
+              className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none"
+              data-ocid="hotel.hids.toggle"
+            >
+              <input
+                type="checkbox"
+                checked={useHids}
+                onChange={(e) => setUseHids(e.target.checked)}
+                className="accent-primary"
+                data-ocid="hotel.hids.checkbox"
+              />
+              <Hash className="w-3.5 h-3.5" />
+              Search by specific Hotel IDs (hids)
+            </label>
+            {useHids && (
+              <div className="space-y-1">
+                <Textarea
+                  placeholder="Paste comma-separated hotel IDs, e.g. 10000000012345, 10000000054321"
+                  value={hidsText}
+                  onChange={(e) => setHidsText(e.target.value)}
+                  rows={2}
+                  className="text-xs font-mono resize-none"
+                  data-ocid="hotel.hids.textarea"
+                />
+                <p className="text-[10px] text-muted-foreground">
+                  TripJack hotel IDs (tjHotelId) — up to 100 per search. City
+                  search is disabled when using hotel IDs.
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-3 flex-wrap">
             <Button
               type="submit"
               size="lg"
               className="bg-primary text-primary-foreground font-semibold px-8"
-              disabled={loading || !destination}
+              disabled={loading || (!destination && !useHids)}
               data-ocid="hotel.search.primary_button"
             >
               {loading ? (
@@ -935,7 +1569,6 @@ export function HotelSearch() {
         </form>
       </div>
 
-      {/* Recent searches */}
       {!results && !loading && (
         <div
           className="bg-card border border-border rounded-xl p-5"
@@ -973,7 +1606,6 @@ export function HotelSearch() {
         </div>
       )}
 
-      {/* Deals banner */}
       {!results && !loading && (
         <div
           className="bg-gradient-to-r from-primary to-blue-600 rounded-xl p-5 text-white"
@@ -1015,7 +1647,6 @@ export function HotelSearch() {
         </div>
       )}
 
-      {/* Loading */}
       {loading && (
         <div
           className="bg-card border border-border rounded-xl p-12 text-center"
@@ -1042,12 +1673,13 @@ export function HotelSearch() {
         </div>
       )}
 
-      {/* Results */}
       {results && (
         <HotelResults
           hotels={results}
           nights={nights}
           onBack={() => setResults(null)}
+          correlationId={correlationId}
+          onViewDetail={(id, name) => setSelectedHotel({ id, name })}
         />
       )}
     </div>
