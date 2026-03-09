@@ -1,4 +1,4 @@
-import { FileText, Package, Ship, Train, TrendingUp, User } from "lucide-react";
+import { Package, Ship, Train, TrendingUp, User } from "lucide-react";
 import { useState } from "react";
 import { AgentLoginPage, AgentRegisterPage } from "./components/AuthPages";
 import type { DashboardPage } from "./components/DashboardLayout";
@@ -15,8 +15,9 @@ import {
 } from "./components/PublicPages";
 import { TourSearch } from "./components/TourSearch";
 import { TransferBooking } from "./components/TransferBooking";
+import { VisaServices } from "./components/VisaServices";
 
-// ── App Root ──────────────────────────────────────────────────────────────────────────
+// ── App Root ──────────────────────────────────────────────────────────────────────
 export default function App() {
   const [page, setPage] = useState<Page>("home");
   const [dashNav, setDashNav] = useState<DashboardPage>("dashboard");
@@ -53,7 +54,7 @@ export default function App() {
     navigate("home");
   }
 
-  // ── Public pages ──────────────────────────────────────────────────────────────────
+  // ── Public pages ──────────────────────────────────────────────────────────────────────
   if (page === "home") {
     return (
       <div className="min-h-screen flex flex-col">
@@ -93,7 +94,7 @@ export default function App() {
     );
   }
 
-  // ── Agent Dashboard ───────────────────────────────────────────────────────────────────
+  // ── Agent Dashboard ────────────────────────────────────────────────────────────────────────────
   const dashboardTitles: Record<DashboardPage, string> = {
     dashboard: "Agent Dashboard",
     flights: "Flight Booking",
@@ -123,13 +124,7 @@ export default function App() {
       {dashNav === "hotels" && <HotelSearch />}
       {dashNav === "tours" && <TourSearch />}
       {dashNav === "transfers" && <TransferBooking />}
-      {dashNav === "visa" && (
-        <ComingSoonPage
-          title="Visa Services"
-          icon={FileText}
-          onNavigateFlights={() => handleDashNav("flights")}
-        />
-      )}
+      {dashNav === "visa" && <VisaServices />}
       {dashNav === "cruises" && (
         <ComingSoonPage
           title="Cruise Booking"
@@ -154,7 +149,7 @@ export default function App() {
       {dashNav === "bookings" && (
         <ComingSoonPage
           title="My Bookings"
-          icon={FileText}
+          icon={User}
           onNavigateFlights={() => handleDashNav("flights")}
         />
       )}
