@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { deductWalletBalance, getWalletBalance } from "../utils/walletUtils";
 import type { ChecklistItem, VisaCountry } from "./VisaCountrySearch";
 
 interface Props {
@@ -207,6 +208,14 @@ export default function VisaEvisaFlow({ country, onBack, onComplete }: Props) {
 
   function handleSubmit() {
     if (!validateStep(3)) return;
+    if (getWalletBalance() < totalInr) {
+      toast.error("Insufficient wallet balance. Please top up your wallet.");
+      return;
+    }
+    deductWalletBalance(totalInr);
+    toast.success(
+      `₹${totalInr.toLocaleString("en-IN")} deducted from your wallet`,
+    );
     const d = new Date();
     const dateStr = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
     const randNum = Math.floor(1000 + Math.random() * 9000);
@@ -242,6 +251,12 @@ export default function VisaEvisaFlow({ country, onBack, onComplete }: Props) {
           <div className="flex justify-between">
             <span className="text-gray-500 text-sm">Reference Number</span>
             <span className="font-mono font-bold text-[#0B5ED7]">{appRef}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-500 text-sm">Amount Deducted</span>
+            <span className="font-medium text-emerald-700">
+              ₹{totalInr.toLocaleString("en-IN")} from wallet
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500 text-sm">Visa Type</span>
@@ -579,8 +594,14 @@ export default function VisaEvisaFlow({ country, onBack, onComplete }: Props) {
             Review & Submit
           </h2>
 
-          <div className="bg-blue-50 rounded-xl p-4 space-y-2 text-sm">
-            <h3 className="font-semibold text-gray-700 mb-3">Trip Details</h3>
+          {/* Trip Details */}
+          <div
+            className="bg-blue-50 border border-blue-100 rounded-xl p-4 space-y-2 text-sm"
+            data-ocid="evisa.review.trip.card"
+          >
+            <h3 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+              <span>✈️</span> Trip Details
+            </h3>
             <Row
               label="Destination"
               value={`${country.flag} ${country.name}`}
@@ -592,58 +613,199 @@ export default function VisaEvisaFlow({ country, onBack, onComplete }: Props) {
             {hotelRef && <Row label="Hotel Ref" value={hotelRef} />}
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
-            <h3 className="font-semibold text-gray-700 mb-3">
-              Passport Details
+          {/* Passport Details */}
+          <div
+            className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-2 text-sm"
+            data-ocid="evisa.review.passport.card"
+          >
+            <h3 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
+              <span>🛂</span> Passport Details
             </h3>
-            <Row label="Name" value={`${firstName} ${lastName}`} />
-            <Row label="DOB" value={dob} />
+            <Row label="Full Name" value={`${firstName} ${lastName}`} />
+            <Row label="Date of Birth" value={dob} />
             <Row label="Gender" value={gender} />
             <Row label="Nationality" value={nationality} />
-            <Row label="Passport No" value={passportNum} />
-            <Row label="Expiry" value={passportExpiry} />
+            <Row label="Passport Number" value={passportNum} />
+            <Row label="Expiry Date" value={passportExpiry} />
+            <Row label="Issue Date" value={passportIssue} />
+            <Row label="Issuing Country" value={issuingCountry} />
           </div>
 
-          <div className="bg-emerald-50 rounded-xl p-4 space-y-2 text-sm">
-            <h3 className="font-semibold text-gray-700 mb-3">Fee Breakdown</h3>
+          {/* Documents */}
+          <div
+            className="bg-purple-50 border border-purple-100 rounded-xl p-4 space-y-2 text-sm"
+            data-ocid="evisa.review.docs.card"
+          >
+            <h3 className="font-semibold text-purple-800 mb-3 flex items-center gap-2">
+              <span>📄</span> Documents Uploaded
+            </h3>
+            {country.evisaChecklist.map((d) => (
+              <div
+                key={d.id}
+                className="flex items-center justify-between py-1 border-b border-purple-100 last:border-0"
+              >
+                <span className="text-gray-700">
+                  {d.document}
+                  <span
+                    className={`ml-2 text-xs ${d.mandatory ? "text-red-500" : "text-gray-400"}`}
+                  >
+                    ({d.mandatory ? "Mandatory" : "Optional"})
+                  </span>
+                </span>
+                {docStatus[d.id] === "done" ? (
+                  <span className="text-emerald-600 font-medium text-xs flex items-center gap-1">
+                    ✅ Uploaded
+                  </span>
+                ) : (
+                  <span className="text-red-500 font-medium text-xs flex items-center gap-1">
+                    ❌ Not uploaded
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Fee & Wallet */}
+          <div
+            className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 space-y-2 text-sm"
+            data-ocid="evisa.review.wallet.card"
+          >
+            <h3 className="font-semibold text-emerald-800 mb-3 flex items-center gap-2">
+              <span>💳</span> Fee & Wallet
+            </h3>
             <Row label="Visa Fee" value={`$${visaFee} USD`} />
-            <Row label="Service Charge" value={`$${serviceCharge} USD`} />
-            <Row label="GST (18%)" value={`$${gst} USD`} />
-            <hr className="border-emerald-200" />
+            <Row label="Service Charge (10%)" value={`$${serviceCharge} USD`} />
+            <Row
+              label="GST (18%)"
+              value={`₹${Math.round((visaFee * 83.5 + serviceCharge * 83.5) * 0.18).toLocaleString("en-IN")}`}
+            />
+            <hr className="border-emerald-200 my-1" />
             <Row
               label="Total (approx.)"
               value={`₹${totalInr.toLocaleString("en-IN")}`}
               bold
             />
+            <hr className="border-emerald-300 my-1" />
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-gray-600">Your Wallet Balance</span>
+              <span className="font-semibold text-gray-800">
+                ₹{getWalletBalance().toLocaleString("en-IN")}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600">Amount to Deduct</span>
+              <span className="font-semibold text-orange-600">
+                ₹{totalInr.toLocaleString("en-IN")}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600">Balance After Payment</span>
+              <span
+                className={`font-bold ${getWalletBalance() - totalInr >= 0 ? "text-emerald-600" : "text-red-600"}`}
+              >
+                ₹
+                {Math.max(0, getWalletBalance() - totalInr).toLocaleString(
+                  "en-IN",
+                )}
+              </span>
+            </div>
+            {getWalletBalance() < totalInr && (
+              <div
+                className="mt-2 p-2 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700 text-xs"
+                data-ocid="evisa.review.wallet.error_state"
+              >
+                ⚠️ Insufficient wallet balance. Please top up your wallet before
+                submitting.
+              </div>
+            )}
           </div>
 
-          <div className="flex items-start gap-3">
-            <Checkbox
-              id="evisa-terms"
-              checked={agreeTerms}
-              onCheckedChange={(v) => setAgreeTerms(v === true)}
-              data-ocid="evisa.review.terms.checkbox"
-            />
-            <Label
-              htmlFor="evisa-terms"
-              className="text-sm text-gray-600 leading-relaxed"
-            >
-              I confirm that all the information provided is accurate and I
-              agree to the{" "}
-              <span className="text-[#0B5ED7] underline cursor-pointer">
-                Terms & Conditions
-              </span>
-              .
-            </Label>
+          {/* Terms & Conditions */}
+          <div data-ocid="evisa.review.terms.panel">
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">
+              Terms & Conditions
+            </h3>
+            <div className="max-h-40 overflow-y-auto border border-gray-200 rounded-lg bg-white p-3 text-xs text-gray-600 leading-relaxed space-y-2">
+              <p className="font-semibold text-gray-800">
+                TERMS AND CONDITIONS FOR VISA APPLICATION SERVICES
+              </p>
+              <p>
+                <strong>1. ACCURACY OF INFORMATION:</strong> All information
+                provided in this application must be accurate, complete, and
+                truthful. FiveStar Travel (FiveStarTravel.in) is not responsible
+                for applications rejected due to incorrect or incomplete
+                information.
+              </p>
+              <p>
+                <strong>2. PROCESSING FEES:</strong> Service charges are
+                non-refundable once the application has been submitted to the
+                respective embassy or visa authority.
+              </p>
+              <p>
+                <strong>3. NO GUARANTEE OF APPROVAL:</strong> FiveStar Travel
+                acts as a facilitator and does not guarantee visa approval.
+                Final decision rests solely with the relevant
+                embassy/consulate/immigration authority.
+              </p>
+              <p>
+                <strong>4. DOCUMENT RESPONSIBILITY:</strong> The applicant is
+                responsible for ensuring all uploaded documents are valid,
+                legible, and meet the requirements of the destination country.
+              </p>
+              <p>
+                <strong>5. WALLET DEDUCTION:</strong> By submitting this
+                application, you authorise FiveStar Travel to deduct the total
+                visa service fee from your registered agent wallet.
+              </p>
+              <p>
+                <strong>6. PROCESSING TIME:</strong> Stated processing times are
+                estimates provided by visa authorities and may vary. FiveStar
+                Travel is not liable for delays.
+              </p>
+              <p>
+                <strong>7. PRIVACY:</strong> Your personal data will be shared
+                with the relevant embassy/consulate as required for visa
+                processing, in accordance with our Privacy Policy.
+              </p>
+              <p>
+                <strong>8. CANCELLATION:</strong> Once submitted, applications
+                cannot be cancelled or modified. Please review all details
+                carefully before submitting.
+              </p>
+              <p>
+                <strong>9. GOVERNING LAW:</strong> These terms are governed by
+                the laws of India. Any disputes shall be subject to the
+                exclusive jurisdiction of courts in Chandigarh, India.
+              </p>
+              <p>
+                <strong>10. CONTACT:</strong> For support, email
+                customerservice@fivestartravel.in or call +91-1725000004.
+              </p>
+            </div>
+            <div className="flex items-start gap-3 mt-3">
+              <Checkbox
+                id="evisa-terms"
+                checked={agreeTerms}
+                onCheckedChange={(v) => setAgreeTerms(v === true)}
+                data-ocid="evisa.review.terms.checkbox"
+              />
+              <Label
+                htmlFor="evisa-terms"
+                className="text-sm text-gray-600 leading-relaxed cursor-pointer"
+              >
+                I have read and agree to the Terms & Conditions above, and
+                confirm that all details are accurate.
+              </Label>
+            </div>
+            {errors.terms && (
+              <p
+                className="text-xs text-red-500 mt-1"
+                data-ocid="evisa.review.error_state"
+              >
+                {errors.terms}
+              </p>
+            )}
           </div>
-          {errors.terms && (
-            <p
-              className="text-xs text-red-500"
-              data-ocid="evisa.review.error_state"
-            >
-              {errors.terms}
-            </p>
-          )}
         </div>
       )}
 

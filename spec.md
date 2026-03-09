@@ -1,36 +1,31 @@
 # FiveStarTravel B2B Portal
 
 ## Current State
-Visa module has a single VisaApplyFlow that handles both online and offline visa in one shared 4-step form, branching on `isOnline` boolean. VisaServices shows a single search view and a unified apply flow.
+- VisaEvisaFlow.tsx: 4-step flow. Step 4 (Review & Submit) shows trip details, passport summary, fee breakdown, and a T&C checkbox. On submit, generates a reference number.
+- VisaOfflineFlow.tsx: 4-step flow. Step 4 (Appointment & Submit) shows appointment summary, time slot picker, payment info, important notes, and a T&C checkbox. On submit, generates a reference number.
+- Wallet balance is hardcoded as ₹1,24,800 in DashboardLayout.tsx.
 
 ## Requested Changes (Diff)
 
 ### Add
-- `VisaEvisaFlow.tsx` — dedicated Online eVisa flow (Atlys-style):
-  - For countries with visa type: e-Visa, Visa on Arrival
-  - Steps: Country Info → Personal Details → Document Upload (per evisaChecklist) → Review & Submit
-  - Passport OCR scan mock, photo upload, mandatory/optional document checklist with progress bar
-  - Fee summary in USD + INR, application reference on confirmation
-- `VisaOfflineFlow.tsx` — dedicated Offline/Sticker Visa flow (VisaHQ-style):
-  - For countries with visa type: Sticker Visa, Visa Required
-  - Steps: Select Embassy → Applicant Form (personal + travel details) → Document Checklist (per offlineChecklist with checkboxes + upload) → Appointment & Submit
-  - Per-item document checklist with checkboxes, upload per document, progress bar
-  - Embassy/consulate selector, appointment date picker, courier return toggle
-  - PDF checklist download button (mocked)
-  - Full applicant form: name, DOB, nationality, passport no., travel dates, purpose, address
-  - Application reference on confirmation
-- Two distinct entry points on the Visa landing: "Apply Online eVisa" section and "Sticker Visa / Offline" section with clear visual separation and separate CTAs
+- A shared wallet utility (walletUtils.ts) to read/write wallet balance in localStorage (initial: 124800).
+- In Review step of both flows: complete document upload summary showing all doc names and their uploaded status.
+- Expanded Terms & Conditions section (scrollable text box, ~200px height) showing the full T&C text before the checkbox.
+- Wallet balance check panel on Review step: show current balance, total charge, and post-deduction balance. Show an error if insufficient balance.
+- On submit in both flows: deduct the total charge from wallet balance via walletUtils, show toast with amount deducted.
+- DashboardLayout.tsx: read wallet balance from localStorage via walletUtils instead of hardcoded value.
 
 ### Modify
-- `VisaServices.tsx` — add two tabs at top: "Online eVisa" and "Offline Visa"; route `view` to correct new flow component based on selected country visa type
-- `VisaCountrySearch.tsx` — pass `visaType` context so the Apply button routes to the correct flow; show "Apply eVisa" vs "Apply Offline" label on country cards based on type
-- Remove shared `VisaApplyFlow.tsx` usage and replace with the two new dedicated components
+- VisaEvisaFlow.tsx step 4: Expand review to show ALL passport fields (passport number, expiry, issue date, issuing country, DOB, gender, nationality), all trip details, and all uploaded documents list.
+- VisaOfflineFlow.tsx step 4: Expand review to show ALL applicant form fields (full name, DOB, gender, nationality, passport, place of birth, occupation, employer, full address, emergency contact), all travel/embassy details, and all uploaded documents list.
+- handleSubmit in both flows: add wallet deduction before setConfirmed(true).
+- Success screen in both flows: show amount deducted from wallet.
 
 ### Remove
-- `VisaApplyFlow.tsx` — replaced by the two dedicated flow components (keep file but gut usage)
+- Nothing removed.
 
 ## Implementation Plan
-1. Create `VisaEvisaFlow.tsx` with dedicated 4-step online eVisa form (passport OCR, document upload per evisaChecklist, review, confirmation)
-2. Create `VisaOfflineFlow.tsx` with dedicated 4-step offline visa form (embassy select, full applicant form, document checklist with checkboxes+upload, appointment, confirmation + PDF mock)
-3. Update `VisaServices.tsx` to show two top-level sections (Online eVisa / Offline Visa) and route to correct component
-4. Update `VisaCountrySearch.tsx` country cards to show correct CTA label and pass visaType to parent on select
+1. Create `src/frontend/src/utils/walletUtils.ts` with getWalletBalance() / deductWalletBalance(amount) functions using localStorage key `fstwallet`.
+2. Update `VisaEvisaFlow.tsx` step 4 JSX: add full passport detail rows, full document list, scrollable T&C box, wallet balance panel. Update handleSubmit to call deductWalletBalance.
+3. Update `VisaOfflineFlow.tsx` step 4 JSX: add full applicant/embassy detail rows, full document list, scrollable T&C box, wallet balance panel. Update handleSubmit to call deductWalletBalance.
+4. Update `DashboardLayout.tsx`: import walletUtils, use state + storage event to show live wallet balance.

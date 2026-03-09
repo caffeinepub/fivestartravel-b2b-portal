@@ -12,6 +12,8 @@ import {
   User,
   X,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getWalletBalance } from "../utils/walletUtils";
 import type { Page } from "./PublicPages";
 
 export type DashboardPage =
@@ -66,6 +68,18 @@ export function DashboardLayout({
   title,
   subtitle,
 }: DashboardLayoutProps) {
+  const [walletBal, setWalletBal] = useState(() => getWalletBalance());
+
+  useEffect(() => {
+    const handler = () => setWalletBal(getWalletBalance());
+    window.addEventListener("storage", handler);
+    const interval = setInterval(() => setWalletBal(getWalletBalance()), 2000);
+    return () => {
+      window.removeEventListener("storage", handler);
+      clearInterval(interval);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-muted/30 flex">
       {/* Sidebar */}
@@ -135,7 +149,7 @@ export function DashboardLayout({
                 className="font-display font-bold text-accent text-sm"
                 data-ocid="dashboard.wallet_balance.panel"
               >
-                ₹1,24,800
+                ₹{walletBal.toLocaleString("en-IN")}
               </p>
             </div>
             <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">

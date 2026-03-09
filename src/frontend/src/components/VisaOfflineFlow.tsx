@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { deductWalletBalance, getWalletBalance } from "../utils/walletUtils";
 import type { ChecklistItem, VisaCountry } from "./VisaCountrySearch";
 
 interface Props {
@@ -242,8 +243,20 @@ export default function VisaOfflineFlow({
     }, 1000);
   }
 
+  const offlineServiceCharge = Math.round(country.fee * 83.5 * 0.1);
+  const offlineGst = Math.round(offlineServiceCharge * 0.18);
+  const offlineTotalInr = offlineServiceCharge + offlineGst;
+
   function handleSubmit() {
     if (!validateStep(3)) return;
+    if (getWalletBalance() < offlineTotalInr) {
+      toast.error("Insufficient wallet balance. Please top up your wallet.");
+      return;
+    }
+    deductWalletBalance(offlineTotalInr);
+    toast.success(
+      `₹${offlineTotalInr.toLocaleString("en-IN")} deducted from your wallet`,
+    );
     const d = new Date();
     const dateStr = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
     const randNum = Math.floor(1000 + Math.random() * 9000);
@@ -274,6 +287,12 @@ export default function VisaOfflineFlow({
           <div className="flex justify-between">
             <span className="text-gray-500 text-sm">Reference Number</span>
             <span className="font-mono font-bold text-[#0B5ED7]">{appRef}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-500 text-sm">Amount Deducted</span>
+            <span className="font-medium text-blue-700">
+              ₹{offlineTotalInr.toLocaleString("en-IN")} from wallet
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500 text-sm">Appointment</span>
@@ -741,20 +760,86 @@ export default function VisaOfflineFlow({
       {step === 3 && (
         <div className="space-y-5">
           <h2 className="text-lg font-semibold text-gray-800">
-            Confirm Appointment & Submit
+            Review & Confirm Appointment
           </h2>
 
-          <div className="bg-slate-50 rounded-xl p-4 space-y-2 text-sm">
-            <h3 className="font-semibold text-gray-700 mb-2">
-              Appointment Summary
+          {/* Embassy & Travel Summary */}
+          <div
+            className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2 text-sm"
+            data-ocid="offline.review.embassy.card"
+          >
+            <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+              <span>🏛️</span> Embassy & Travel Summary
             </h3>
             <Row label="Embassy" value={embassy} />
-            <Row label="Date" value={apptDate} />
-            <Row label="Applicant" value={`${givenName} ${surname}`} />
+            <Row label="Appointment Date" value={apptDate} />
+            <Row label="Travel Dates" value={`${fromDate} → ${toDate}`} />
+            <Row label="Purpose" value={purpose} />
+            <Row
+              label="Courier Return"
+              value={courier ? `Yes — ${courierAddress}` : "No"}
+            />
           </div>
 
+          {/* Applicant Details */}
+          <div
+            className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-2 text-sm"
+            data-ocid="offline.review.applicant.card"
+          >
+            <h3 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
+              <span>👤</span> Applicant Details
+            </h3>
+            <Row label="Full Name" value={`${givenName} ${surname}`} />
+            <Row label="Date of Birth" value={dob} />
+            <Row label="Gender" value={gender} />
+            <Row label="Nationality" value={nationality} />
+            <Row label="Passport Number" value={passportNum} />
+            <Row label="Passport Expiry" value={passportExpiry} />
+            <Row label="Place of Birth" value={placeOfBirth} />
+            <Row label="Occupation" value={occupation || "—"} />
+            <Row label="Employer" value={employer || "—"} />
+            <Row
+              label="Address"
+              value={`${addrLine1}, ${addrCity}, ${addrState} ${addrPin}, ${addrCountry}`}
+            />
+            <Row label="Emergency Contact" value={`${ecName} — ${ecPhone}`} />
+          </div>
+
+          {/* Documents */}
+          <div
+            className="bg-purple-50 border border-purple-100 rounded-xl p-4 space-y-2 text-sm"
+            data-ocid="offline.review.docs.card"
+          >
+            <h3 className="font-semibold text-purple-800 mb-3 flex items-center gap-2">
+              <span>📄</span> Documents Uploaded
+            </h3>
+            {country.offlineChecklist.map((d) => (
+              <div
+                key={d.id}
+                className="flex items-center justify-between py-1 border-b border-purple-100 last:border-0"
+              >
+                <span className="text-gray-700">
+                  {d.document}
+                  <span
+                    className={`ml-2 text-xs ${d.mandatory ? "text-red-500" : "text-gray-400"}`}
+                  >
+                    ({d.mandatory ? "Mandatory" : "Optional"})
+                  </span>
+                </span>
+                {docStatus[d.id] === "done" ? (
+                  <span className="text-emerald-600 text-xs">✅ Uploaded</span>
+                ) : (
+                  <span className="text-red-500 text-xs">❌ Not uploaded</span>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Time Slot */}
           <div>
-            <Label className="block mb-2">Select Time Slot *</Label>
+            <Label className="block mb-2 font-semibold text-gray-700">
+              Select Appointment Time Slot *
+            </Label>
             <div className="grid grid-cols-3 gap-2">
               {TIME_SLOTS.map((slot) => (
                 <button
@@ -775,29 +860,69 @@ export default function VisaOfflineFlow({
             <FieldError msg={errors.timeSlot} />
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-            <h3 className="text-sm font-semibold text-amber-800 mb-2">
-              Payment Information
+          {/* Fee & Wallet */}
+          <div
+            className="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-2 text-sm"
+            data-ocid="offline.review.wallet.card"
+          >
+            <h3 className="text-sm font-semibold text-amber-800 mb-3 flex items-center gap-2">
+              <span>💳</span> Fee & Wallet
             </h3>
-            <ul className="text-sm text-amber-700 space-y-1">
-              <li>
-                • Visa fee: <strong>${country.fee} USD</strong> (pay at embassy)
-              </li>
-              <li>
-                • Service charge:{" "}
-                <strong>
-                  ₹
-                  {Math.round(country.fee * 83.5 * 0.1).toLocaleString("en-IN")}
-                </strong>{" "}
-                (pay online)
-              </li>
-              <li>
-                • DD/Cheque payable to:{" "}
-                <strong>Embassy of {country.name}</strong>
-              </li>
-            </ul>
+            <Row label="Visa Fee (at embassy)" value={`$${country.fee} USD`} />
+            <Row
+              label="Service Charge (online)"
+              value={`₹${offlineServiceCharge.toLocaleString("en-IN")}`}
+            />
+            <Row
+              label="GST (18%)"
+              value={`₹${offlineGst.toLocaleString("en-IN")}`}
+            />
+            <hr className="border-amber-200 my-1" />
+            <Row
+              label="Total Online Payment"
+              value={`₹${offlineTotalInr.toLocaleString("en-IN")}`}
+              bold
+            />
+            <p className="text-xs text-amber-700 italic">
+              DD/Cheque payable to: Embassy of {country.name}
+            </p>
+            <hr className="border-amber-300 my-1" />
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-gray-600">Your Wallet Balance</span>
+              <span className="font-semibold text-gray-800">
+                ₹{getWalletBalance().toLocaleString("en-IN")}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600">Amount to Deduct</span>
+              <span className="font-semibold text-orange-600">
+                ₹{offlineTotalInr.toLocaleString("en-IN")}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600">Balance After</span>
+              <span
+                className={`font-bold ${getWalletBalance() - offlineTotalInr >= 0 ? "text-emerald-600" : "text-red-600"}`}
+              >
+                ₹
+                {Math.max(
+                  0,
+                  getWalletBalance() - offlineTotalInr,
+                ).toLocaleString("en-IN")}
+              </span>
+            </div>
+            {getWalletBalance() < offlineTotalInr && (
+              <div
+                className="mt-2 p-2 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs"
+                data-ocid="offline.review.wallet.error_state"
+              >
+                ⚠️ Insufficient wallet balance. Please top up your wallet before
+                submitting.
+              </div>
+            )}
           </div>
 
+          {/* Important Notes */}
           <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
             <h3 className="text-sm font-semibold text-blue-800 mb-2">
               Important Notes
@@ -810,32 +935,92 @@ export default function VisaOfflineFlow({
             </ul>
           </div>
 
-          <div className="flex items-start gap-3">
-            <Checkbox
-              id="offline-terms"
-              checked={agreeTerms}
-              onCheckedChange={(v) => setAgreeTerms(v === true)}
-              data-ocid="offline.appt.terms.checkbox"
-            />
-            <Label
-              htmlFor="offline-terms"
-              className="text-sm text-gray-600 leading-relaxed"
-            >
-              I confirm all information is accurate and I agree to the{" "}
-              <span className="text-[#0B5ED7] underline cursor-pointer">
-                Terms & Conditions
-              </span>
-              .
-            </Label>
+          {/* Terms & Conditions */}
+          <div data-ocid="offline.review.terms.panel">
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">
+              Terms & Conditions
+            </h3>
+            <div className="max-h-40 overflow-y-auto border border-gray-200 rounded-lg bg-white p-3 text-xs text-gray-600 leading-relaxed space-y-2">
+              <p className="font-semibold text-gray-800">
+                TERMS AND CONDITIONS FOR VISA APPLICATION SERVICES
+              </p>
+              <p>
+                <strong>1. ACCURACY OF INFORMATION:</strong> All information
+                provided in this application must be accurate, complete, and
+                truthful. FiveStar Travel (FiveStarTravel.in) is not responsible
+                for applications rejected due to incorrect or incomplete
+                information.
+              </p>
+              <p>
+                <strong>2. PROCESSING FEES:</strong> Service charges are
+                non-refundable once the application has been submitted to the
+                respective embassy or visa authority.
+              </p>
+              <p>
+                <strong>3. NO GUARANTEE OF APPROVAL:</strong> FiveStar Travel
+                acts as a facilitator and does not guarantee visa approval.
+                Final decision rests solely with the relevant
+                embassy/consulate/immigration authority.
+              </p>
+              <p>
+                <strong>4. DOCUMENT RESPONSIBILITY:</strong> The applicant is
+                responsible for ensuring all uploaded documents are valid,
+                legible, and meet the requirements of the destination country.
+              </p>
+              <p>
+                <strong>5. WALLET DEDUCTION:</strong> By submitting this
+                application, you authorise FiveStar Travel to deduct the total
+                visa service fee from your registered agent wallet.
+              </p>
+              <p>
+                <strong>6. PROCESSING TIME:</strong> Stated processing times are
+                estimates provided by visa authorities and may vary. FiveStar
+                Travel is not liable for delays.
+              </p>
+              <p>
+                <strong>7. PRIVACY:</strong> Your personal data will be shared
+                with the relevant embassy/consulate as required for visa
+                processing, in accordance with our Privacy Policy.
+              </p>
+              <p>
+                <strong>8. CANCELLATION:</strong> Once submitted, applications
+                cannot be cancelled or modified. Please review all details
+                carefully before submitting.
+              </p>
+              <p>
+                <strong>9. GOVERNING LAW:</strong> These terms are governed by
+                the laws of India. Any disputes shall be subject to the
+                exclusive jurisdiction of courts in Chandigarh, India.
+              </p>
+              <p>
+                <strong>10. CONTACT:</strong> For support, email
+                customerservice@fivestartravel.in or call +91-1725000004.
+              </p>
+            </div>
+            <div className="flex items-start gap-3 mt-3">
+              <Checkbox
+                id="offline-terms"
+                checked={agreeTerms}
+                onCheckedChange={(v) => setAgreeTerms(v === true)}
+                data-ocid="offline.appt.terms.checkbox"
+              />
+              <Label
+                htmlFor="offline-terms"
+                className="text-sm text-gray-600 leading-relaxed cursor-pointer"
+              >
+                I have read and agree to the Terms & Conditions above, and
+                confirm that all details are accurate.
+              </Label>
+            </div>
+            {errors.terms && (
+              <p
+                className="text-xs text-red-500 mt-1"
+                data-ocid="offline.appt.error_state"
+              >
+                {errors.terms}
+              </p>
+            )}
           </div>
-          {errors.terms && (
-            <p
-              className="text-xs text-red-500"
-              data-ocid="offline.appt.error_state"
-            >
-              {errors.terms}
-            </p>
-          )}
         </div>
       )}
 
