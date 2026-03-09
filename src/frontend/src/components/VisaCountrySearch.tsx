@@ -30,6 +30,7 @@ export interface VisaCountry {
 
 interface VisaCountrySearchProps {
   onSelectCountry: (country: VisaCountry) => void;
+  visaTab?: "evisa" | "offline";
 }
 
 const COUNTRIES: VisaCountry[] = [
@@ -1296,7 +1297,14 @@ function CountryCard({
   country,
   index,
   onSelect,
-}: { country: VisaCountry; index: number; onSelect: () => void }) {
+}: {
+  country: VisaCountry;
+  index: number;
+  onSelect: () => void;
+  isOnline?: boolean;
+}) {
+  const isEvisa =
+    country.visaType === "e-Visa" || country.visaType === "Visa on Arrival";
   return (
     <Card
       className="group overflow-hidden border border-border hover:border-primary/40 hover:shadow-lg transition-all duration-200 cursor-pointer bg-card"
@@ -1341,11 +1349,12 @@ function CountryCard({
 
         <Button
           size="sm"
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+          className={`w-full ${isEvisa ? "bg-emerald-600 hover:bg-emerald-700" : "bg-[#0B5ED7] hover:bg-blue-700"} text-white`}
           onClick={onSelect}
           data-ocid={`visa.apply.button.${index}`}
         >
-          Apply Now <ChevronRight className="w-3 h-3 ml-1" />
+          {isEvisa ? "Apply eVisa" : "Apply Offline"}{" "}
+          <ChevronRight className="w-3 h-3 ml-1" />
         </Button>
       </CardContent>
     </Card>
@@ -1354,6 +1363,7 @@ function CountryCard({
 
 export default function VisaCountrySearch({
   onSelectCountry,
+  visaTab = "evisa",
 }: VisaCountrySearchProps) {
   const [query, setQuery] = useState("");
   const [region, setRegion] = useState("All");
@@ -1371,9 +1381,12 @@ export default function VisaCountrySearch({
         query === "" || c.name.toLowerCase().includes(query.toLowerCase());
       const matchRegion = region === "All" || c.region === region;
       const matchType = visaType === "All" || c.visaType === visaType;
-      return matchQuery && matchRegion && matchType;
+      const isOnline =
+        c.visaType === "e-Visa" || c.visaType === "Visa on Arrival";
+      const matchTab = visaTab === "evisa" ? isOnline : !isOnline;
+      return matchQuery && matchRegion && matchType && matchTab;
     });
-  }, [query, region, visaType]);
+  }, [query, region, visaType, visaTab]);
 
   const popular = COUNTRIES.filter((c) => POPULAR_CODES.includes(c.code));
 
@@ -1524,6 +1537,10 @@ export default function VisaCountrySearch({
                 country={country}
                 index={idx + 1}
                 onSelect={() => onSelectCountry(country)}
+                isOnline={
+                  country.visaType === "e-Visa" ||
+                  country.visaType === "Visa on Arrival"
+                }
               />
             ))}
           </div>

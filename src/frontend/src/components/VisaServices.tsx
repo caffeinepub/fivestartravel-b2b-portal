@@ -10,20 +10,24 @@ import {
 } from "@/components/ui/table";
 import {
   ArrowLeft,
+  Building2,
   CheckCircle,
   Clock,
   Eye,
   FileText,
+  Globe,
   RefreshCw,
   Search,
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import VisaApplyFlow from "./VisaApplyFlow";
 import VisaCountrySearch, { type VisaCountry } from "./VisaCountrySearch";
+import VisaEvisaFlow from "./VisaEvisaFlow";
+import VisaOfflineFlow from "./VisaOfflineFlow";
 
-type View = "search" | "apply" | "status";
+type View = "search" | "evisa" | "offline" | "status";
+type VisaTab = "evisa" | "offline";
 
 interface ApplicationRecord {
   ref: string;
@@ -35,8 +39,8 @@ interface ApplicationRecord {
 
 const SEED_APPLICATIONS: ApplicationRecord[] = [
   {
-    ref: "FST-VISA-20260110-4521",
-    country: "UAE",
+    ref: "FST-EVISA-20260110-4521",
+    country: "UAE (Dubai)",
     visaType: "e-Visa",
     submitted: "10 Jan 2026",
     status: "Approved",
@@ -49,7 +53,7 @@ const SEED_APPLICATIONS: ApplicationRecord[] = [
     status: "Processing",
   },
   {
-    ref: "FST-VISA-20260301-1193",
+    ref: "FST-EVISA-20260301-1193",
     country: "Thailand",
     visaType: "Visa on Arrival",
     submitted: "01 Mar 2026",
@@ -70,10 +74,7 @@ const STATUS_CONFIG = {
     color: "bg-blue-100 text-blue-800 border-blue-200",
     icon: RefreshCw,
   },
-  Rejected: {
-    color: "bg-red-100 text-red-800 border-red-200",
-    icon: XCircle,
-  },
+  Rejected: { color: "bg-red-100 text-red-800 border-red-200", icon: XCircle },
 };
 
 function StatusBadge({ status }: { status: ApplicationRecord["status"] }) {
@@ -81,9 +82,7 @@ function StatusBadge({ status }: { status: ApplicationRecord["status"] }) {
   const Icon = config.icon;
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${
-        config.color
-      }`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${config.color}`}
     >
       <Icon className="h-3 w-3" />
       {status}
@@ -93,6 +92,7 @@ function StatusBadge({ status }: { status: ApplicationRecord["status"] }) {
 
 export default function VisaServices() {
   const [view, setView] = useState<View>("search");
+  const [visaTab, setVisaTab] = useState<VisaTab>("evisa");
   const [selectedCountry, setSelectedCountry] = useState<VisaCountry | null>(
     null,
   );
@@ -102,7 +102,9 @@ export default function VisaServices() {
 
   function handleSelectCountry(country: VisaCountry) {
     setSelectedCountry(country);
-    setView("apply");
+    const isOnline =
+      country.visaType === "e-Visa" || country.visaType === "Visa on Arrival";
+    setView(isOnline ? "evisa" : "offline");
   }
 
   function handleApplicationComplete(ref: string) {
@@ -119,170 +121,225 @@ export default function VisaServices() {
       status: "Pending",
     };
     setCompletedApps((prev) => [newApp, ...prev]);
-    setView("status");
   }
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      {/* Sticky Header */}
       <div className="border-b border-border bg-card/60 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-3">
-          {/* Breadcrumb for apply view */}
-          {view === "apply" && (
+          {/* Back button */}
+          {(view === "evisa" || view === "offline") && (
             <button
               type="button"
-              data-ocid="visa.back_button"
+              data-ocid="visa.back.button"
               onClick={() => setView("search")}
               className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-3 transition-colors"
             >
-              <ArrowLeft className="h-4 w-4" />
-              Back to countries
+              <ArrowLeft className="h-4 w-4" /> Back to countries
             </button>
           )}
 
-          {/* Top nav tabs */}
-          <div className="flex items-center gap-1">
+          {/* Primary Tab Navigation */}
+          <div className="flex items-center gap-2 mb-3">
             <button
               type="button"
-              data-ocid="visa.nav.tab"
-              onClick={() => setView("search")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                view === "search" || view === "apply"
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              data-ocid="visa.evisa.tab"
+              onClick={() => {
+                setVisaTab("evisa");
+                setView("search");
+              }}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all border ${
+                visaTab === "evisa" && (view === "search" || view === "evisa")
+                  ? "bg-gradient-to-r from-blue-600 to-emerald-500 text-white border-transparent shadow-md"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-blue-300 hover:text-[#0B5ED7]"
               }`}
             >
-              <Search className="h-4 w-4" />
-              Find Visa
+              <Globe className="h-4 w-4" />
+              Online eVisa
+              <Badge className="ml-1 bg-emerald-100 text-emerald-700 border-none text-xs px-1.5 py-0">
+                Instant
+              </Badge>
             </button>
+
             <button
               type="button"
-              data-ocid="visa.nav.tab"
+              data-ocid="visa.offline.tab"
+              onClick={() => {
+                setVisaTab("offline");
+                setView("search");
+              }}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all border ${
+                visaTab === "offline" &&
+                (view === "search" || view === "offline")
+                  ? "bg-gradient-to-r from-slate-700 to-blue-800 text-white border-transparent shadow-md"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-slate-400 hover:text-slate-700"
+              }`}
+            >
+              <Building2 className="h-4 w-4" />
+              Offline / Sticker Visa
+              <Badge className="ml-1 bg-slate-100 text-slate-700 border-none text-xs px-1.5 py-0">
+                Embassy
+              </Badge>
+            </button>
+
+            <div className="flex-1" />
+
+            <button
+              type="button"
+              data-ocid="visa.status.tab"
               onClick={() => setView("status")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all border ${
                 view === "status"
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  ? "bg-[#0B5ED7] text-white border-[#0B5ED7]"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-[#0B5ED7] hover:text-[#0B5ED7]"
               }`}
             >
               <FileText className="h-4 w-4" />
               My Applications
               {allApplications.length > 0 && (
-                <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full text-xs font-bold bg-primary-foreground/20">
+                <span className="bg-[#0B5ED7] text-white text-xs rounded-full px-1.5 py-0.5 ml-1">
                   {allApplications.length}
                 </span>
               )}
             </button>
           </div>
+
+          {/* Sub-label for current tab */}
+          {view !== "status" && (
+            <div
+              className={`text-xs font-medium px-1 ${
+                visaTab === "evisa" ? "text-emerald-600" : "text-slate-500"
+              }`}
+            >
+              {visaTab === "evisa"
+                ? "🌐 Instant approval · 100% online · No embassy visit"
+                : "🏛️ Embassy appointment · Original documents · Physical stamp"}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Main content */}
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-6">
-        {view === "search" && (
-          <VisaCountrySearch onSelectCountry={handleSelectCountry} />
-        )}
-
-        {view === "apply" && selectedCountry && (
-          <VisaApplyFlow
+        {/* eVisa flow */}
+        {view === "evisa" && selectedCountry && (
+          <VisaEvisaFlow
             country={selectedCountry}
             onBack={() => setView("search")}
-            onComplete={handleApplicationComplete}
+            onComplete={(ref) => {
+              handleApplicationComplete(ref);
+            }}
           />
         )}
 
+        {/* Offline flow */}
+        {view === "offline" && selectedCountry && (
+          <VisaOfflineFlow
+            country={selectedCountry}
+            onBack={() => setView("search")}
+            onComplete={(ref) => {
+              handleApplicationComplete(ref);
+            }}
+          />
+        )}
+
+        {/* Country search */}
+        {view === "search" && (
+          <VisaCountrySearch
+            onSelectCountry={handleSelectCountry}
+            visaTab={visaTab}
+          />
+        )}
+
+        {/* My Applications */}
         {view === "status" && (
           <div>
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-foreground">
-                My Visa Applications
-              </h2>
-              <p className="text-muted-foreground mt-1">
-                Track the status of all your visa applications in one place.
-              </p>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">
+                  My Visa Applications
+                </h2>
+                <p className="text-sm text-gray-500 mt-0.5">
+                  {allApplications.length} total applications
+                </p>
+              </div>
             </div>
 
             {allApplications.length === 0 ? (
               <div
+                className="text-center py-16 text-gray-400"
                 data-ocid="visa.status.empty_state"
-                className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-border rounded-xl bg-card/40"
               >
-                <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                  <FileText className="h-8 w-8 text-muted-foreground" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  No applications yet
-                </h3>
-                <p className="text-muted-foreground text-sm max-w-sm">
-                  You haven&apos;t submitted any visa applications. Find a
-                  country and start your application.
-                </p>
+                <FileText className="w-10 h-10 mx-auto mb-3 opacity-40" />
+                <p className="font-medium">No applications yet</p>
+                <p className="text-sm mt-1">Apply for a visa to see it here</p>
                 <Button
-                  className="mt-6"
+                  variant="outline"
+                  className="mt-4"
                   onClick={() => setView("search")}
-                  data-ocid="visa.nav.tab"
+                  data-ocid="visa.status.secondary_button"
                 >
-                  <Search className="h-4 w-4 mr-2" />
-                  Find a Visa
+                  Browse Countries
                 </Button>
               </div>
             ) : (
               <div
-                className="rounded-xl border border-border bg-card overflow-hidden"
+                className="rounded-xl border border-border overflow-hidden"
                 data-ocid="visa.status.table"
               >
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-muted/50">
-                      <TableHead className="font-semibold">Reference</TableHead>
-                      <TableHead className="font-semibold">Country</TableHead>
-                      <TableHead className="font-semibold">Visa Type</TableHead>
-                      <TableHead className="font-semibold">Submitted</TableHead>
-                      <TableHead className="font-semibold">Status</TableHead>
-                      <TableHead className="font-semibold text-right">
-                        Action
-                      </TableHead>
+                      <TableHead>Reference</TableHead>
+                      <TableHead>Country</TableHead>
+                      <TableHead>Visa Type</TableHead>
+                      <TableHead>Submitted</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {allApplications.map((app, idx) => (
+                    {allApplications.map((app, i) => (
                       <TableRow
                         key={app.ref}
-                        data-ocid={`visa.status.row.${idx + 1}`}
                         className="hover:bg-muted/30 transition-colors"
+                        data-ocid={`visa.status.row.${i + 1}`}
                       >
-                        <TableCell className="font-mono text-xs text-muted-foreground">
+                        <TableCell className="font-mono text-sm text-[#0B5ED7] font-semibold">
                           {app.ref}
                         </TableCell>
                         <TableCell className="font-medium">
                           {app.country}
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="text-xs">
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${
+                              app.visaType === "e-Visa"
+                                ? "bg-blue-50 text-blue-700 border-blue-200"
+                                : app.visaType === "Visa on Arrival"
+                                  ? "bg-green-50 text-green-700 border-green-200"
+                                  : "bg-orange-50 text-orange-700 border-orange-200"
+                            }`}
+                          >
                             {app.visaType}
-                          </Badge>
+                          </span>
                         </TableCell>
-                        <TableCell className="text-muted-foreground text-sm">
+                        <TableCell className="text-gray-500">
                           {app.submitted}
                         </TableCell>
                         <TableCell>
                           <StatusBadge status={app.status} />
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            data-ocid={`visa.status.view_button.${idx + 1}`}
-                            onClick={() =>
-                              toast.info(`Application ${app.ref}`, {
-                                description: `${app.country} · ${app.visaType} · Status: ${app.status}`,
-                              })
-                            }
-                            className="gap-1.5"
+                          <button
+                            type="button"
+                            onClick={() => toast.info(`Tracking ${app.ref}`)}
+                            className="text-[#0B5ED7] hover:underline text-sm flex items-center gap-1 ml-auto"
+                            data-ocid={`visa.status.edit_button.${i + 1}`}
                           >
-                            <Eye className="h-3.5 w-3.5" />
-                            View Details
-                          </Button>
+                            <Eye className="h-3.5 w-3.5" /> View
+                          </button>
                         </TableCell>
                       </TableRow>
                     ))}
