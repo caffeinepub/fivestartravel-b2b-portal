@@ -14,9 +14,13 @@ import {
   Mail,
   MapPin,
   Phone,
+  Shield,
+  Star,
+  TrendingUp,
   Upload,
   User,
   UserPlus,
+  Users,
 } from "lucide-react";
 import { useState } from "react";
 import type { Page } from "./PublicPages";
@@ -47,19 +51,86 @@ export function AgentLoginPage({
   }
 
   return (
-    <div className="min-h-[calc(100vh-120px)] flex items-center justify-center bg-muted/30 py-12 px-4">
-      <div className="w-full max-w-md">
-        <div className="bg-card rounded-2xl border border-border shadow-xl p-8">
-          <div className="text-center mb-8">
+    <div className="min-h-screen flex">
+      {/* Left panel — hero */}
+      <div className="hidden md:flex w-1/2 flex-col items-center justify-center p-12 hero-gradient grain-overlay relative">
+        <div className="relative z-10 text-center max-w-sm">
+          {/* Logo */}
+          <div className="bg-white/90 rounded-xl px-4 py-2.5 inline-flex items-center mb-10">
             <img
-              src="/assets/uploads/image-1.png"
+              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
               alt="FiveStar Travel"
-              className="h-12 w-auto object-contain mx-auto mb-5"
+              className="h-9 w-auto object-contain"
             />
-            <h1 className="font-display text-2xl font-bold text-foreground">
+          </div>
+
+          <h2 className="font-display text-3xl font-bold text-white mb-3">
+            Welcome Back, Agent
+          </h2>
+          <p className="text-white/70 text-sm mb-10 leading-relaxed">
+            Access India's most powerful B2B travel portal and grow your agency.
+          </p>
+
+          {/* Trust stats */}
+          <div className="space-y-3 text-left">
+            {[
+              { icon: Users, value: "147,000+", label: "Travel Agents" },
+              { icon: Shield, value: "IATA", label: "Accredited Platform" },
+              { icon: TrendingUp, value: "24x7", label: "Expert Support" },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="glass-card rounded-xl px-4 py-3 flex items-center gap-3"
+              >
+                <div className="w-9 h-9 rounded-lg bg-accent/20 flex items-center justify-center flex-shrink-0">
+                  <item.icon className="w-4 h-4 text-accent" />
+                </div>
+                <div>
+                  <p className="text-white font-semibold text-sm">
+                    {item.value}
+                  </p>
+                  <p className="text-white/60 text-xs">{item.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Live booking card */}
+          <div className="mt-8 glass-card rounded-xl p-4 text-left float-card">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-white/70 text-xs">
+                Live booking just now
+              </span>
+            </div>
+            <p className="text-white font-semibold text-sm">
+              DEL → DXB · Economy
+            </p>
+            <p className="text-accent text-sm font-bold">₹24,500 · 2 Pax</p>
+            <p className="text-white/50 text-xs mt-1">
+              By TravelWorld Agency, Delhi
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Right panel — form */}
+      <div className="w-full md:w-1/2 flex items-center justify-center bg-white py-12 px-6">
+        <div className="w-full max-w-md">
+          {/* Mobile logo */}
+          <div className="md:hidden text-center mb-8">
+            <img
+              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              alt="FiveStar Travel"
+              className="h-10 w-auto object-contain mx-auto"
+            />
+          </div>
+
+          <div className="mb-8">
+            <h1 className="font-display text-2xl font-bold text-foreground mb-1">
               Agent Login
             </h1>
-            <p className="text-muted-foreground text-sm mt-1">
+            <p className="text-muted-foreground text-sm">
               Sign in to your FiveStar Travel agent account
             </p>
           </div>
@@ -94,8 +165,7 @@ export function AgentLoginPage({
                 </Label>
                 <button
                   type="button"
-                  className="text-xs text-primary hover:underline"
-                  data-ocid="login.forgot_password.link"
+                  className="text-xs text-accent hover:underline"
                 >
                   Forgot password?
                 </button>
@@ -115,7 +185,7 @@ export function AgentLoginPage({
                   type="button"
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   onClick={() => setShowPassword((v) => !v)}
-                  data-ocid="login.show_password.toggle"
+                  data-ocid="login.password_toggle.button"
                 >
                   {showPassword ? (
                     <EyeOff className="w-4 h-4" />
@@ -128,13 +198,13 @@ export function AgentLoginPage({
 
             <div className="flex items-center gap-2">
               <Checkbox
-                id="remember-me"
+                id="remember"
                 checked={rememberMe}
                 onCheckedChange={(v) => setRememberMe(!!v)}
                 data-ocid="login.remember_me.checkbox"
               />
               <Label
-                htmlFor="remember-me"
+                htmlFor="remember"
                 className="text-sm text-muted-foreground cursor-pointer"
               >
                 Remember me for 30 days
@@ -142,519 +212,551 @@ export function AgentLoginPage({
             </div>
 
             {error && (
-              <div
-                className="rounded-lg bg-destructive/10 border border-destructive/20 px-4 py-3 text-sm text-destructive"
+              <p
+                className="text-sm text-destructive bg-destructive/8 rounded-lg px-3 py-2"
                 data-ocid="login.error_state"
               >
                 {error}
-              </div>
+              </p>
             )}
 
             <Button
               type="submit"
-              className="w-full bg-primary text-primary-foreground font-semibold"
+              className="w-full btn-orange rounded-xl font-semibold py-5 text-base"
               disabled={loading}
-              data-ocid="login.submit.primary_button"
+              data-ocid="login.submit_button"
             >
               {loading ? (
-                <span
-                  className="flex items-center gap-2"
-                  data-ocid="login.loading_state"
-                >
-                  <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                   Signing in...
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
                   <LogIn className="w-4 h-4" />
-                  Sign In
+                  Sign In to Dashboard
                 </span>
               )}
             </Button>
           </form>
 
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-border" />
-            </div>
-            <div className="relative flex justify-center text-xs text-muted-foreground">
-              <span className="bg-card px-2">New to FiveStar Travel?</span>
-            </div>
-          </div>
-
-          <Button
-            variant="outline"
-            className="w-full border-primary/30 text-primary hover:bg-primary/5 font-medium"
-            onClick={() => onNavigate("register")}
-            data-ocid="login.register.secondary_button"
-          >
-            <UserPlus className="w-4 h-4 mr-2" />
-            Create Agent Account
-          </Button>
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            New to FiveStar Travel?{" "}
+            <button
+              type="button"
+              className="text-accent font-medium hover:underline"
+              onClick={() => onNavigate("register")}
+              data-ocid="login.register.link"
+            >
+              Create free account →
+            </button>
+          </p>
         </div>
-
-        <p className="text-center text-xs text-muted-foreground mt-5">
-          Need help?{" "}
-          <a href="tel:+911725000004" className="text-primary hover:underline">
-            +91-1725000004
-          </a>
-          {" · "}
-          <a
-            href="mailto:customerservice@fivestartravel.in"
-            className="text-primary hover:underline"
-          >
-            customerservice@fivestartravel.in
-          </a>
-        </p>
       </div>
     </div>
   );
 }
 
-// ── Agent Registration Page ───────────────────────────────────────────────────
-const REG_STEPS = ["Basic Info", "Company", "Documents", "Confirm"];
+// ── Registration Page ──────────────────────────────────────────────────────────
+const STEPS = [
+  "Agency Details",
+  "Contact Person",
+  "Documents",
+  "Review & Submit",
+];
+
+interface RegForm {
+  agencyName: string;
+  agencyType: string;
+  panNumber: string;
+  gstNumber: string;
+  fullName: string;
+  email: string;
+  mobile: string;
+  password: string;
+  confirmPassword: string;
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+  iataCode: string;
+  panDoc: string;
+  gstDoc: string;
+  termsAccepted: boolean;
+}
 
 export function AgentRegisterPage({
   onNavigate,
 }: { onNavigate: (page: Page) => void }) {
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    password: "",
+  const [form, setForm] = useState<RegForm>({
     agencyName: "",
-    agencyType: "",
+    agencyType: "retail",
+    panNumber: "",
     gstNumber: "",
+    fullName: "",
+    email: "",
+    mobile: "",
+    password: "",
+    confirmPassword: "",
     address: "",
     city: "",
     state: "",
-    panCard: null as File | null,
-    gstCert: null as File | null,
-    agencyLogo: null as File | null,
-    agreed: false,
+    pincode: "",
+    iataCode: "",
+    panDoc: "",
+    gstDoc: "",
+    termsAccepted: false,
   });
-  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
 
-  function update(key: string, value: string | boolean | File | null) {
-    setForm((f) => ({ ...f, [key]: value }));
+  function upd(k: keyof RegForm, v: string | boolean) {
+    setForm((f) => ({ ...f, [k]: v }));
   }
-  function handleFile(key: string, files: FileList | null) {
-    update(key, files ? files[0] : null);
-  }
-  const next = () => {
-    if (step < REG_STEPS.length - 1) setStep((s) => s + 1);
-  };
-  const back = () => {
-    if (step > 0) setStep((s) => s - 1);
-  };
 
-  if (submitted) {
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (step < 3) {
+      setStep((s) => s + 1);
+      return;
+    }
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setDone(true);
+    }, 1200);
+  }
+
+  if (done) {
     return (
-      <div className="min-h-[calc(100vh-120px)] flex items-center justify-center bg-muted/30 py-12 px-4">
-        <div className="w-full max-w-md text-center">
-          <div
-            className="bg-card rounded-2xl border border-border shadow-xl p-10"
-            data-ocid="register.success_state"
-          >
-            <div className="w-16 h-16 rounded-full bg-accent/15 flex items-center justify-center mx-auto mb-5">
-              <CheckCircle2 className="w-8 h-8 text-accent" />
-            </div>
-            <h2 className="font-display text-2xl font-bold text-foreground mb-2">
-              Registration Submitted!
-            </h2>
-            <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-              Thank you for registering with FiveStar Travel. Our team will
-              review your documents and activate your account within 24-48
-              hours.
-            </p>
-            <p className="text-xs text-muted-foreground mb-6">
-              Confirmation email sent to{" "}
-              <span className="font-medium text-foreground">
-                {form.email || "your email"}
-              </span>
-            </p>
-            <Button
-              className="w-full bg-primary text-primary-foreground"
-              onClick={() => onNavigate("login")}
-              data-ocid="register.go_to_login.primary_button"
-            >
-              Go to Agent Login
-            </Button>
+      <div className="min-h-screen bg-muted/30 flex items-center justify-center px-4">
+        <div className="bg-card rounded-2xl border border-border shadow-premium p-10 max-w-md w-full text-center">
+          <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-5">
+            <CheckCircle2 className="w-8 h-8 text-emerald-600" />
           </div>
+          <h2 className="font-display text-2xl font-bold text-foreground mb-2">
+            Registration Submitted!
+          </h2>
+          <p className="text-muted-foreground text-sm mb-6">
+            Your agency application is under review. We'll notify you at{" "}
+            <strong>{form.email}</strong> within 24 hours.
+          </p>
+          <Button
+            className="w-full btn-orange rounded-xl font-semibold"
+            onClick={() => onNavigate("login")}
+            data-ocid="register.go_login.button"
+          >
+            Go to Login
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-[calc(100vh-120px)] flex items-center justify-center bg-muted/30 py-12 px-4">
-      <div className="w-full max-w-lg">
-        <div className="bg-card rounded-2xl border border-border shadow-xl overflow-hidden">
-          {/* Header */}
-          <div className="bg-primary px-8 py-6 text-white">
-            <div className="flex items-center justify-between mb-1">
-              <h1 className="font-display text-xl font-bold">
-                Agent Registration
-              </h1>
-              <Badge className="bg-white/15 text-white border-white/20 text-xs">
-                Step {step + 1} of {REG_STEPS.length}
-              </Badge>
-            </div>
-            <p className="text-white/70 text-sm">
-              Join 147,000+ travel agents on FiveStar Travel
-            </p>
-            <div className="flex items-center gap-1 mt-4">
-              {REG_STEPS.map((label, i) => (
-                <div key={label} className="flex items-center gap-1 flex-1">
-                  <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                      i < step
-                        ? "bg-accent text-white"
-                        : i === step
-                          ? "bg-white text-primary"
-                          : "bg-white/20 text-white/50"
-                    }`}
-                    data-ocid={`register.step.${i + 1}`}
-                  >
-                    {i < step ? (
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                    ) : (
-                      i + 1
-                    )}
-                  </div>
-                  <span
-                    className={`text-xs hidden sm:block ${i === step ? "text-white font-medium" : "text-white/50"}`}
-                  >
-                    {label}
-                  </span>
-                  {i < REG_STEPS.length - 1 && (
-                    <div
-                      className={`flex-1 h-px mx-1 ${i < step ? "bg-accent/60" : "bg-white/20"}`}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
+    <div className="min-h-screen bg-muted/30">
+      {/* Register header */}
+      <div className="bg-primary py-6 px-4">
+        <div className="container">
+          <div className="flex items-center justify-between mb-6">
+            <img
+              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              alt="FiveStar Travel"
+              className="h-8 w-auto object-contain bg-white/90 rounded-lg px-2 py-1"
+            />
+            <button
+              type="button"
+              className="text-white/60 hover:text-white text-sm"
+              onClick={() => onNavigate("login")}
+              data-ocid="register.login.link"
+            >
+              Already have an account? Sign in →
+            </button>
           </div>
 
-          {/* Form content */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setSubmitted(true);
-            }}
-            className="p-8 space-y-5"
-            data-ocid="register.form"
+          {/* Steps */}
+          <div
+            className="flex items-center gap-3"
+            data-ocid="register.steps.panel"
           >
+            {STEPS.map((s, i) => (
+              <div key={s} className="flex items-center gap-2 flex-1">
+                <div
+                  className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                    i < step
+                      ? "bg-emerald-500 text-white"
+                      : i === step
+                        ? "bg-accent text-white"
+                        : "bg-white/20 text-white/50"
+                  }`}
+                >
+                  {i < step ? "✓" : i + 1}
+                </div>
+                <span
+                  className={`text-xs hidden sm:block ${
+                    i === step ? "text-white font-semibold" : "text-white/50"
+                  }`}
+                >
+                  {s}
+                </span>
+                {i < STEPS.length - 1 && (
+                  <div className="flex-1 h-px bg-white/20 mx-1" />
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Progress bar */}
+          <div className="mt-4 bg-white/20 rounded-full h-1.5">
+            <div
+              className="bg-accent h-1.5 rounded-full transition-all duration-500"
+              style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Form */}
+      <div className="container py-8">
+        <form onSubmit={handleSubmit} data-ocid="register.form">
+          <div className="bg-card rounded-2xl border border-border shadow-navy-md p-8 max-w-2xl mx-auto">
+            <h2 className="font-display text-xl font-bold text-foreground mb-6">
+              {STEPS[step]}
+            </h2>
+
             {step === 0 && (
-              <>
+              <div className="space-y-5">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="r-fname">First Name *</Label>
+                  <div className="col-span-2 space-y-1.5">
+                    <Label className="text-sm font-medium">
+                      Agency / Business Name *
+                    </Label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input
-                        id="r-fname"
-                        placeholder="Rahul"
                         className="pl-9"
-                        value={form.firstName}
-                        onChange={(e) => update("firstName", e.target.value)}
-                        data-ocid="register.first_name.input"
+                        placeholder="Sunrise Travels Pvt Ltd"
+                        value={form.agencyName}
+                        onChange={(e) => upd("agencyName", e.target.value)}
+                        required
+                        data-ocid="register.agency_name.input"
                       />
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="r-lname">Last Name *</Label>
+                    <Label className="text-sm font-medium">Agency Type *</Label>
+                    <select
+                      className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                      value={form.agencyType}
+                      onChange={(e) => upd("agencyType", e.target.value)}
+                      data-ocid="register.agency_type.select"
+                    >
+                      <option value="retail">Retail Agency</option>
+                      <option value="corporate">Corporate Agency</option>
+                      <option value="wholesale">Wholesale Agency</option>
+                      <option value="online">Online Travel Agency</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-medium">PAN Number *</Label>
                     <Input
-                      id="r-lname"
-                      placeholder="Sharma"
-                      value={form.lastName}
-                      onChange={(e) => update("lastName", e.target.value)}
-                      data-ocid="register.last_name.input"
+                      placeholder="ABCDE1234F"
+                      value={form.panNumber}
+                      onChange={(e) => upd("panNumber", e.target.value)}
+                      required
+                      data-ocid="register.pan_number.input"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-medium">GST Number</Label>
+                    <Input
+                      placeholder="27ABCDE1234F1Z5"
+                      value={form.gstNumber}
+                      onChange={(e) => upd("gstNumber", e.target.value)}
+                      data-ocid="register.gst_number.input"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-medium">
+                      IATA Code (if any)
+                    </Label>
+                    <Input
+                      placeholder="91-4XXXXX"
+                      value={form.iataCode}
+                      onChange={(e) => upd("iataCode", e.target.value)}
+                      data-ocid="register.iata_code.input"
                     />
                   </div>
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="r-email">Email Address *</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
-                      id="r-email"
-                      type="email"
-                      placeholder="rahul@agency.com"
-                      className="pl-9"
-                      value={form.email}
-                      onChange={(e) => update("email", e.target.value)}
-                      data-ocid="register.email.input"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="r-phone">Mobile Number *</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
-                      id="r-phone"
-                      type="tel"
-                      placeholder="+91 98765 43210"
-                      className="pl-9"
-                      value={form.phone}
-                      onChange={(e) => update("phone", e.target.value)}
-                      data-ocid="register.phone.input"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="r-password">Create Password *</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
-                      id="r-password"
-                      type="password"
-                      placeholder="Min 8 characters"
-                      className="pl-9"
-                      value={form.password}
-                      onChange={(e) => update("password", e.target.value)}
-                      data-ocid="register.password.input"
-                    />
-                  </div>
-                </div>
-              </>
+              </div>
             )}
 
             {step === 1 && (
-              <>
-                <div className="space-y-1.5">
-                  <Label htmlFor="r-agency">Agency Name *</Label>
-                  <div className="relative">
-                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
-                      id="r-agency"
-                      placeholder="Sharma Travels Pvt Ltd"
-                      className="pl-9"
-                      value={form.agencyName}
-                      onChange={(e) => update("agencyName", e.target.value)}
-                      data-ocid="register.agency_name.input"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="r-type">Agency Type *</Label>
-                  <select
-                    id="r-type"
-                    className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                    value={form.agencyType}
-                    onChange={(e) => update("agencyType", e.target.value)}
-                    data-ocid="register.agency_type.select"
-                  >
-                    <option value="">Select agency type</option>
-                    <option value="travel_agent">Travel Agent</option>
-                    <option value="tour_operator">Tour Operator</option>
-                    <option value="corporate">Corporate Travel</option>
-                    <option value="dmc">DMC</option>
-                    <option value="ota">Online Travel Agency</option>
-                  </select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="r-gst">GST Number</Label>
-                  <Input
-                    id="r-gst"
-                    placeholder="22AAAAA0000A1Z5"
-                    value={form.gstNumber}
-                    onChange={(e) => update("gstNumber", e.target.value)}
-                    data-ocid="register.gst.input"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="r-addr">Office Address *</Label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-                    <textarea
-                      id="r-addr"
-                      placeholder="Full office address"
-                      className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 pl-9 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
-                      value={form.address}
-                      onChange={(e) => update("address", e.target.value)}
-                      data-ocid="register.address.textarea"
-                    />
-                  </div>
-                </div>
+              <div className="space-y-5">
                 <div className="grid grid-cols-2 gap-4">
+                  <div className="col-span-2 space-y-1.5">
+                    <Label className="text-sm font-medium">Full Name *</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        className="pl-9"
+                        placeholder="Rajesh Kumar"
+                        value={form.fullName}
+                        onChange={(e) => upd("fullName", e.target.value)}
+                        required
+                        data-ocid="register.full_name.input"
+                      />
+                    </div>
+                  </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="r-city">City *</Label>
+                    <Label className="text-sm font-medium">
+                      Email Address *
+                    </Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        type="email"
+                        className="pl-9"
+                        placeholder="rajesh@agency.com"
+                        value={form.email}
+                        onChange={(e) => upd("email", e.target.value)}
+                        required
+                        data-ocid="register.email.input"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-medium">
+                      Mobile Number *
+                    </Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        type="tel"
+                        className="pl-9"
+                        placeholder="+91 9876543210"
+                        value={form.mobile}
+                        onChange={(e) => upd("mobile", e.target.value)}
+                        required
+                        data-ocid="register.mobile.input"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-medium">Password *</Label>
                     <Input
-                      id="r-city"
+                      type="password"
+                      placeholder="Min 8 characters"
+                      value={form.password}
+                      onChange={(e) => upd("password", e.target.value)}
+                      required
+                      data-ocid="register.password.input"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-medium">
+                      Confirm Password *
+                    </Label>
+                    <Input
+                      type="password"
+                      placeholder="Repeat password"
+                      value={form.confirmPassword}
+                      onChange={(e) => upd("confirmPassword", e.target.value)}
+                      required
+                      data-ocid="register.confirm_password.input"
+                    />
+                  </div>
+                  <div className="col-span-2 space-y-1.5">
+                    <Label className="text-sm font-medium">
+                      Office Address *
+                    </Label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                      <textarea
+                        className="w-full rounded-md border border-input bg-background px-3 py-2 pl-9 text-sm min-h-[70px] resize-none"
+                        placeholder="Complete office address"
+                        value={form.address}
+                        onChange={(e) => upd("address", e.target.value)}
+                        data-ocid="register.address.textarea"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-medium">City *</Label>
+                    <Input
                       placeholder="Mumbai"
                       value={form.city}
-                      onChange={(e) => update("city", e.target.value)}
+                      onChange={(e) => upd("city", e.target.value)}
+                      required
                       data-ocid="register.city.input"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="r-state">State *</Label>
+                    <Label className="text-sm font-medium">State *</Label>
                     <Input
-                      id="r-state"
                       placeholder="Maharashtra"
                       value={form.state}
-                      onChange={(e) => update("state", e.target.value)}
+                      onChange={(e) => upd("state", e.target.value)}
+                      required
                       data-ocid="register.state.input"
                     />
                   </div>
                 </div>
-              </>
+              </div>
             )}
 
             {step === 2 && (
-              <>
-                <p className="text-sm text-muted-foreground leading-relaxed bg-muted/50 rounded-lg p-3 border border-border">
-                  Upload your KYC documents for account verification. Accepted
-                  formats: PDF, JPG, PNG (max 5MB each).
+              <div className="space-y-5">
+                <p className="text-sm text-muted-foreground">
+                  Upload documents for verification. All documents are securely
+                  stored and encrypted.
                 </p>
                 {[
                   {
-                    key: "panCard",
                     label: "PAN Card *",
-                    hint: "Required for tax compliance",
+                    key: "panDoc" as keyof RegForm,
+                    ocid: "register.pan_doc.upload_button",
                   },
                   {
-                    key: "gstCert",
                     label: "GST Certificate",
-                    hint: "If GST registered",
+                    key: "gstDoc" as keyof RegForm,
+                    ocid: "register.gst_doc.upload_button",
                   },
-                  {
-                    key: "agencyLogo",
-                    label: "Agency Logo",
-                    hint: "For your branded portal",
-                  },
-                ].map(({ key, label, hint }) => (
-                  <div key={key} className="space-y-1.5">
-                    <Label>{label}</Label>
+                ].map((doc) => (
+                  <div key={doc.key} className="space-y-1.5">
+                    <Label className="text-sm font-medium">{doc.label}</Label>
                     <label
-                      className="flex items-center gap-3 cursor-pointer border-2 border-dashed border-border rounded-lg p-4 hover:border-primary/40 hover:bg-muted/30 transition-colors"
-                      data-ocid={`register.${key}.dropzone`}
+                      className="flex items-center gap-3 border-2 border-dashed border-border rounded-xl p-5 cursor-pointer hover:border-accent/50 hover:bg-accent/5 transition-colors"
+                      data-ocid={doc.ocid}
                     >
-                      <input
-                        type="file"
-                        className="sr-only"
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        onChange={(e) => handleFile(key, e.target.files)}
-                        data-ocid={`register.${key}.upload_button`}
-                      />
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Upload className="w-5 h-5 text-primary" />
-                      </div>
+                      <Upload className="w-5 h-5 text-muted-foreground" />
                       <div>
                         <p className="text-sm font-medium text-foreground">
-                          {(form[key as keyof typeof form] as File | null)
-                            ?.name || "Click to upload"}
+                          {form[doc.key]
+                            ? String(form[doc.key])
+                            : "Click to upload"}
                         </p>
-                        <p className="text-xs text-muted-foreground">{hint}</p>
+                        <p className="text-xs text-muted-foreground">
+                          PDF, JPG, PNG up to 5MB
+                        </p>
                       </div>
-                      {(form[key as keyof typeof form] as File | null) && (
-                        <CheckCircle2 className="w-5 h-5 text-accent ml-auto flex-shrink-0" />
-                      )}
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) =>
+                          upd(doc.key, e.target.files?.[0]?.name ?? "")
+                        }
+                      />
                     </label>
                   </div>
                 ))}
-              </>
+              </div>
             )}
 
             {step === 3 && (
-              <>
-                <div className="bg-muted/50 rounded-xl border border-border p-5 space-y-3">
-                  <h3 className="font-display font-semibold text-sm text-foreground">
+              <div className="space-y-5">
+                <div className="bg-muted/50 rounded-xl p-5 space-y-3 text-sm">
+                  <h3 className="font-semibold text-foreground">
                     Application Summary
                   </h3>
-                  <div className="space-y-2 text-sm">
-                    {[
-                      ["Name", `${form.firstName} ${form.lastName}`],
-                      ["Email", form.email],
-                      ["Phone", form.phone],
-                      ["Agency", form.agencyName],
-                      [
-                        "City",
-                        `${form.city}${form.state ? `, ${form.state}` : ""}`,
-                      ],
-                    ].map(([label, val]) => (
-                      <div key={label} className="flex justify-between">
-                        <span className="text-muted-foreground">{label}</span>
-                        <span className="font-medium text-foreground">
-                          {val || "—"}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                  {[
+                    { label: "Agency", value: form.agencyName || "—" },
+                    { label: "Type", value: form.agencyType },
+                    { label: "PAN", value: form.panNumber || "—" },
+                    { label: "Contact", value: form.fullName || "—" },
+                    { label: "Email", value: form.email || "—" },
+                    { label: "Mobile", value: form.mobile || "—" },
+                    { label: "City", value: form.city || "—" },
+                  ].map((row) => (
+                    <div key={row.label} className="flex justify-between">
+                      <span className="text-muted-foreground">{row.label}</span>
+                      <span className="font-medium text-foreground">
+                        {row.value}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex items-start gap-2.5">
+
+                <div className="flex items-start gap-3 bg-primary/5 border border-primary/20 rounded-xl p-4">
                   <Checkbox
-                    id="reg-agree"
-                    checked={form.agreed}
-                    onCheckedChange={(v) => update("agreed", !!v)}
+                    id="terms"
+                    checked={form.termsAccepted}
+                    onCheckedChange={(v) => upd("termsAccepted", !!v)}
                     data-ocid="register.terms.checkbox"
                   />
                   <Label
-                    htmlFor="reg-agree"
+                    htmlFor="terms"
                     className="text-sm text-muted-foreground cursor-pointer leading-relaxed"
                   >
                     I agree to the{" "}
-                    <span className="text-primary">Terms & Conditions</span>,{" "}
-                    <span className="text-primary">Privacy Policy</span> and{" "}
-                    <span className="text-primary">Refund Policy</span> of
-                    FiveStar Travel.
+                    <button
+                      type="button"
+                      className="text-accent hover:underline"
+                    >
+                      Terms & Conditions
+                    </button>
+                    ,{" "}
+                    <button
+                      type="button"
+                      className="text-accent hover:underline"
+                    >
+                      Privacy Policy
+                    </button>
+                    , and{" "}
+                    <button
+                      type="button"
+                      className="text-accent hover:underline"
+                    >
+                      Agent Agreement
+                    </button>{" "}
+                    of FiveStar Travel.
                   </Label>
                 </div>
-              </>
+              </div>
             )}
 
-            <div className="flex gap-3 pt-2">
-              {step > 0 && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="flex-1"
-                  onClick={back}
-                  data-ocid="register.back.secondary_button"
-                >
-                  Back
-                </Button>
-              )}
-              {step < REG_STEPS.length - 1 ? (
-                <Button
-                  type="button"
-                  className="flex-1 bg-primary text-primary-foreground"
-                  onClick={next}
-                  data-ocid="register.next.primary_button"
-                >
-                  Continue <ChevronRight className="w-4 h-4 ml-1" />
-                </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  className="flex-1 bg-accent text-white hover:bg-accent/90"
-                  disabled={!form.agreed}
-                  data-ocid="register.submit.primary_button"
-                >
-                  <CheckCircle2 className="w-4 h-4 mr-2" />
-                  Submit Application
-                </Button>
-              )}
-            </div>
-          </form>
-        </div>
+            {/* Navigation */}
+            <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
+              <Button
+                type="button"
+                variant="outline"
+                className="px-6"
+                onClick={() => {
+                  if (step === 0) onNavigate("login");
+                  else setStep((s) => s - 1);
+                }}
+                data-ocid="register.back.button"
+              >
+                {step === 0 ? "Back to Login" : "← Back"}
+              </Button>
 
-        <p className="text-center text-xs text-muted-foreground mt-4">
-          Already have an account?{" "}
-          <button
-            type="button"
-            className="text-primary hover:underline font-medium"
-            onClick={() => onNavigate("login")}
-            data-ocid="register.go_to_login.link"
-          >
-            Sign in here
-          </button>
-        </p>
+              <Button
+                type="submit"
+                className="btn-orange rounded-xl px-8 font-semibold"
+                disabled={loading || (step === 3 && !form.termsAccepted)}
+                data-ocid="register.next.primary_button"
+              >
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    Submitting...
+                  </span>
+                ) : step === 3 ? (
+                  <span className="flex items-center gap-2">
+                    <UserPlus className="w-4 h-4" />
+                    Submit Application
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    Continue <ChevronRight className="w-4 h-4" />
+                  </span>
+                )}
+              </Button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   );

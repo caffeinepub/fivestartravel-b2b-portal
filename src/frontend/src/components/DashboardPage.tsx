@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import {
+  ArrowUpRight,
   Award,
   Car,
   FileText,
@@ -10,6 +11,7 @@ import {
   Train,
   TrendingUp,
   Users,
+  Wallet,
 } from "lucide-react";
 import type { DashboardPage } from "./DashboardLayout";
 
@@ -62,22 +64,133 @@ const RECENT_BOOKINGS = [
   },
 ];
 
-const STATUS_COLORS: Record<string, string> = {
-  Confirmed: "bg-green-100 text-green-700",
-  Pending: "bg-yellow-100 text-yellow-700",
-  Processing: "bg-blue-100 text-blue-700",
-  Cancelled: "bg-red-100 text-red-700",
+const STATUS_CONFIG: Record<string, { cls: string; dot: string }> = {
+  Confirmed: {
+    cls: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    dot: "bg-emerald-500",
+  },
+  Pending: {
+    cls: "bg-amber-50 text-amber-700 border-amber-200",
+    dot: "bg-amber-500",
+  },
+  Processing: {
+    cls: "bg-blue-50 text-blue-700 border-blue-200",
+    dot: "bg-blue-500",
+  },
+  Cancelled: {
+    cls: "bg-red-50 text-red-700 border-red-200",
+    dot: "bg-red-500",
+  },
 };
 
 const QUICK_BOOK = [
-  { icon: Plane, label: "Flights", key: "flights" as DashboardPage },
-  { icon: Hotel, label: "Hotels", key: "hotels" as DashboardPage },
-  { icon: Package, label: "Tours", key: "tours" as DashboardPage },
-  { icon: Car, label: "Transfers", key: "transfers" as DashboardPage },
-  { icon: FileText, label: "Visa", key: "visa" as DashboardPage },
-  { icon: Ship, label: "Cruises", key: "cruises" as DashboardPage },
-  { icon: Train, label: "Railway", key: "railway" as DashboardPage },
-  { icon: Package, label: "Packages", key: "packages" as DashboardPage },
+  {
+    icon: Plane,
+    label: "Flights",
+    key: "flights" as DashboardPage,
+    gradient: "from-blue-600 to-blue-800",
+    bg: "bg-blue-50",
+    text: "text-blue-700",
+  },
+  {
+    icon: Hotel,
+    label: "Hotels",
+    key: "hotels" as DashboardPage,
+    gradient: "from-orange-500 to-orange-700",
+    bg: "bg-orange-50",
+    text: "text-orange-700",
+  },
+  {
+    icon: Package,
+    label: "Tours",
+    key: "tours" as DashboardPage,
+    gradient: "from-purple-600 to-purple-800",
+    bg: "bg-purple-50",
+    text: "text-purple-700",
+  },
+  {
+    icon: Car,
+    label: "Transfers",
+    key: "transfers" as DashboardPage,
+    gradient: "from-teal-500 to-teal-700",
+    bg: "bg-teal-50",
+    text: "text-teal-700",
+  },
+  {
+    icon: FileText,
+    label: "Visa",
+    key: "visa" as DashboardPage,
+    gradient: "from-indigo-500 to-indigo-700",
+    bg: "bg-indigo-50",
+    text: "text-indigo-700",
+  },
+  {
+    icon: Ship,
+    label: "Cruises",
+    key: "cruises" as DashboardPage,
+    gradient: "from-cyan-500 to-cyan-700",
+    bg: "bg-cyan-50",
+    text: "text-cyan-700",
+  },
+  {
+    icon: Train,
+    label: "Railway",
+    key: "railway" as DashboardPage,
+    gradient: "from-rose-500 to-rose-700",
+    bg: "bg-rose-50",
+    text: "text-rose-700",
+  },
+  {
+    icon: Package,
+    label: "Packages",
+    key: "packages" as DashboardPage,
+    gradient: "from-amber-500 to-amber-700",
+    bg: "bg-amber-50",
+    text: "text-amber-700",
+  },
+];
+
+const STAT_CARDS = [
+  {
+    label: "Total Bookings",
+    value: "312",
+    change: "+12% this month",
+    up: true,
+    icon: Package,
+    color: "text-blue-600",
+    bg: "bg-blue-50",
+    border: "border-l-blue-500",
+  },
+  {
+    label: "Wallet Balance",
+    value: "₹1,24,800",
+    change: "Available credit",
+    up: true,
+    icon: Wallet,
+    color: "text-emerald-600",
+    bg: "bg-emerald-50",
+    border: "border-l-emerald-500",
+  },
+  {
+    label: "This Month Revenue",
+    value: "₹4,28,500",
+    change: "+18% vs last month",
+    up: true,
+    icon: TrendingUp,
+    color: "text-accent",
+    bg: "bg-orange-50",
+    border: "border-l-orange-500",
+  },
+  {
+    label: "Active Clients",
+    value: "87",
+    change: "+5 this week",
+    up: true,
+    icon: Users,
+    color: "text-purple-600",
+    bg: "bg-purple-50",
+    border: "border-l-purple-500",
+  },
 ];
 
 interface DashboardHomeProps {
@@ -86,85 +199,64 @@ interface DashboardHomeProps {
 
 export function DashboardHome({ onNavChange }: DashboardHomeProps) {
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Stats row */}
       <div
         className="grid grid-cols-2 lg:grid-cols-4 gap-4"
         data-ocid="dashboard.stats.panel"
       >
-        {[
-          {
-            label: "Total Bookings",
-            value: "312",
-            change: "+12% this month",
-            icon: Package,
-            color: "text-blue-600",
-            bg: "bg-blue-50",
-          },
-          {
-            label: "Wallet Balance",
-            value: "₹1,24,800",
-            change: "Available credit",
-            icon: TrendingUp,
-            color: "text-green-600",
-            bg: "bg-green-50",
-          },
-          {
-            label: "This Month Revenue",
-            value: "₹4,28,500",
-            change: "+18% vs last month",
-            icon: Award,
-            color: "text-amber-600",
-            bg: "bg-amber-50",
-          },
-          {
-            label: "Active Bookings",
-            value: "24",
-            change: "5 pending action",
-            icon: Users,
-            color: "text-purple-600",
-            bg: "bg-purple-50",
-          },
-        ].map((stat, i) => (
+        {STAT_CARDS.map((card, i) => (
           <div
-            key={stat.label}
-            className="bg-card rounded-xl border border-border p-4"
-            data-ocid={`dashboard.stat.item.${i + 1}`}
+            key={card.label}
+            className={`bg-card rounded-xl border border-l-4 ${card.border} border-border p-5 shadow-xs hover:shadow-navy-sm transition-shadow`}
+            data-ocid={`dashboard.stats.item.${i + 1}`}
           >
             <div className="flex items-start justify-between mb-3">
-              <p className="text-xs text-muted-foreground">{stat.label}</p>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                {card.label}
+              </p>
               <div
-                className={`w-8 h-8 rounded-lg ${stat.bg} flex items-center justify-center`}
+                className={`w-9 h-9 rounded-lg ${card.bg} flex items-center justify-center flex-shrink-0`}
               >
-                <stat.icon className={`w-4 h-4 ${stat.color}`} />
+                <card.icon className={`w-4.5 h-4.5 ${card.color}`} />
               </div>
             </div>
-            <p className="font-display font-bold text-xl text-foreground">
-              {stat.value}
+            <p className={`font-display text-2xl font-bold ${card.color} mb-1`}>
+              {card.value}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">{stat.change}</p>
+            <div className="flex items-center gap-1">
+              {card.up && <ArrowUpRight className="w-3 h-3 text-emerald-500" />}
+              <span className="text-xs text-muted-foreground">
+                {card.change}
+              </span>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Quick booking */}
-      <div className="bg-card rounded-xl border border-border p-5">
-        <h2 className="font-display font-semibold text-sm text-foreground mb-4">
+      {/* Quick Book */}
+      <div className="bg-card rounded-xl border border-border p-5 shadow-xs">
+        <h2 className="font-display font-semibold text-foreground mb-4">
           Quick Book
         </h2>
-        <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
+        <div
+          className="grid grid-cols-4 md:grid-cols-8 gap-3"
+          data-ocid="dashboard.quick_book.panel"
+        >
           {QUICK_BOOK.map((item, i) => (
             <button
               key={item.key}
               type="button"
-              className="flex flex-col items-center gap-2 p-3 rounded-xl bg-muted/50 hover:bg-primary/10 hover:text-primary transition-colors duration-150 group"
+              className="flex flex-col items-center gap-2 group"
               onClick={() => onNavChange(item.key)}
               data-ocid={`dashboard.quick_book.item.${i + 1}`}
             >
-              <div className="w-10 h-10 rounded-lg bg-primary/10 group-hover:bg-primary/20 flex items-center justify-center">
-                <item.icon className="w-5 h-5 text-primary" />
+              <div
+                className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-150`}
+              >
+                <item.icon className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xs font-medium text-center leading-tight">
+              <span className="text-xs font-medium text-foreground/70 group-hover:text-foreground transition-colors">
                 {item.label}
               </span>
             </button>
@@ -172,37 +264,37 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
         </div>
       </div>
 
-      {/* Recent bookings */}
-      <div className="bg-card rounded-xl border border-border overflow-hidden">
+      {/* Recent Bookings */}
+      <div className="bg-card rounded-xl border border-border shadow-xs overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-          <h2 className="font-display font-semibold text-sm text-foreground">
+          <h2 className="font-display font-semibold text-foreground">
             Recent Bookings
           </h2>
-          <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">
-            Last 7 days
-          </Badge>
-        </div>
-        <div className="overflow-x-auto">
-          <table
-            className="w-full text-sm"
-            data-ocid="dashboard.bookings.table"
+          <button
+            type="button"
+            className="text-xs text-accent hover:underline font-medium"
+            onClick={() => onNavChange("bookings")}
+            data-ocid="dashboard.bookings.link"
           >
+            View all →
+          </button>
+        </div>
+        <div className="overflow-x-auto" data-ocid="dashboard.bookings.table">
+          <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border bg-muted/30">
+              <tr className="bg-muted/50">
                 {[
                   "Booking ID",
                   "Service",
-                  "Details",
+                  "Route / Hotel",
                   "Passenger",
                   "Date",
                   "Amount",
                   "Status",
-                ].map((h, hi) => (
+                ].map((h) => (
                   <th
                     key={h}
-                    className={`text-left px-5 py-3 text-xs font-medium text-muted-foreground ${
-                      hi >= 2 && hi <= 3 ? "hidden sm:table-cell" : ""
-                    } ${hi === 4 ? "hidden md:table-cell" : ""} ${hi === 6 ? "text-center" : ""} ${hi === 5 ? "text-right" : ""}`}
+                    className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3"
                   >
                     {h}
                   </th>
@@ -210,93 +302,86 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
               </tr>
             </thead>
             <tbody>
-              {RECENT_BOOKINGS.map((b, i) => (
-                <tr
-                  key={b.id}
-                  className="border-b border-border hover:bg-muted/20 transition-colors"
-                  data-ocid={`dashboard.booking.row.${i + 1}`}
-                >
-                  <td className="px-5 py-3 font-mono text-xs font-medium text-primary">
-                    {b.id}
-                  </td>
-                  <td className="px-5 py-3">
-                    <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
+              {RECENT_BOOKINGS.map((b, i) => {
+                const sc = STATUS_CONFIG[b.status] ?? STATUS_CONFIG.Pending;
+                return (
+                  <tr
+                    key={b.id}
+                    className="border-t border-border hover:bg-muted/30 transition-colors"
+                    data-ocid={`dashboard.bookings.row.${i + 1}`}
+                  >
+                    <td className="px-4 py-3 font-medium text-foreground font-mono text-xs">
+                      {b.id}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
                       {b.service}
-                    </Badge>
-                  </td>
-                  <td className="px-5 py-3 text-muted-foreground text-xs hidden sm:table-cell">
-                    {b.route}
-                  </td>
-                  <td className="px-5 py-3 text-xs hidden md:table-cell">
-                    {b.pax}
-                  </td>
-                  <td className="px-5 py-3 text-xs text-muted-foreground hidden lg:table-cell">
-                    {b.date}
-                  </td>
-                  <td className="px-5 py-3 text-right font-semibold text-xs">
-                    {b.amount}
-                  </td>
-                  <td className="px-5 py-3 text-center">
-                    <span
-                      className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[b.status] || "bg-gray-100 text-gray-700"}`}
-                    >
-                      {b.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="px-4 py-3 font-medium text-foreground">
+                      {b.route}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">{b.pax}</td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {b.date}
+                    </td>
+                    <td className="px-4 py-3 font-semibold text-foreground">
+                      {b.amount}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${sc.cls}`}
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${sc.dot}`}
+                        />
+                        {b.status}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Deals & Offers */}
-      <div className="bg-card rounded-xl border border-border p-5">
-        <h2 className="font-display font-semibold text-sm text-foreground mb-4">
-          Deals & Offers
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[
-            {
-              title: "Dubai Special",
-              desc: "Flight + Hotel from ₹42,000",
-              tag: "HOT DEAL",
-              color: "from-orange-500 to-red-500",
-            },
-            {
-              title: "Europe Packages",
-              desc: "Group tours from ₹85,000",
-              tag: "NEW",
-              color: "from-blue-500 to-purple-500",
-            },
-            {
-              title: "Singapore Visa",
-              desc: "Fast-track processing ₹3,500",
-              tag: "LIMITED",
-              color: "from-green-500 to-teal-500",
-            },
-          ].map((deal, i) => (
-            <div
-              key={deal.title}
-              className={`rounded-xl bg-gradient-to-br ${deal.color} p-4 text-white`}
-              data-ocid={`dashboard.deal.item.${i + 1}`}
-            >
-              <Badge className="bg-white/20 text-white border-white/30 text-xs mb-2">
-                {deal.tag}
-              </Badge>
-              <h3 className="font-display font-semibold text-sm mb-1">
-                {deal.title}
-              </h3>
-              <p className="text-white/80 text-xs">{deal.desc}</p>
-              <button
-                type="button"
-                className="mt-3 text-xs font-medium bg-white/20 hover:bg-white/30 transition-colors px-3 py-1 rounded-full"
-                data-ocid={`dashboard.deal.button.${i + 1}`}
-              >
-                Book Now
-              </button>
+      {/* Deals Banner */}
+      <div
+        className="rounded-xl p-6 text-white relative overflow-hidden"
+        style={{
+          background:
+            "linear-gradient(135deg, oklch(0.16 0.08 260) 0%, oklch(0.22 0.09 255) 100%)",
+        }}
+      >
+        <div
+          className="absolute right-0 top-0 bottom-0 w-1/3 opacity-20"
+          style={{
+            background:
+              "radial-gradient(ellipse at right, oklch(0.65 0.22 42) 0%, transparent 70%)",
+          }}
+        />
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Award className="w-5 h-5 text-accent" />
+              <span className="text-accent text-sm font-semibold">
+                Exclusive Agent Deals
+              </span>
             </div>
-          ))}
+            <h3 className="font-display font-bold text-xl text-white mb-1">
+              Dubai 5N/6D Package — ₹42,500/pax
+            </h3>
+            <p className="text-white/60 text-sm">
+              Includes flights, hotel & transfers · Valid till 31 Mar 2026
+            </p>
+          </div>
+          <button
+            type="button"
+            className="btn-orange px-5 py-2.5 rounded-xl text-sm font-semibold flex-shrink-0"
+            onClick={() => onNavChange("tours")}
+            data-ocid="dashboard.deals.primary_button"
+          >
+            Book Now →
+          </button>
         </div>
       </div>
     </div>

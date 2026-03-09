@@ -98,7 +98,7 @@ export function Header({ onNavigate }: { onNavigate: (page: Page) => void }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-border">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-navy-sm border-b border-border">
       <div className="container flex items-center justify-between h-16">
         <button
           type="button"
@@ -107,7 +107,7 @@ export function Header({ onNavigate }: { onNavigate: (page: Page) => void }) {
           data-ocid="nav.logo.link"
         >
           <img
-            src="/assets/uploads/image-1.png"
+            src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
             alt="FiveStar Travel"
             className="h-10 w-auto object-contain"
           />
@@ -121,7 +121,7 @@ export function Header({ onNavigate }: { onNavigate: (page: Page) => void }) {
             <a
               key={link.label}
               href={link.href}
-              className="nav-link text-sm font-medium text-foreground/80 hover:text-primary transition-colors duration-150"
+              className="text-sm font-medium text-foreground/70 hover:text-accent transition-colors duration-150"
               onClick={() => onNavigate("home")}
               data-ocid={`nav.${link.label.toLowerCase().replace(/\s/g, "_")}.link`}
             >
@@ -134,7 +134,7 @@ export function Header({ onNavigate }: { onNavigate: (page: Page) => void }) {
           <Button
             variant="outline"
             size="sm"
-            className="border-primary/30 text-primary hover:bg-primary/5"
+            className="border-primary/30 text-primary hover:bg-primary/5 hover:border-accent/50"
             onClick={() => onNavigate("login")}
             data-ocid="nav.login.button"
           >
@@ -142,7 +142,7 @@ export function Header({ onNavigate }: { onNavigate: (page: Page) => void }) {
           </Button>
           <Button
             size="sm"
-            className="bg-primary text-primary-foreground hover:bg-primary/90"
+            className="btn-orange rounded-full font-semibold px-5"
             onClick={() => onNavigate("register")}
             data-ocid="nav.signup.primary_button"
           >
@@ -171,7 +171,7 @@ export function Header({ onNavigate }: { onNavigate: (page: Page) => void }) {
             <a
               key={link.label}
               href={link.href}
-              className="block text-sm font-medium text-foreground/80 hover:text-primary py-1"
+              className="block text-sm font-medium text-foreground/80 hover:text-accent py-1"
               onClick={() => {
                 setMobileOpen(false);
                 onNavigate("home");
@@ -196,7 +196,7 @@ export function Header({ onNavigate }: { onNavigate: (page: Page) => void }) {
             </Button>
             <Button
               size="sm"
-              className="w-full bg-primary text-primary-foreground"
+              className="w-full btn-orange rounded-full"
               onClick={() => {
                 setMobileOpen(false);
                 onNavigate("register");
@@ -221,26 +221,28 @@ export function Hero({ onNavigate }: { onNavigate: (page: Page) => void }) {
     >
       <div className="container relative z-10">
         <div className="max-w-3xl">
-          <Badge className="mb-5 bg-white/10 text-white border-white/20 text-xs font-medium px-3 py-1">
-            <Star className="w-3 h-3 mr-1.5 fill-yellow-400 text-yellow-400" />
-            India's #1 B2B Travel Distribution Platform
-          </Badge>
+          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6">
+            <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+            <span className="text-white/90 text-xs font-medium tracking-wide">
+              Trusted by 147,000+ Travel Agents Across India
+            </span>
+          </div>
 
           <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.1] tracking-tight mb-6">
-            India's Leading{" "}
-            <span className="text-accent">Travel Distribution</span> Platform
+            Power Your Travel Business with{" "}
+            <span className="text-accent">India's #1</span> B2B Platform
           </h1>
 
-          <p className="text-white/75 text-lg md:text-xl leading-relaxed mb-8 max-w-2xl">
+          <p className="text-white/70 text-lg md:text-xl leading-relaxed mb-8 max-w-2xl">
             Our technology enables travel buyers and suppliers to come together
             and seamlessly create joyful experiences for travellers all over the
             world.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 mb-8">
             <Button
               size="lg"
-              className="font-semibold bg-accent text-white hover:bg-accent/90 shadow-lg"
+              className="btn-orange font-semibold shadow-glow rounded-xl px-8"
               onClick={() => onNavigate("register")}
               data-ocid="hero.become_agent.primary_button"
             >
@@ -250,26 +252,26 @@ export function Hero({ onNavigate }: { onNavigate: (page: Page) => void }) {
             <Button
               size="lg"
               variant="outline"
-              className="font-semibold border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent"
+              className="font-semibold border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent rounded-xl px-8"
               data-ocid="hero.explore_services.secondary_button"
             >
-              Explore Services
+              Explore Platform
             </Button>
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center gap-5 text-sm text-white/60">
+          <div className="flex flex-wrap items-center gap-5 text-sm text-white/60">
             {["No setup fee", "Instant approval", "24x7 support"].map((t) => (
               <span key={t} className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-accent" />
-                {t}
+                <span className="text-white/80">{t}</span>
               </span>
             ))}
           </div>
         </div>
       </div>
 
-      <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-3 opacity-90">
-        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 text-white w-52">
+      <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-3">
+        <div className="glass-card rounded-xl p-4 text-white w-52 float-card">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-8 h-8 rounded-lg bg-blue-500/30 flex items-center justify-center">
               <Plane className="w-4 h-4 text-blue-200" />
@@ -283,7 +285,7 @@ export function Hero({ onNavigate }: { onNavigate: (page: Page) => void }) {
             ₹24,500 · Economy · IndiGo
           </p>
         </div>
-        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 text-white w-52 ml-6">
+        <div className="glass-card rounded-xl p-4 text-white w-52 ml-6 float-card-delayed">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-8 h-8 rounded-lg bg-green-500/30 flex items-center justify-center">
               <Hotel className="w-4 h-4 text-green-200" />
@@ -295,7 +297,7 @@ export function Hero({ onNavigate }: { onNavigate: (page: Page) => void }) {
             ₹18,200 / night · Deluxe
           </p>
         </div>
-        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 text-white w-52">
+        <div className="glass-card rounded-xl p-4 text-white w-52 float-card">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-8 h-8 rounded-lg bg-amber-500/30 flex items-center justify-center">
               <TrendingUp className="w-4 h-4 text-amber-200" />
@@ -332,11 +334,11 @@ export function StatsBar() {
               style={{ animationDelay: `${i * 0.1}s` }}
               data-ocid={`stats.item.${i + 1}`}
             >
-              <stat.icon className="w-7 h-7 text-white/60 mb-2" />
+              <stat.icon className="w-6 h-6 text-accent mb-2" />
               <span className="font-display text-3xl md:text-4xl font-bold text-white">
                 {stat.value}
               </span>
-              <span className="text-white/70 text-sm mt-1">{stat.label}</span>
+              <span className="text-white/60 text-sm mt-1">{stat.label}</span>
             </div>
           ))}
         </div>
@@ -359,72 +361,68 @@ const SERVICES = [
   },
   {
     icon: Package,
-    title: "Tour Packages",
-    desc: "Group tours, private tours, sightseeing & holiday packages via Viator, GetYourGuide & Klook.",
+    title: "Holiday Packages",
+    desc: "Curated packages for honeymoon, family & corporate travel with markup control and B2C resell.",
   },
   {
     icon: Car,
     title: "Transfers",
-    desc: "Airport & city transfers via HolidayTaxis, Jayride & Mozio. Reliable & comfortable rides.",
+    desc: "Airport, city, and hotel transfers with multiple vehicle options via HolidayTaxis, Jayride & Mozio.",
   },
   {
     icon: FileText,
     title: "Visa Services",
-    desc: "End-to-end visa assistance with OCR passport reading, online e-Visa & offline checklist support.",
+    desc: "eVisa and sticker visa processing for 190+ countries with document checklist and status tracking.",
   },
   {
     icon: Ship,
     title: "Cruise Booking",
-    desc: "Cruise routes, cabins & itineraries from top cruise lines. Luxury sailing experiences worldwide.",
+    desc: "Premium cruise inventory from leading cruise lines with cabin selection and real-time pricing.",
   },
   {
     icon: Train,
     title: "Railway Booking",
-    desc: "Indian Railways & international rail tickets. Fast, reliable train booking for all destinations.",
+    desc: "Indian Railways integration with PNR status, berth selection, and tatkal booking support.",
   },
   {
-    icon: Shield,
-    title: "Travel Insurance",
-    desc: "Comprehensive travel insurance covering medical, trip cancellation & baggage loss protection.",
+    icon: TrendingUp,
+    title: "Wallet & Payments",
+    desc: "Instant credit line, wallet top-up, multi-currency support, and automated reconciliation.",
   },
 ];
 
 export function ServicesSection() {
   return (
-    <section id="services" className="py-16 md:py-24 bg-background">
+    <section id="services" className="py-20 bg-white">
       <div className="container">
-        <div className="text-center mb-12">
-          <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+        <div className="text-center mb-14">
+          <Badge className="bg-accent/10 text-accent border-accent/20 mb-4">
             Our Services
           </Badge>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Everything Your Agents Need
+            Everything Your Agency Needs
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            One platform. All travel products. Seamlessly integrated with global
-            suppliers for instant booking and maximum margins.
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            A complete travel technology stack — from booking engines to payment
+            solutions, built for modern B2B travel agencies.
           </p>
         </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {SERVICES.map((service, i) => (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {SERVICES.map((svc, i) => (
             <div
-              key={service.title}
-              className="card-lift rounded-xl p-6 border border-border bg-card group cursor-pointer"
+              key={svc.title}
+              className="group card-lift bg-white border border-border rounded-2xl p-6 hover:border-accent/30"
               data-ocid={`services.item.${i + 1}`}
             >
-              <div className="w-12 h-12 rounded-xl bg-primary/8 flex items-center justify-center mb-4 transition-transform duration-200 group-hover:scale-110">
-                <service.icon className="w-6 h-6 text-primary" />
+              <div className="w-12 h-12 rounded-xl bg-primary/8 flex items-center justify-center mb-4 group-hover:bg-accent/10 transition-colors">
+                <svc.icon className="w-6 h-6 text-primary group-hover:text-accent transition-colors" />
               </div>
-              <h3 className="font-display font-semibold text-base text-foreground mb-2">
-                {service.title}
+              <h3 className="font-display font-semibold text-foreground mb-2">
+                {svc.title}
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {service.desc}
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                {svc.desc}
               </p>
-              <div className="mt-4 flex items-center gap-1 text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                Learn more <ChevronRight className="w-3 h-3" />
-              </div>
             </div>
           ))}
         </div>
@@ -434,26 +432,36 @@ export function ServicesSection() {
 }
 
 // ── Why Work With Us ──────────────────────────────────────────────────────────
-const WHY_POINTS = [
+const FEATURES = [
   {
     icon: Zap,
-    title: "Single XML Integration",
-    desc: "Connect once to access all LCC & full-service domestic carriers through a single powerful API.",
+    title: "Instant Bookings",
+    desc: "Real-time inventory with sub-2 second response times across all modules.",
   },
   {
-    icon: Globe,
-    title: "60+ Hotel Suppliers",
-    desc: "Largest hotel supplier network in India with instant room availability and competitive rates.",
+    icon: Shield,
+    title: "IATA Accredited",
+    desc: "Fully compliant with IATA standards and industry regulations for B2B travel.",
+  },
+  {
+    icon: Award,
+    title: "Best Commission",
+    desc: "Highest agent margins in the industry with transparent markup controls.",
   },
   {
     icon: HeadphonesIcon,
-    title: "24x7 Customer & Technical Support",
-    desc: "Round-the-clock expert support for all your booking queries, technical issues and emergencies.",
+    title: "24x7 Dedicated Support",
+    desc: "Round-the-clock expert support with an average response time under 2 minutes.",
   },
   {
-    icon: Users,
-    title: "2000+ API Customers Worldwide",
-    desc: "Trusted by thousands of travel agents, OTAs and tour operators across the globe.",
+    icon: Globe,
+    title: "Global Inventory",
+    desc: "Access to 1M+ hotels, 1000+ airlines, and 190+ visa destinations worldwide.",
+  },
+  {
+    icon: Building2,
+    title: "White Label Ready",
+    desc: "Launch your own branded portal in under 24 hours with custom domain & branding.",
   },
 ];
 
@@ -461,62 +469,43 @@ export function WhyWorkWithUs() {
   return (
     <section
       id="about"
-      className="py-16 md:py-24 relative overflow-hidden"
+      className="py-20"
       style={{
         background:
-          "linear-gradient(135deg, oklch(0.23 0.03 255) 0%, oklch(0.30 0.06 260) 100%)",
+          "linear-gradient(135deg, oklch(0.14 0.07 262) 0%, oklch(0.18 0.08 258) 100%)",
       }}
     >
-      <div className="container relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <Badge className="mb-4 bg-white/10 text-white border-white/20">
-              Why Work With Us
-            </Badge>
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">
-              Empowering 147,000+ Travel Agents Across India
-            </h2>
-            <p className="text-white/70 text-lg leading-relaxed mb-8">
-              FiveStar Travel has built India's most comprehensive B2B travel
-              distribution platform — connecting buyers and suppliers through
-              cutting-edge technology with 21 offices across India.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              {[
-                "Best Travel Technology 2023",
-                "IATA Accredited",
-                "ISO 9001:2015",
-              ].map((award) => (
-                <div
-                  key={award}
-                  className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1.5 text-xs text-white/80"
-                >
-                  <Award className="w-3.5 h-3.5 text-yellow-400" />
-                  {award}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {WHY_POINTS.map((point, i) => (
-              <div
-                key={point.title}
-                className="bg-white/8 backdrop-blur-sm border border-white/15 rounded-xl p-5 hover:bg-white/12 transition-colors duration-200"
-                data-ocid={`why.item.${i + 1}`}
-              >
-                <div className="w-10 h-10 rounded-lg bg-primary/30 flex items-center justify-center mb-3">
-                  <point.icon className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="font-display font-semibold text-white text-sm mb-2">
-                  {point.title}
-                </h3>
-                <p className="text-white/60 text-sm leading-relaxed">
-                  {point.desc}
-                </p>
+      <div className="container">
+        <div className="text-center mb-14">
+          <Badge className="bg-white/10 text-white/80 border-white/20 mb-4">
+            Why Choose Us
+          </Badge>
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">
+            Built for Serious Travel Professionals
+          </h2>
+          <p className="text-white/60 max-w-2xl mx-auto">
+            Enterprise-grade technology that scales with your business — from
+            solo agents to large agencies.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {FEATURES.map((feat, i) => (
+            <div
+              key={feat.title}
+              className="glass-card rounded-2xl p-6 group hover:border-white/30 transition-all duration-200"
+              data-ocid={`features.item.${i + 1}`}
+            >
+              <div className="w-11 h-11 rounded-xl bg-accent/20 flex items-center justify-center mb-4">
+                <feat.icon className="w-5 h-5 text-accent" />
               </div>
-            ))}
-          </div>
+              <h3 className="font-display font-semibold text-white mb-2">
+                {feat.title}
+              </h3>
+              <p className="text-white/60 text-sm leading-relaxed">
+                {feat.desc}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -524,36 +513,37 @@ export function WhyWorkWithUs() {
 }
 
 // ── Platinum Banner ───────────────────────────────────────────────────────────
-export function PlatinumBanner() {
+export function PlatinumBanner({
+  onNavigate,
+}: { onNavigate: (page: Page) => void }) {
   return (
-    <section className="py-10 bg-muted border-y border-border">
-      <div className="container">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 rounded-2xl bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 p-7 md:p-10">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center flex-shrink-0">
-              <Star className="w-6 h-6 text-white fill-white" />
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-amber-600 uppercase tracking-wider mb-0.5">
-                Exclusive
-              </p>
-              <h3 className="font-display text-xl font-bold text-foreground">
-                The Platinum Collection
-              </h3>
-              <p className="text-muted-foreground text-sm mt-1">
-                Handpicked hotels offering world-class service, luxurious
-                amenities &amp; unforgettable experiences.
-              </p>
-            </div>
-          </div>
-          <Button
-            className="bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-white font-semibold shadow-lg flex-shrink-0"
-            data-ocid="platinum.explore.primary_button"
-          >
-            Explore Collection
-            <ChevronRight className="w-4 h-4 ml-1" />
-          </Button>
+    <section
+      className="py-16"
+      style={{
+        background:
+          "linear-gradient(135deg, oklch(0.55 0.15 75) 0%, oklch(0.65 0.22 42) 60%, oklch(0.60 0.18 50) 100%)",
+      }}
+    >
+      <div className="container text-center">
+        <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center mx-auto mb-5">
+          <Star className="w-7 h-7 text-white fill-white" />
         </div>
+        <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">
+          Become a Platinum Partner
+        </h2>
+        <p className="text-white/80 max-w-xl mx-auto mb-8">
+          Unlock premium rates, dedicated account manager, priority support, and
+          exclusive destination deals.
+        </p>
+        <Button
+          size="lg"
+          className="bg-white text-amber-700 hover:bg-white/90 font-semibold rounded-xl px-8 shadow-premium"
+          onClick={() => onNavigate("register")}
+          data-ocid="platinum.join.primary_button"
+        >
+          Apply for Platinum
+          <ChevronRight className="w-4 h-4 ml-1" />
+        </Button>
       </div>
     </section>
   );
@@ -564,44 +554,45 @@ export function CTASection({
   onNavigate,
 }: { onNavigate: (page: Page) => void }) {
   return (
-    <section id="destinations" className="py-16 md:py-20 bg-background">
+    <section className="py-20 bg-background">
       <div className="container">
-        <div className="rounded-2xl bg-primary overflow-hidden relative">
+        <div className="bg-primary rounded-2xl px-8 py-14 text-center relative overflow-hidden">
           <div
-            className="absolute inset-0 opacity-10"
+            className="absolute inset-0 opacity-20"
             style={{
-              backgroundImage:
-                "repeating-linear-gradient(45deg, transparent, transparent 20px, white 20px, white 21px)",
+              background:
+                "radial-gradient(ellipse at 70% 50%, oklch(0.65 0.22 42) 0%, transparent 60%)",
             }}
           />
-          <div className="relative z-10 p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="text-white max-w-xl">
-              <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
-                Ready to Grow Your Travel Business?
-              </h2>
-              <p className="text-white/75 text-lg leading-relaxed">
-                Join 147,000+ travel agents who trust FiveStar Travel for their
-                booking needs. Get access to global inventory, competitive
-                pricing and dedicated support.
-              </p>
-            </div>
-            <div className="flex flex-col gap-3 flex-shrink-0">
+          <div className="relative z-10">
+            <Badge className="bg-white/10 text-white/80 border-white/20 mb-5">
+              Get Started Today
+            </Badge>
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">
+              Ready to Transform Your Travel Business?
+            </h2>
+            <p className="text-white/70 max-w-xl mx-auto mb-8">
+              Join 147,000+ agents already booking with FiveStar Travel. No
+              setup fee, instant approval.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button
                 size="lg"
-                className="bg-white text-primary hover:bg-white/90 font-semibold shadow-xl"
+                className="btn-orange rounded-xl font-semibold px-8 shadow-glow"
                 onClick={() => onNavigate("register")}
                 data-ocid="cta.register.primary_button"
               >
-                Start Free — No Setup Fee
+                Create Free Account
                 <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="border-white/40 text-white hover:bg-white/10 bg-transparent font-semibold"
-                data-ocid="cta.contact.secondary_button"
+                className="border-white/30 text-white hover:bg-white/10 bg-transparent rounded-xl"
+                onClick={() => onNavigate("login")}
+                data-ocid="cta.login.secondary_button"
               >
-                Talk to Our Team
+                Agent Login
               </Button>
             </div>
           </div>
@@ -612,160 +603,187 @@ export function CTASection({
 }
 
 // ── Footer ────────────────────────────────────────────────────────────────────
-const FOOTER_LINKS = {
-  Services: [
-    "Flight Booking",
-    "Hotel Booking",
-    "Tour Packages",
-    "Transfers",
-    "Visa Services",
-    "Cruise Booking",
-  ],
-  Company: [
-    "About Us",
-    "Careers",
-    "News & Events",
-    "Awards",
-    "Contact Us",
-    "Sitemap",
-  ],
-  Agents: [
-    "Become an Agent",
-    "Agent Login",
-    "Agent Dashboard",
-    "API Integration",
-    "Supplier Login",
-    "DMC Portal",
-  ],
-  Legal: [
-    "Privacy Policy",
-    "Terms & Conditions",
-    "Refund Policy",
-    "Payment Security",
-    "Compliance",
-    "CSR",
-  ],
-};
-
-const SOCIAL_LINKS = [
-  { icon: Facebook, label: "Facebook" },
-  { icon: Twitter, label: "Twitter" },
-  { icon: Linkedin, label: "LinkedIn" },
-  { icon: Instagram, label: "Instagram" },
-  { icon: Youtube, label: "YouTube" },
-];
-
-export function Footer() {
+export function Footer({ onNavigate }: { onNavigate?: (page: Page) => void }) {
   const year = new Date().getFullYear();
   return (
-    <footer id="contact" className="bg-secondary text-white">
-      <div className="container py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 md:gap-10">
-          <div className="lg:col-span-2">
-            <img
-              src="/assets/uploads/image-1.png"
-              alt="FiveStar Travel"
-              className="h-12 w-auto object-contain mb-4 brightness-0 invert"
-            />
+    <footer className="bg-secondary text-white">
+      <div className="container py-14">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+          {/* Brand */}
+          <div className="md:col-span-1">
+            <button
+              type="button"
+              onClick={() => onNavigate?.("home")}
+              className="mb-4 block"
+              data-ocid="footer.logo.link"
+            >
+              <div className="bg-white/90 rounded-lg px-2 py-1.5 inline-flex items-center">
+                <img
+                  src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+                  alt="FiveStar Travel"
+                  className="h-7 w-auto object-contain"
+                />
+              </div>
+            </button>
             <p className="text-white/60 text-sm leading-relaxed mb-5">
-              India's leading B2B travel distribution platform empowering
-              147,000+ travel agents with global inventory and cutting-edge
-              technology.
+              India's leading B2B travel technology platform powering 147,000+
+              travel agents worldwide.
             </p>
-            <div className="space-y-2.5">
-              <div className="flex items-start gap-2.5 text-sm text-white/60">
-                <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5 text-accent" />
-                <span>SCO 48, Sector 30C, Chandigarh, India</span>
-              </div>
-              <div className="flex items-center gap-2.5 text-sm text-white/60">
-                <Phone className="w-4 h-4 flex-shrink-0 text-accent" />
+            <div className="flex items-center gap-3">
+              {[
+                {
+                  icon: Facebook,
+                  href: "https://facebook.com",
+                  name: "facebook",
+                },
+                { icon: Twitter, href: "https://twitter.com", name: "twitter" },
+                {
+                  icon: Instagram,
+                  href: "https://instagram.com",
+                  name: "instagram",
+                },
+                {
+                  icon: Linkedin,
+                  href: "https://linkedin.com",
+                  name: "linkedin",
+                },
+                { icon: Youtube, href: "https://youtube.com", name: "youtube" },
+              ].map(({ icon: Icon, href, name }, i) => (
                 <a
-                  href="tel:01725000004"
-                  className="hover:text-white transition-colors"
-                  data-ocid="footer.phone.link"
+                  key={name}
+                  href={href}
+                  className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent transition-colors duration-150"
+                  data-ocid={`footer.social.link.${i + 1}`}
                 >
-                  01725000004
-                </a>
-              </div>
-              <div className="flex items-center gap-2.5 text-sm text-white/60">
-                <Mail className="w-4 h-4 flex-shrink-0 text-accent" />
-                <a
-                  href="mailto:customerservice@fivestartravel.in"
-                  className="hover:text-white transition-colors"
-                  data-ocid="footer.email.link"
-                >
-                  customerservice@fivestartravel.in
-                </a>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 mt-5">
-              {SOCIAL_LINKS.map((social) => (
-                <a
-                  key={social.label}
-                  href="/"
-                  aria-label={social.label}
-                  className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-primary transition-colors duration-150"
-                  data-ocid={`footer.${social.label.toLowerCase()}.link`}
-                >
-                  <social.icon className="w-4 h-4 text-white/70" />
+                  <Icon className="w-3.5 h-3.5" />
                 </a>
               ))}
             </div>
           </div>
 
-          {Object.entries(FOOTER_LINKS).map(([category, links]) => (
-            <div key={category}>
-              <h4 className="font-display font-semibold text-sm text-white mb-4">
-                {category}
-              </h4>
-              <ul className="space-y-2.5">
-                {links.map((link) => (
-                  <li key={link}>
-                    <a
-                      href={`#${link.toLowerCase().replace(/\s/g, "-")}`}
-                      className="text-sm text-white/55 hover:text-white transition-colors duration-150"
-                      data-ocid={`footer.${link.toLowerCase().replace(/\s/g, "_")}.link`}
-                    >
-                      {link}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {/* Services */}
+          <div>
+            <h4 className="font-display font-semibold text-white mb-4 text-sm uppercase tracking-wider">
+              Services
+            </h4>
+            <ul className="space-y-2.5 text-sm">
+              {[
+                "Flight Booking",
+                "Hotel Booking",
+                "Holiday Packages",
+                "Visa Services",
+                "Transfers",
+                "Cruises",
+              ].map((s) => (
+                <li key={s}>
+                  <a
+                    href="#services"
+                    className="text-white/60 hover:text-accent transition-colors"
+                  >
+                    {s}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <h4 className="font-display font-semibold text-white mb-4 text-sm uppercase tracking-wider">
+              Company
+            </h4>
+            <ul className="space-y-2.5 text-sm">
+              {[
+                "About Us",
+                "Careers",
+                "Press",
+                "Blog",
+                "Partner Program",
+                "Sitemap",
+              ].map((s) => (
+                <li key={s}>
+                  <a
+                    href="/about"
+                    className="text-white/60 hover:text-accent transition-colors"
+                  >
+                    {s}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div id="contact">
+            <h4 className="font-display font-semibold text-white mb-4 text-sm uppercase tracking-wider">
+              Contact
+            </h4>
+            <ul className="space-y-3 text-sm">
+              <li className="flex items-start gap-2.5 text-white/60">
+                <MapPin className="w-4 h-4 mt-0.5 text-accent flex-shrink-0" />
+                SCO 48 Sector 30C, Chandigarh, India
+              </li>
+              <li>
+                <a
+                  href="tel:+911725000004"
+                  className="flex items-center gap-2.5 text-white/60 hover:text-accent transition-colors"
+                >
+                  <Phone className="w-4 h-4 text-accent" />
+                  +91-1725000004
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:customerservice@fivestartravel.in"
+                  className="flex items-center gap-2.5 text-white/60 hover:text-accent transition-colors"
+                >
+                  <Mail className="w-4 h-4 text-accent" />
+                  customerservice@fivestartravel.in
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
 
-      <div className="border-t border-white/10">
-        <div className="container py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-white/40">
-          <div className="flex flex-wrap items-center gap-4">
-            <span>© {year} FiveStar Travel. All rights reserved.</span>
-            <span>CIN: U63030MH2018PTC314938</span>
-          </div>
-          <a
-            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(typeof window !== "undefined" ? window.location.hostname : "")}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-white/60 transition-colors"
-          >
-            Built with ♥ using caffeine.ai
-          </a>
+      <div className="premium-divider" />
+
+      <div className="container py-5">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-white/50">
+          <p>
+            © {year} FiveStar Travel · CIN: U63030MH2018PTC314938 · All rights
+            reserved.
+          </p>
+          <p>
+            Built with love using{" "}
+            <a
+              href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(typeof window !== "undefined" ? window.location.hostname : "")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:text-accent/80 transition-colors"
+            >
+              caffeine.ai
+            </a>
+          </p>
         </div>
       </div>
     </footer>
   );
 }
 
-// ── Home Page composite ───────────────────────────────────────────────────────
+// ── Home Page ─────────────────────────────────────────────────────────────────
 export function HomePage({ onNavigate }: { onNavigate: (page: Page) => void }) {
   return (
-    <>
+    <div>
+      <TopBar />
+      <Header onNavigate={onNavigate} />
       <Hero onNavigate={onNavigate} />
       <StatsBar />
       <ServicesSection />
       <WhyWorkWithUs />
-      <PlatinumBanner />
+      <PlatinumBanner onNavigate={onNavigate} />
       <CTASection onNavigate={onNavigate} />
-    </>
+      <Footer onNavigate={onNavigate} />
+    </div>
   );
 }

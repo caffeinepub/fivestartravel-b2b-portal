@@ -1,39 +1,44 @@
-# FiveStarTravel B2B Portal - Transfer Module Complete Rebuild
+# FiveStarTravel B2B Portal — Premium Redesign
 
 ## Current State
-TransferBooking.tsx exists with a basic 4-step flow (search → results → details → confirmed) covering airport, outstation, and local tabs. It has vehicle cards, passenger fields (name/phone/email/notes), and a basic booking summary. Missing: proper trip type tabs (one-way/round/rental/outstation), car plate/reg number, full duration/distance fields, proper review step before payment, airport/hotel/city address confirmation fields, rental hours picker, and wallet deduction display.
+- Working B2B portal with full booking modules (Flight, Hotel, Visa, Transfer, etc.)
+- Basic design using Bricolage Grotesque + Outfit fonts
+- Primary color #0B5ED7 (blue), secondary #1E293B (navy), accent #22C55E (green)
+- Logo hosted at /assets/uploads/image-1.png (old), new logo at /assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg
+- Standard SaaS dashboard layout, not premium enough
 
 ## Requested Changes (Diff)
 
 ### Add
-- Trip type tabs: One-Way | Round Trip | Rental (hourly) | Outstation
-- Transfer category selector per type: Airport Transfer vs City-to-City vs Hotel Pickup
-- Full vehicle detail on card: car type, registration number (plate), PAX capacity, luggage capacity, estimated duration, price per km/hour
-- Dedicated Review step (step 4) between details and confirmation showing: all trip details, vehicle summary, passenger info, pickup/drop confirmation (airport terminal, hotel name, city), itinerary, price breakup (base fare + toll + GST + driver allowance), T&C, wallet balance vs total
-- Wallet deduction on final confirm with remaining balance shown
-- Rental: hours picker (4hr/8hr/12hr) + package price
-- Outstation: multi-day support, per-day pricing, return date
-- Passenger form: title (Mr/Mrs/Ms), full name, mobile, email, alternate contact
-- Pickup confirmation: airport name + terminal (for airport type), hotel name + address (for hotel), city + landmark (for city)
-- Booking ref format: TRF-YYYYMMDD-XXXXXX
-- 5-step progress stepper: Search → Results → Details → Review → Confirmed
+- New logo reference: /assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg used throughout
+- Premium OKLCH color tokens: deep navy (primary), vibrant orange (accent/CTA), rich gold highlights
+- Advanced glassmorphism hero with animated gradient mesh background
+- Premium sidebar with gradient, logo display, glowing active states
+- Top header with glass effect and premium wallet display
+- Luxury-tier typography: Bricolage Grotesque for display, Plus Jakarta Sans for body
+- Premium stat cards with gradient overlays and micro-detail
+- Animated gradient CTA buttons with hover shimmer effects
+- Premium service cards with sophisticated hover interactions
+- High-end footer with gradient background and subtle texture
+- Advanced dashboard quick-book grid with premium icon design
+- Cinematic hero section with layered depth and floating booking cards
 
 ### Modify
-- Replace single tab (airport/outstation/local) with 4 trip type tabs
-- Expand vehicle cards with plate number (masked), duration estimate, km estimate, tolls included badge
-- Passenger details page: add title, alternate contact, GST (optional), special requests
-- Confirmation page: full itinerary card, driver contact (mock), QR code placeholder, download voucher CTA
+- index.css: Rewrite all CSS tokens to match premium navy/orange palette + advanced gradient classes
+- tailwind.config.js: Add Plus Jakarta Sans font, premium shadow tokens, advanced animations
+- PublicPages.tsx: Redesign Header, Hero, StatsBar, ServicesSection, WhyWorkWithUs, Footer with premium look
+- DashboardLayout.tsx: Premium dark sidebar with gradient, glowing nav items, premium header
+- DashboardPage.tsx: Premium stat cards, gradient deal cards, polished booking table
+- AuthPages.tsx: Premium login/register with logo + brand color background panel
 
 ### Remove
-- Generic "local" tab (replaced by Rental)
-- Sparse confirmation screen (replaced by detailed booking confirmation card)
+- Generic flat card styles
+- Outdated logo src paths replaced with new logo
 
 ## Implementation Plan
-1. Rewrite TransferBooking.tsx completely as a standalone file under 600 lines
-2. Add trip type: ONE_WAY | ROUND_TRIP | RENTAL | OUTSTATION with appropriate sub-fields
-3. Transfer category: AIRPORT | CITY | HOTEL pickup/drop
-4. Vehicle cards: show car type, reg (masked), PAX, bags, distance, duration, price
-5. Passenger details form: title + name + mobile + email + alt contact + pickup notes
-6. Review step: full summary, price breakup table, T&C checkbox, wallet panel
-7. Wallet deduction on submit, show remaining balance
-8. Confirmed step: booking ref, driver info, full trip card, download/new-search CTAs
+1. Update index.css with premium OKLCH tokens: deep navy primary, orange accent, gold brand color, dark/semi-dark sidebar
+2. Update tailwind.config.js with Plus Jakarta Sans, premium shadows, custom animations
+3. Redesign PublicPages.tsx: cinematic hero, premium nav, advanced sections
+4. Redesign DashboardLayout.tsx: premium sidebar with gradient + glow, header glass
+5. Redesign DashboardPage.tsx: premium stats, gradient cards, polished table
+6. Redesign AuthPages.tsx: split-panel login with brand hero side

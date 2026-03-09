@@ -4,13 +4,14 @@ import {
   Car,
   FileText,
   Hotel,
+  LogOut,
   Package,
   Plane,
   Ship,
   Train,
   TrendingUp,
   User,
-  X,
+  Wallet,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getWalletBalance } from "../utils/walletUtils";
@@ -35,9 +36,10 @@ export const DASHBOARD_NAV: {
   icon: React.ElementType;
   label: string;
   key: DashboardPage;
+  badge?: string;
 }[] = [
   { icon: TrendingUp, label: "Dashboard", key: "dashboard" },
-  { icon: Plane, label: "Flights", key: "flights" },
+  { icon: Plane, label: "Flights", key: "flights", badge: "LIVE" },
   { icon: Hotel, label: "Hotels", key: "hotels" },
   { icon: Package, label: "Tours", key: "tours" },
   { icon: Car, label: "Transfers", key: "transfers" },
@@ -46,7 +48,7 @@ export const DASHBOARD_NAV: {
   { icon: Train, label: "Railway", key: "railway" },
   { icon: Package, label: "Packages", key: "packages" },
   { icon: FileText, label: "My Bookings", key: "bookings" },
-  { icon: TrendingUp, label: "Wallet", key: "wallet" },
+  { icon: Wallet, label: "Wallet", key: "wallet" },
   { icon: Award, label: "Reports", key: "reports" },
   { icon: User, label: "Support", key: "support" },
 ];
@@ -84,48 +86,78 @@ export function DashboardLayout({
     <div className="min-h-screen bg-muted/30 flex">
       {/* Sidebar */}
       <aside
-        className="w-56 bg-card border-r border-border flex-shrink-0 hidden md:flex flex-col"
+        className="w-60 flex-shrink-0 hidden md:flex flex-col sidebar-gradient"
         data-ocid="dashboard.sidebar.panel"
       >
-        <div className="px-4 py-4 border-b border-border">
-          <img
-            src="/assets/uploads/image-1.png"
-            alt="FiveStar Travel"
-            className="h-9 w-auto object-contain"
-          />
+        {/* Logo area */}
+        <div className="px-4 py-5 border-b border-sidebar-border">
+          <div className="bg-white/90 rounded-lg px-2 py-1.5 inline-flex items-center">
+            <img
+              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              alt="FiveStar Travel"
+              className="h-8 w-auto object-contain"
+            />
+          </div>
         </div>
-        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+
+        {/* Nav label */}
+        <div className="px-4 pt-5 pb-2">
+          <span className="text-[10px] font-semibold tracking-widest text-sidebar-foreground/40 uppercase">
+            Main Menu
+          </span>
+        </div>
+
+        <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto pb-4">
           {DASHBOARD_NAV.map((item, i) => (
             <button
               key={item.key}
               type="button"
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150 ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
                 activeNav === item.key
-                  ? "bg-primary text-primary-foreground"
-                  : "text-foreground/70 hover:bg-muted hover:text-foreground"
+                  ? "nav-active text-white"
+                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
               }`}
               onClick={() => onNavChange(item.key)}
               data-ocid={`dashboard.nav.item.${i + 1}`}
             >
-              <item.icon className="w-4 h-4 flex-shrink-0" />
-              {item.label}
-              {item.key === "flights" && (
-                <Badge className="ml-auto bg-accent/20 text-accent border-accent/20 text-[10px] px-1.5 py-0">
-                  NEW
-                </Badge>
+              <item.icon
+                className={`w-4 h-4 flex-shrink-0 ${
+                  activeNav === item.key ? "text-accent" : "opacity-60"
+                }`}
+              />
+              <span className="flex-1 text-left">{item.label}</span>
+              {item.badge && (
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-accent/20 text-accent leading-none">
+                  {item.badge}
+                </span>
               )}
             </button>
           ))}
         </nav>
-        <div className="px-3 pb-4 border-t border-border pt-3">
+
+        {/* Bottom user area */}
+        <div className="px-3 pb-5 border-t border-sidebar-border pt-4 space-y-3">
+          <div className="flex items-center gap-3 px-3 py-2">
+            <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
+              <User className="w-4 h-4 text-accent" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sidebar-foreground text-xs font-semibold truncate">
+                Demo Agent
+              </p>
+              <p className="text-sidebar-foreground/40 text-[10px]">
+                Travel Agent
+              </p>
+            </div>
+          </div>
           <button
             type="button"
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors duration-150"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors duration-150"
             onClick={onLogout}
             data-ocid="dashboard.logout.button"
           >
-            <X className="w-4 h-4" />
-            Logout
+            <LogOut className="w-4 h-4" />
+            Sign Out
           </button>
         </div>
       </aside>
@@ -133,7 +165,7 @@ export function DashboardLayout({
       {/* Main area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top header */}
-        <header className="h-14 bg-card border-b border-border flex items-center justify-between px-5 flex-shrink-0">
+        <header className="h-14 bg-card/95 backdrop-blur-sm shadow-navy-sm border-b border-border flex items-center justify-between px-5 flex-shrink-0">
           <div>
             <h1 className="font-display font-semibold text-foreground text-base">
               {title}
@@ -142,17 +174,22 @@ export function DashboardLayout({
               <p className="text-xs text-muted-foreground">{subtitle}</p>
             )}
           </div>
-          <div className="flex items-center gap-3">
-            <div className="text-right hidden sm:block">
-              <p className="text-xs text-muted-foreground">Wallet Balance</p>
-              <p
-                className="font-display font-bold text-accent text-sm"
-                data-ocid="dashboard.wallet_balance.panel"
-              >
-                ₹{walletBal.toLocaleString("en-IN")}
-              </p>
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-2 bg-accent/8 border border-accent/20 rounded-lg px-3 py-1.5">
+              <Wallet className="w-3.5 h-3.5 text-accent" />
+              <div>
+                <p className="text-[10px] text-muted-foreground leading-none">
+                  Wallet
+                </p>
+                <p
+                  className="font-display font-bold text-accent text-sm leading-none mt-0.5"
+                  data-ocid="dashboard.wallet_balance.panel"
+                >
+                  ₹{walletBal.toLocaleString("en-IN")}
+                </p>
+              </div>
             </div>
-            <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
               <User className="w-4 h-4 text-primary" />
             </div>
           </div>
