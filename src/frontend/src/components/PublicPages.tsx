@@ -62,7 +62,13 @@ export type Page =
   | "reports"
   | "support"
   | "supplier-login"
-  | "admin-login";
+  | "admin-login"
+  | "gds"
+  | "dmc-login"
+  | "dmc-dashboard"
+  | "admin-dashboard"
+  | "supplier-dashboard"
+  | "crm";
 
 // ── Scroll Animation Hook ─────────────────────────────────────────────────────
 function useScrollReveal() {

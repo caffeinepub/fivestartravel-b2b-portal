@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Eye,
   EyeOff,
+  Globe,
   Lock,
   LogIn,
   Mail,
@@ -782,7 +783,7 @@ export function SupplierLoginPage({
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      onNavigate("dashboard");
+      onNavigate("supplier-dashboard");
     }, 800);
   }
 
@@ -1034,7 +1035,7 @@ export function AdminLoginPage({
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      onNavigate("dashboard");
+      onNavigate("admin-dashboard");
     }, 800);
   }
 
@@ -1274,6 +1275,233 @@ export function AdminLoginPage({
               type="button"
               onClick={() => onNavigate("home")}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              ← Back to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── DMC Login Page ───────────────────────────────────────────────────────────
+export function DMCLoginPage({
+  onNavigate,
+}: { onNavigate: (page: Page) => void }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    if (!email || !password) {
+      setError("Please enter your email and password.");
+      return;
+    }
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      onNavigate("dmc-dashboard");
+    }, 800);
+  }
+
+  return (
+    <div className="min-h-screen flex">
+      {/* Left panel */}
+      <div
+        className="hidden md:flex w-1/2 flex-col items-center justify-center p-12 relative overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #0F766E, #14B8A6)" }}
+      >
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 20% 50%, #fff 0%, transparent 60%), radial-gradient(circle at 80% 20%, #fff 0%, transparent 50%)",
+          }}
+        />
+        <div className="relative z-10 text-center max-w-sm">
+          <div className="bg-white/90 rounded-xl px-4 py-2.5 inline-flex items-center mb-10">
+            <img
+              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              alt="FiveStar Travel"
+              className="h-9 w-auto object-contain"
+            />
+          </div>
+          <h2 className="font-display text-3xl font-bold text-white mb-3">
+            DMC Portal
+          </h2>
+          <p className="text-white/80 text-sm mb-10 leading-relaxed">
+            Manage destination packages, partner agents, and curated travel
+            experiences across the world's top destinations.
+          </p>
+          <div className="space-y-3 text-left">
+            {[
+              { icon: Users, value: "200+", label: "DMC Partners" },
+              { icon: Globe, value: "180+", label: "Destinations Covered" },
+              { icon: Shield, value: "24/7", label: "Dedicated Support" },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="rounded-xl px-4 py-3 flex items-center gap-3"
+                style={{
+                  background: "rgba(255,255,255,0.15)",
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                }}
+              >
+                <div
+                  className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                  style={{ background: "rgba(255,255,255,0.2)" }}
+                >
+                  <item.icon className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-white font-semibold text-sm">
+                    {item.value}
+                  </p>
+                  <p className="text-white/70 text-xs">{item.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Live status widget */}
+          <div
+            className="mt-8 rounded-xl p-4 text-left"
+            style={{
+              background: "rgba(255,255,255,0.15)",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255,255,255,0.2)",
+            }}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-2 h-2 rounded-full bg-green-300 animate-pulse" />
+              <span className="text-white/80 text-xs">
+                Package update · just now
+              </span>
+            </div>
+            <p className="text-white font-semibold text-sm">
+              Dubai 5N/6D Premium
+            </p>
+            <p className="text-white/90 text-sm font-bold">
+              12 packages · 4 new arrivals
+            </p>
+            <p className="text-white/60 text-xs mt-1">
+              Rates updated for March 2026
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Right panel */}
+      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-white">
+        <div className="w-full max-w-md">
+          <div className="md:hidden flex items-center mb-8">
+            <img
+              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              alt="FiveStar Travel"
+              className="h-8 w-auto object-contain"
+            />
+          </div>
+          <div
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-6"
+            style={{ background: "#CCFBF1", color: "#0F766E" }}
+          >
+            <Globe className="w-3.5 h-3.5" />
+            DMC Portal
+          </div>
+          <h1 className="text-2xl font-bold text-slate-900 mb-1">
+            Welcome back
+          </h1>
+          <p className="text-slate-500 text-sm mb-8">
+            Sign in to your DMC account
+          </p>
+
+          {error && (
+            <div
+              className="mb-4 rounded-lg px-4 py-3 text-sm font-medium"
+              style={{ background: "#FEF2F2", color: "#DC2626" }}
+              data-ocid="dmc-login.error_state"
+            >
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label
+                htmlFor="dmc-email"
+                className="block text-sm font-medium text-slate-700 mb-1.5"
+              >
+                Email Address
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                id="dmc-email"
+                placeholder="dmc@example.com"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all"
+                style={{ "--tw-ring-color": "#14B8A6" } as React.CSSProperties}
+                data-ocid="dmc-login.input"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="dmc-password"
+                className="block text-sm font-medium text-slate-700 mb-1.5"
+              >
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  id="dmc-password"
+                  placeholder="Enter your password"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all pr-11"
+                  style={
+                    { "--tw-ring-color": "#14B8A6" } as React.CSSProperties
+                  }
+                  data-ocid="dmc-login.input"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 bg-transparent border-0 p-0 cursor-pointer"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 rounded-xl text-white font-semibold text-sm transition-all hover:opacity-90 disabled:opacity-60"
+              style={{
+                background: "linear-gradient(135deg, #0F766E, #14B8A6)",
+                boxShadow: "0 10px 25px rgba(15,118,110,0.35)",
+              }}
+              data-ocid="dmc-login.submit_button"
+            >
+              {loading ? "Signing in…" : "Sign In to DMC Portal"}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <button
+              type="button"
+              onClick={() => onNavigate("home")}
+              className="text-slate-400 text-sm hover:text-slate-600 bg-transparent border-0 p-0 cursor-pointer"
+              data-ocid="dmc-login.link"
             >
               ← Back to Home
             </button>

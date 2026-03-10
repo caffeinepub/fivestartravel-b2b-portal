@@ -1,9 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 import {
   Award,
+  Bell,
   Car,
   FileText,
+  Globe,
   Hotel,
+  Layers,
   LogOut,
   Package,
   Plane,
@@ -11,6 +14,7 @@ import {
   Train,
   TrendingUp,
   User,
+  Users,
   Wallet,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -30,7 +34,11 @@ export type DashboardPage =
   | "bookings"
   | "wallet"
   | "reports"
-  | "support";
+  | "crm"
+  | "support"
+  | "gds"
+  | "whitelabel"
+  | "notifications";
 
 export const DASHBOARD_NAV: {
   icon: React.ElementType;
@@ -46,10 +54,14 @@ export const DASHBOARD_NAV: {
   { icon: FileText, label: "Visa", key: "visa" },
   { icon: Ship, label: "Cruises", key: "cruises" },
   { icon: Train, label: "Railway", key: "railway" },
+  { icon: Globe, label: "GDS", key: "gds", badge: "NEW" },
   { icon: Package, label: "Packages", key: "packages" },
   { icon: FileText, label: "My Bookings", key: "bookings" },
   { icon: Wallet, label: "Wallet", key: "wallet" },
   { icon: Award, label: "Reports", key: "reports" },
+  { icon: Users, label: "CRM", key: "crm", badge: "NEW" },
+  { icon: Layers, label: "White Label", key: "whitelabel", badge: "NEW" },
+  { icon: Bell, label: "Notifications", key: "notifications", badge: "3" },
   { icon: User, label: "Support", key: "support" },
 ];
 

@@ -1,44 +1,31 @@
-# FiveStarTravel B2B Portal — Premium Redesign
+# FiveStarTravel B2B Portal
 
 ## Current State
-- Working B2B portal with full booking modules (Flight, Hotel, Visa, Transfer, etc.)
-- Basic design using Bricolage Grotesque + Outfit fonts
-- Primary color #0B5ED7 (blue), secondary #1E293B (navy), accent #22C55E (green)
-- Logo hosted at /assets/uploads/image-1.png (old), new logo at /assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg
-- Standard SaaS dashboard layout, not premium enough
+- All 7 booking modules complete (Flight, Hotel, Visa, Transfer, Tour, Cruise, Railway)
+- GDS, Package Builder, Wallet, Reports, CRM (5 tabs), Supplier/DMC/Admin Dashboards all complete
+- Premium public homepage with 4 role-based login buttons (Agent, Supplier, DMC, Admin)
+- DMC Login page exists as a basic placeholder (inline in App.tsx, not a proper dedicated page)
+- No White-Label Settings module
+- No Notifications/Announcements system
 
 ## Requested Changes (Diff)
 
 ### Add
-- New logo reference: /assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg used throughout
-- Premium OKLCH color tokens: deep navy (primary), vibrant orange (accent/CTA), rich gold highlights
-- Advanced glassmorphism hero with animated gradient mesh background
-- Premium sidebar with gradient, logo display, glowing active states
-- Top header with glass effect and premium wallet display
-- Luxury-tier typography: Bricolage Grotesque for display, Plus Jakarta Sans for body
-- Premium stat cards with gradient overlays and micro-detail
-- Animated gradient CTA buttons with hover shimmer effects
-- Premium service cards with sophisticated hover interactions
-- High-end footer with gradient background and subtle texture
-- Advanced dashboard quick-book grid with premium icon design
-- Cinematic hero section with layered depth and floating booking cards
+- DMCLoginPage component in AuthPages.tsx — premium teal-themed split layout matching Supplier/Admin login pages
+- White-Label Settings module (new page in agent dashboard) — branding customization, sub-agent portal settings, domain config, commission settings
+- Notifications module (new page in agent dashboard) — announcement feed, unread badges, mark-read, notification types (booking confirmed, payment, promotion, system)
 
 ### Modify
-- index.css: Rewrite all CSS tokens to match premium navy/orange palette + advanced gradient classes
-- tailwind.config.js: Add Plus Jakarta Sans font, premium shadow tokens, advanced animations
-- PublicPages.tsx: Redesign Header, Hero, StatsBar, ServicesSection, WhyWorkWithUs, Footer with premium look
-- DashboardLayout.tsx: Premium dark sidebar with gradient, glowing nav items, premium header
-- DashboardPage.tsx: Premium stat cards, gradient deal cards, polished booking table
-- AuthPages.tsx: Premium login/register with logo + brand color background panel
+- App.tsx: replace inline DMC login placeholder with proper DMCLoginPage component; add white-label and notifications routing
+- DashboardLayout.tsx: add White-Label and Notifications to nav items and DashboardPage type
 
 ### Remove
-- Generic flat card styles
-- Outdated logo src paths replaced with new logo
+- Inline DMC login placeholder code in App.tsx
 
 ## Implementation Plan
-1. Update index.css with premium OKLCH tokens: deep navy primary, orange accent, gold brand color, dark/semi-dark sidebar
-2. Update tailwind.config.js with Plus Jakarta Sans, premium shadows, custom animations
-3. Redesign PublicPages.tsx: cinematic hero, premium nav, advanced sections
-4. Redesign DashboardLayout.tsx: premium sidebar with gradient + glow, header glass
-5. Redesign DashboardPage.tsx: premium stats, gradient cards, polished table
-6. Redesign AuthPages.tsx: split-panel login with brand hero side
+1. Add DMCLoginPage to AuthPages.tsx (teal gradient left panel, form right panel)
+2. Update App.tsx to import and use DMCLoginPage, replace inline placeholder
+3. Add WhiteLabelSettings component (new file)
+4. Add NotificationsModule component (new file)
+5. Update DashboardLayout.tsx to add WhiteLabel and Notifications nav items
+6. Update App.tsx routing for new modules
