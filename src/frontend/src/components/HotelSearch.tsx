@@ -625,7 +625,7 @@ function HotelCard({
 
   return (
     <div
-      className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-200"
+      className={`bg-card border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200 border-l-4 ${hotel.badge === "LUXURY" ? "border-l-purple-500 border-border" : hotel.badge === "BEST VALUE" || hotel.badge === "CHEAPEST" ? "border-l-green-500 border-border" : hotel.badge === "BEST SELLER" ? "border-l-orange-500 border-border" : "border-l-primary border-border"}`}
       data-ocid={`hotel.result.item.${index + 1}`}
     >
       <div className="flex gap-0 sm:gap-4 flex-col sm:flex-row">
@@ -726,7 +726,7 @@ function HotelCard({
               )}
               <Button
                 size="sm"
-                className="mt-2 bg-primary text-primary-foreground font-semibold text-xs px-4"
+                className="mt-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold text-xs px-4 shadow-sm shadow-orange-500/25 border-0"
                 data-ocid={`hotel.book.button.${index + 1}`}
                 onClick={onViewDetail}
               >
@@ -993,12 +993,12 @@ function HotelResults({
 
         {/* Session timer */}
         <div
-          className={`mb-3 flex items-center justify-between px-4 py-2.5 rounded-xl border text-sm ${
+          className={`mb-3 flex items-center justify-between px-4 py-2.5 rounded-full border text-sm font-medium shadow-md ${
             sessionExpired
-              ? "bg-red-50 border-red-200 text-red-700"
+              ? "bg-red-950/80 border-red-500/50 text-red-300 shadow-red-900/40"
               : sessionSecs < 120
-                ? "bg-amber-50 border-amber-200 text-amber-700"
-                : "bg-blue-50 border-blue-200 text-blue-700"
+                ? "bg-amber-950/80 border-amber-400/50 text-amber-200 shadow-amber-900/40 animate-pulse"
+                : "bg-blue-950/60 border-blue-400/30 text-blue-200 shadow-blue-900/30"
           }`}
           data-ocid="hotel.session_timer.panel"
         >
@@ -1040,7 +1040,7 @@ function HotelResults({
                 type="button"
                 className={`px-4 py-2 rounded-full text-xs font-semibold border transition-colors whitespace-nowrap ${
                   ratePlan === plan.id
-                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                    ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white border-orange-500 shadow-sm shadow-orange-500/30"
                     : "bg-card text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
                 }`}
                 onClick={() => setRatePlan(plan.id)}
@@ -1341,8 +1341,8 @@ export function HotelSearch() {
 
   return (
     <div className="space-y-5" data-ocid="hotel.search.panel">
-      <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
-        <div className="bg-primary px-6 py-4 flex items-center gap-3">
+      <div className="rounded-2xl overflow-hidden shadow-2xl border border-slate-700/60">
+        <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 px-6 py-4 flex items-center gap-3 border-b border-white/10">
           <Hotel className="w-5 h-5 text-white" />
           <h2 className="font-display font-bold text-white text-lg">
             Book Hotels
@@ -1354,18 +1354,18 @@ export function HotelSearch() {
 
         <form
           onSubmit={handleSearch}
-          className="p-5 space-y-4"
+          className="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 p-5 space-y-4"
           data-ocid="hotel.search.form"
         >
           <div className="space-y-1 relative">
             <Label
               htmlFor="hotel-destination"
-              className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+              className="text-xs font-semibold text-white/70 uppercase tracking-wide"
             >
               Destination / Hotel Name
             </Label>
             <div className="relative">
-              <MapPin className="absolute left-3 top-3.5 w-4 h-4 text-muted-foreground" />
+              <MapPin className="absolute left-3 top-3.5 w-4 h-4 text-white/50" />
               <Input
                 id="hotel-destination"
                 placeholder="City, hotel, or area"
@@ -1376,7 +1376,7 @@ export function HotelSearch() {
                 }}
                 onFocus={() => setCityDropdown(true)}
                 onBlur={() => setTimeout(() => setCityDropdown(false), 150)}
-                className="h-12 pl-9 text-base font-medium"
+                className="h-12 pl-9 text-base font-medium bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-orange-400/60"
                 data-ocid="hotel.destination.input"
                 autoComplete="off"
               />
@@ -1414,7 +1414,7 @@ export function HotelSearch() {
             <div className="space-y-1">
               <Label
                 htmlFor="check-in"
-                className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                className="text-xs font-semibold text-white/70 uppercase tracking-wide"
               >
                 Check-in
               </Label>
@@ -1423,14 +1423,14 @@ export function HotelSearch() {
                 type="date"
                 value={checkIn}
                 onChange={(e) => setCheckIn(e.target.value)}
-                className="h-12"
+                className="h-12 bg-white/10 border-white/20 text-white [color-scheme:dark]"
                 data-ocid="hotel.checkin.input"
               />
             </div>
             <div className="space-y-1">
               <Label
                 htmlFor="check-out"
-                className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                className="text-xs font-semibold text-white/70 uppercase tracking-wide"
               >
                 Check-out ·{" "}
                 <span className="text-primary font-bold">
@@ -1442,7 +1442,7 @@ export function HotelSearch() {
                 type="date"
                 value={checkOut}
                 onChange={(e) => setCheckOut(e.target.value)}
-                className="h-12"
+                className="h-12 bg-white/10 border-white/20 text-white [color-scheme:dark]"
                 data-ocid="hotel.checkout.input"
               />
             </div>
@@ -1458,13 +1458,13 @@ export function HotelSearch() {
             <div className="space-y-1">
               <Label
                 htmlFor="nationality"
-                className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                className="text-xs font-semibold text-white/70 uppercase tracking-wide"
               >
                 Nationality
               </Label>
               <select
                 id="nationality"
-                className="w-full h-12 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full h-12 rounded-md border border-white/20 bg-white/10 text-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400/60 [&>option]:bg-slate-900 [&>option]:text-white"
                 value={nationality}
                 onChange={(e) => setNationality(e.target.value)}
                 data-ocid="hotel.nationality.select"
@@ -1494,7 +1494,7 @@ export function HotelSearch() {
           <div className="flex items-center justify-between">
             <label
               htmlFor="gst-rates"
-              className="flex items-center gap-2 cursor-pointer text-sm"
+              className="flex items-center gap-2 cursor-pointer text-sm text-white/80"
             >
               <input
                 id="gst-rates"
@@ -1511,7 +1511,7 @@ export function HotelSearch() {
           {/* Hotel ID Search Toggle */}
           <div className="space-y-2">
             <label
-              className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none"
+              className="flex items-center gap-2 text-xs text-white/70 cursor-pointer select-none"
               data-ocid="hotel.hids.toggle"
             >
               <input
@@ -1531,10 +1531,10 @@ export function HotelSearch() {
                   value={hidsText}
                   onChange={(e) => setHidsText(e.target.value)}
                   rows={2}
-                  className="text-xs font-mono resize-none"
+                  className="text-xs font-mono resize-none bg-white/10 border-white/20 text-white placeholder:text-white/40"
                   data-ocid="hotel.hids.textarea"
                 />
-                <p className="text-[10px] text-muted-foreground">
+                <p className="text-[10px] text-white/50">
                   TripJack hotel IDs (tjHotelId) — up to 100 per search. City
                   search is disabled when using hotel IDs.
                 </p>
@@ -1546,7 +1546,7 @@ export function HotelSearch() {
             <Button
               type="submit"
               size="lg"
-              className="bg-primary text-primary-foreground font-semibold px-8"
+              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold px-8 shadow-lg shadow-orange-500/30 border-0"
               disabled={loading || (!destination && !useHids)}
               data-ocid="hotel.search.primary_button"
             >

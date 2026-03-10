@@ -235,9 +235,9 @@ export function TransferBooking() {
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors ${
                   i < stepIndex
-                    ? "bg-blue-600 border-blue-600 text-white"
+                    ? "bg-gradient-to-br from-orange-500 to-orange-600 border-orange-500 text-white shadow-md"
                     : i === stepIndex
-                      ? "bg-blue-600 border-blue-600 text-white"
+                      ? "bg-gradient-to-br from-orange-500 to-orange-600 border-orange-500 text-white shadow-md"
                       : "bg-white border-gray-300 text-gray-400"
                 }`}
               >
@@ -245,7 +245,7 @@ export function TransferBooking() {
               </div>
               <span
                 className={`text-xs mt-1 font-medium whitespace-nowrap ${
-                  i <= stepIndex ? "text-blue-600" : "text-gray-400"
+                  i <= stepIndex ? "text-orange-500 font-bold" : "text-gray-400"
                 }`}
               >
                 {label}
@@ -254,7 +254,7 @@ export function TransferBooking() {
             {i < STEP_LABELS.length - 1 && (
               <div
                 className={`h-0.5 w-10 md:w-16 mx-1 mb-4 transition-colors ${
-                  i < stepIndex ? "bg-blue-600" : "bg-gray-200"
+                  i < stepIndex ? "bg-orange-500" : "bg-gray-200"
                 }`}
               />
             )}
@@ -279,7 +279,7 @@ export function TransferBooking() {
 
     return (
       <div className="space-y-6">
-        <div className="bg-gradient-to-br from-blue-700 to-blue-900 rounded-2xl p-6 text-white">
+        <div className="bg-gradient-to-br from-[#0B1629] to-[#0B5ED7] rounded-2xl p-6 text-white">
           <div className="flex items-center gap-3 mb-1">
             <Car className="w-7 h-7" />
             <h2 className="text-2xl font-bold font-display">
@@ -298,8 +298,8 @@ export function TransferBooking() {
                 onClick={() => setTripType(t.key)}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                   tripType === t.key
-                    ? "bg-white text-blue-700"
-                    : "bg-blue-600/60 text-white hover:bg-blue-600"
+                    ? "bg-white text-orange-600 font-bold shadow-md"
+                    : "bg-white/10 text-white hover:bg-white/20 border border-white/20"
                 }`}
               >
                 {t.label}
@@ -324,7 +324,7 @@ export function TransferBooking() {
                     onClick={() => setCategory(c)}
                     className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
                       category === c
-                        ? "bg-blue-600 text-white border-blue-600"
+                        ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white border-orange-500"
                         : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"
                     }`}
                   >
@@ -342,21 +342,21 @@ export function TransferBooking() {
                 City for Rental
               </p>
               <div className="relative">
-                <MapPin className="absolute left-3 top-3.5 w-4 h-4 text-blue-500" />
+                <MapPin className="absolute left-3 top-3.5 w-4 h-4 text-orange-400" />
                 <input
                   data-ocid="transfer.rental_city.input"
                   type="text"
                   value={rentalCity}
                   onChange={(e) => setRentalCity(e.target.value)}
                   placeholder="Enter city (e.g. Mumbai)"
-                  className="w-full pl-9 pr-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full pl-9 pr-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                 />
               </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="relative">
-                <MapPin className="absolute left-3 top-3.5 w-4 h-4 text-blue-500" />
+                <MapPin className="absolute left-3 top-3.5 w-4 h-4 text-orange-400" />
                 <input
                   data-ocid="transfer.from.input"
                   type="text"
@@ -369,7 +369,7 @@ export function TransferBooking() {
                         ? "From (Airport)"
                         : "From Location"
                   }
-                  className="w-full pl-9 pr-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full pl-9 pr-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                 />
               </div>
               <div className="relative">
@@ -386,7 +386,7 @@ export function TransferBooking() {
                         ? "To (Hotel / Address)"
                         : "To Location"
                   }
-                  className="w-full pl-9 pr-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full pl-9 pr-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                 />
               </div>
             </div>
@@ -405,7 +405,7 @@ export function TransferBooking() {
                     onClick={() => setRentalPackage(p.value)}
                     className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${
                       rentalPackage === p.value
-                        ? "bg-blue-600 text-white border-blue-600"
+                        ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white border-orange-500"
                         : "bg-white text-gray-700 border-gray-200 hover:border-blue-300"
                     }`}
                   >
@@ -424,7 +424,7 @@ export function TransferBooking() {
                 type="date"
                 value={pickupDate}
                 onChange={(e) => setPickupDate(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
               />
             </div>
             <div>
@@ -434,7 +434,7 @@ export function TransferBooking() {
                 type="time"
                 value={pickupTime}
                 onChange={(e) => setPickupTime(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
               />
             </div>
           </div>
@@ -449,7 +449,7 @@ export function TransferBooking() {
                   type="date"
                   value={returnDate}
                   onChange={(e) => setReturnDate(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                 />
               </div>
               <div>
@@ -459,7 +459,7 @@ export function TransferBooking() {
                   type="time"
                   value={returnTime}
                   onChange={(e) => setReturnTime(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                 />
               </div>
             </div>
@@ -546,7 +546,7 @@ export function TransferBooking() {
                   type="button"
                   data-ocid="transfer.passenger_done.button"
                   onClick={() => setPaxOpen(false)}
-                  className="mt-3 w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700"
+                  className="mt-3 w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-2 rounded-lg text-sm font-bold"
                 >
                   Done
                 </button>
@@ -612,7 +612,7 @@ export function TransferBooking() {
             data-ocid="transfer.search.primary_button"
             onClick={() => setStep("results")}
             disabled={!searchValid}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white py-3.5 rounded-xl font-semibold text-base transition-colors"
+            className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:from-gray-300 disabled:to-gray-400 text-white py-3.5 rounded-xl font-bold text-base transition-all shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:shadow-[0_0_28px_rgba(249,115,22,0.6)] disabled:shadow-none"
           >
             Search Vehicles
           </button>
@@ -690,7 +690,7 @@ export function TransferBooking() {
             type="button"
             data-ocid="transfer.modify_search.button"
             onClick={() => setStep("search")}
-            className="text-sm text-blue-600 hover:underline font-medium"
+            className="text-sm text-orange-500 hover:text-orange-600 font-semibold underline"
           >
             Modify Search
           </button>
@@ -708,7 +708,7 @@ export function TransferBooking() {
               onClick={() => setFilterType(t)}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                 filterType === t
-                  ? "bg-blue-600 text-white"
+                  ? "bg-gradient-to-r from-[#0B1629] to-[#0B3E8A] text-white"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
@@ -721,7 +721,7 @@ export function TransferBooking() {
               data-ocid="transfer.sort.select"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-              className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-blue-500"
+              className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-orange-400"
             >
               <option value="price">Cheapest</option>
               <option value="rating">Top Rated</option>
@@ -804,7 +804,7 @@ export function TransferBooking() {
                       onChange={(e) =>
                         setPax({ ...pax, title: e.target.value })
                       }
-                      className="w-full px-3 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-3 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                     >
                       {["Mr", "Mrs", "Ms", "Dr"].map((t) => (
                         <option key={t}>{t}</option>
@@ -821,7 +821,7 @@ export function TransferBooking() {
                       value={pax.name}
                       onChange={(e) => setPax({ ...pax, name: e.target.value })}
                       placeholder="Full name as on ID"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                     />
                   </div>
                 </div>
@@ -838,7 +838,7 @@ export function TransferBooking() {
                         setPax({ ...pax, phone: e.target.value })
                       }
                       placeholder="9XXXXXXXXX"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                     />
                   </div>
                   <div>
@@ -853,7 +853,7 @@ export function TransferBooking() {
                         setPax({ ...pax, email: e.target.value })
                       }
                       placeholder="email@example.com"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                     />
                   </div>
                 </div>
@@ -869,7 +869,7 @@ export function TransferBooking() {
                       setPax({ ...pax, altPhone: e.target.value })
                     }
                     placeholder="Alternate mobile number"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                   />
                 </div>
                 <div>
@@ -882,7 +882,7 @@ export function TransferBooking() {
                     onChange={(e) => setPax({ ...pax, notes: e.target.value })}
                     placeholder="E.g. Gate 3, look for name board, need child seat..."
                     rows={2}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none resize-none"
                   />
                 </div>
                 <div className="flex items-center gap-2">
@@ -917,7 +917,7 @@ export function TransferBooking() {
                           setPax({ ...pax, gstNumber: e.target.value })
                         }
                         placeholder="27AAPFU0939F1ZV"
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                       />
                     </div>
                     <div>
@@ -932,7 +932,7 @@ export function TransferBooking() {
                           setPax({ ...pax, gstCompany: e.target.value })
                         }
                         placeholder="Company Pvt Ltd"
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                       />
                     </div>
                   </div>
@@ -958,7 +958,7 @@ export function TransferBooking() {
                         onChange={(e) =>
                           setPax({ ...pax, pickupConfirm: e.target.value })
                         }
-                        className="w-full px-3 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full px-3 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                       >
                         <option value="">Select Airport</option>
                         {AIRPORTS.map((a) => (
@@ -978,7 +978,7 @@ export function TransferBooking() {
                           setPax({ ...pax, terminal: e.target.value })
                         }
                         placeholder="T1 / T2 / T3"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                       />
                     </div>
                     <div>
@@ -993,7 +993,7 @@ export function TransferBooking() {
                           setPax({ ...pax, flightNumber: e.target.value })
                         }
                         placeholder="6E 123"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                       />
                     </div>
                   </div>
@@ -1013,7 +1013,7 @@ export function TransferBooking() {
                           setPax({ ...pax, hotelName: e.target.value })
                         }
                         placeholder="Hotel name"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                       />
                     </div>
                     <div>
@@ -1028,7 +1028,7 @@ export function TransferBooking() {
                           setPax({ ...pax, hotelAddress: e.target.value })
                         }
                         placeholder="Full address"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                       />
                     </div>
                   </div>
@@ -1050,7 +1050,7 @@ export function TransferBooking() {
                         setPax({ ...pax, cityLocality: e.target.value })
                       }
                       placeholder="Locality or area"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                     />
                   </div>
                   <div>
@@ -1065,7 +1065,7 @@ export function TransferBooking() {
                         setPax({ ...pax, landmark: e.target.value })
                       }
                       placeholder="Nearest landmark"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 outline-none"
                     />
                   </div>
                 </div>
@@ -1152,7 +1152,7 @@ export function TransferBooking() {
                 </div>
                 <div className="flex justify-between font-bold text-sm pt-1 mt-1 border-t border-gray-200">
                   <span>Total</span>
-                  <span className="text-blue-700">
+                  <span className="text-orange-500 font-extrabold">
                     ₹{detailTotal.toLocaleString()}
                   </span>
                 </div>
@@ -1163,7 +1163,7 @@ export function TransferBooking() {
               data-ocid="transfer.proceed_review.primary_button"
               onClick={() => setStep("review")}
               disabled={!pax.name || !pax.phone}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white py-3.5 rounded-xl font-semibold transition-colors"
+              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:from-gray-300 disabled:to-gray-400 text-white py-3.5 rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(249,115,22,0.4)]"
             >
               Proceed to Review →
             </button>
@@ -1272,8 +1272,8 @@ export function TransferBooking() {
               </div>
 
               {/* Driver panel */}
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2">
+              <div className="bg-gradient-to-r from-[#0B1629]/5 to-[#0B3E8A]/5 border border-[#0B5ED7]/20 rounded-xl p-4">
+                <p className="text-xs font-bold text-[#0B3E8A] uppercase tracking-widest mb-2">
                   Driver Details
                 </p>
                 <div className="grid grid-cols-3 gap-3 text-sm">
@@ -1327,7 +1327,7 @@ export function TransferBooking() {
                 <button
                   type="button"
                   data-ocid="transfer.download_voucher.button"
-                  className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-3 rounded-xl font-bold transition-all"
                 >
                   <Download className="w-4 h-4" />
                   Download Voucher
@@ -1360,7 +1360,7 @@ export function TransferBooking() {
                       landmark: "",
                     });
                   }}
-                  className="flex-1 border border-blue-600 text-blue-600 hover:bg-blue-50 py-3 rounded-xl font-semibold transition-colors"
+                  className="flex-1 border-2 border-[#0B3E8A] text-[#0B3E8A] hover:bg-[#0B1629]/5 py-3 rounded-xl font-bold transition-colors"
                 >
                   New Search
                 </button>

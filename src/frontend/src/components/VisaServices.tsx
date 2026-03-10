@@ -126,7 +126,7 @@ export default function VisaServices() {
   return (
     <div className="min-h-screen bg-background">
       {/* Sticky Header */}
-      <div className="border-b border-border bg-card/60 backdrop-blur-sm sticky top-0 z-10">
+      <div className="border-b border-slate-200 bg-white/95 backdrop-blur-md sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3">
           {/* Back button */}
           {(view === "evisa" || view === "offline") && (
@@ -151,7 +151,7 @@ export default function VisaServices() {
               }}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all border ${
                 visaTab === "evisa" && (view === "search" || view === "evisa")
-                  ? "bg-gradient-to-r from-blue-600 to-emerald-500 text-white border-transparent shadow-md"
+                  ? "bg-gradient-to-r from-slate-900 to-blue-900 text-white border-transparent shadow-md"
                   : "bg-white text-gray-600 border-gray-200 hover:border-blue-300 hover:text-[#0B5ED7]"
               }`}
             >
@@ -191,7 +191,7 @@ export default function VisaServices() {
               onClick={() => setView("status")}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all border ${
                 view === "status"
-                  ? "bg-[#0B5ED7] text-white border-[#0B5ED7]"
+                  ? "bg-gradient-to-r from-slate-800 to-blue-900 text-white border-transparent shadow-md"
                   : "bg-white text-gray-600 border-gray-200 hover:border-[#0B5ED7] hover:text-[#0B5ED7]"
               }`}
             >
@@ -209,7 +209,7 @@ export default function VisaServices() {
           {view !== "status" && (
             <div
               className={`text-xs font-medium px-1 ${
-                visaTab === "evisa" ? "text-emerald-600" : "text-slate-500"
+                visaTab === "evisa" ? "text-orange-600" : "text-slate-500"
               }`}
             >
               {visaTab === "evisa"
@@ -276,7 +276,7 @@ export default function VisaServices() {
                 <p className="text-sm mt-1">Apply for a visa to see it here</p>
                 <Button
                   variant="outline"
-                  className="mt-4"
+                  className="mt-4 border-orange-300 text-orange-600 hover:bg-orange-50"
                   onClick={() => setView("search")}
                   data-ocid="visa.status.secondary_button"
                 >
@@ -306,7 +306,7 @@ export default function VisaServices() {
                         className="hover:bg-muted/30 transition-colors"
                         data-ocid={`visa.status.row.${i + 1}`}
                       >
-                        <TableCell className="font-mono text-sm text-[#0B5ED7] font-semibold">
+                        <TableCell className="font-mono text-sm text-orange-600 font-semibold">
                           {app.ref}
                         </TableCell>
                         <TableCell className="font-medium">
@@ -335,7 +335,7 @@ export default function VisaServices() {
                           <button
                             type="button"
                             onClick={() => toast.info(`Tracking ${app.ref}`)}
-                            className="text-[#0B5ED7] hover:underline text-sm flex items-center gap-1 ml-auto"
+                            className="text-orange-600 hover:text-orange-700 hover:underline text-sm flex items-center gap-1 ml-auto font-medium"
                             data-ocid={`visa.status.edit_button.${i + 1}`}
                           >
                             <Eye className="h-3.5 w-3.5" /> View

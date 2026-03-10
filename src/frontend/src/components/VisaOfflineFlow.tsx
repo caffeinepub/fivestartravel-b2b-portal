@@ -94,17 +94,17 @@ function StepBar({ current }: { current: number }) {
             <div
               className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all ${
                 i < current
-                  ? "bg-blue-700 border-blue-700 text-white"
+                  ? "bg-gradient-to-br from-orange-500 to-orange-600 border-orange-500 text-white"
                   : i === current
-                    ? "bg-[#1E293B] border-[#1E293B] text-white"
-                    : "bg-white border-gray-300 text-gray-400"
+                    ? "bg-gradient-to-br from-slate-800 to-blue-900 border-slate-700 text-white ring-4 ring-orange-100"
+                    : "bg-white border-slate-200 text-slate-400"
               }`}
             >
               {i < current ? <CheckCircle2 className="w-5 h-5" /> : i + 1}
             </div>
             <span
               className={`text-xs font-medium hidden sm:block ${
-                i <= current ? "text-gray-800" : "text-gray-400"
+                i <= current ? "text-slate-800 font-semibold" : "text-slate-400"
               }`}
             >
               {label}
@@ -113,7 +113,9 @@ function StepBar({ current }: { current: number }) {
           {i < STEPS.length - 1 && (
             <div
               className={`h-0.5 flex-1 mx-1 ${
-                i < current ? "bg-blue-700" : "bg-gray-200"
+                i < current
+                  ? "bg-gradient-to-r from-orange-400 to-orange-500"
+                  : "bg-slate-200"
               }`}
             />
           )}
@@ -325,7 +327,7 @@ export default function VisaOfflineFlow({
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Home
           </Button>
           <Button
-            className="bg-[#0B5ED7] hover:bg-blue-700 text-white"
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-md"
             onClick={() => toast.info("Application tracking coming soon")}
             data-ocid="offline.confirm.primary_button"
           >
@@ -339,7 +341,7 @@ export default function VisaOfflineFlow({
   return (
     <div className="max-w-2xl mx-auto py-6 px-4">
       {/* Header */}
-      <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-slate-700 to-blue-800 text-white flex items-center gap-4">
+      <div className="mb-6 p-5 rounded-2xl bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white flex items-center gap-4 shadow-xl">
         <div className="text-4xl">{country.flag}</div>
         <div>
           <div className="flex items-center gap-2">
@@ -848,7 +850,7 @@ export default function VisaOfflineFlow({
                   onClick={() => setTimeSlot(slot)}
                   className={`py-2 px-3 rounded-lg border text-sm font-medium transition-all ${
                     timeSlot === slot
-                      ? "bg-[#0B5ED7] border-[#0B5ED7] text-white"
+                      ? "bg-gradient-to-r from-orange-500 to-orange-600 border-orange-500 text-white shadow-sm"
                       : "bg-white border-gray-200 text-gray-700 hover:border-[#0B5ED7]"
                   }`}
                   data-ocid="offline.appt.slot.button"
@@ -1037,7 +1039,7 @@ export default function VisaOfflineFlow({
         {step < 3 ? (
           <Button
             onClick={handleNext}
-            className="bg-[#1E293B] hover:bg-slate-800 text-white"
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-md"
             data-ocid="offline.nav.next.button"
           >
             Next <ArrowRight className="w-4 h-4 ml-2" />
@@ -1045,7 +1047,7 @@ export default function VisaOfflineFlow({
         ) : (
           <Button
             onClick={handleSubmit}
-            className="bg-[#0B5ED7] hover:bg-blue-700 text-white"
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-md"
             data-ocid="offline.appt.submit_button"
           >
             Submit Application
@@ -1101,8 +1103,8 @@ function OfflineDocRow({
             variant="outline"
             className={
               item.mandatory
-                ? "text-red-600 border-red-200 bg-red-50 text-xs"
-                : "text-gray-500 border-gray-200 text-xs"
+                ? "text-orange-700 border-orange-200 bg-orange-50 text-xs font-semibold"
+                : "text-slate-500 border-slate-200 text-xs"
             }
           >
             {item.mandatory ? "Mandatory" : "Optional"}

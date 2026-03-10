@@ -761,3 +761,525 @@ export function AgentRegisterPage({
     </div>
   );
 }
+
+// ── Supplier Login Page ───────────────────────────────────────────────────────
+export function SupplierLoginPage({
+  onNavigate,
+}: { onNavigate: (page: Page) => void }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    if (!email || !password) {
+      setError("Please enter your email and password.");
+      return;
+    }
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      onNavigate("dashboard");
+    }, 800);
+  }
+
+  return (
+    <div className="min-h-screen flex">
+      {/* Left panel — hero */}
+      <div
+        className="hidden md:flex w-1/2 flex-col items-center justify-center p-12 relative overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #F97316, #FB923C)" }}
+      >
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 20% 50%, #fff 0%, transparent 60%), radial-gradient(circle at 80% 20%, #fff 0%, transparent 50%)",
+          }}
+        />
+        <div className="relative z-10 text-center max-w-sm">
+          <div className="bg-white/90 rounded-xl px-4 py-2.5 inline-flex items-center mb-10">
+            <img
+              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              alt="FiveStar Travel"
+              className="h-9 w-auto object-contain"
+            />
+          </div>
+          <h2 className="font-display text-3xl font-bold text-white mb-3">
+            Supplier Portal
+          </h2>
+          <p className="text-white/80 text-sm mb-10 leading-relaxed">
+            Manage your inventory, rates and availability across thousands of
+            travel agents on our global B2B network.
+          </p>
+          <div className="space-y-3 text-left">
+            {[
+              { icon: Users, value: "500+", label: "Active Suppliers" },
+              { icon: TrendingUp, value: "50K+", label: "Monthly Bookings" },
+              { icon: Shield, value: "99.9%", label: "Platform Uptime" },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="rounded-xl px-4 py-3 flex items-center gap-3"
+                style={{
+                  background: "rgba(255,255,255,0.15)",
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                }}
+              >
+                <div
+                  className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                  style={{ background: "rgba(255,255,255,0.2)" }}
+                >
+                  <item.icon className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-white font-semibold text-sm">
+                    {item.value}
+                  </p>
+                  <p className="text-white/70 text-xs">{item.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div
+            className="mt-8 rounded-xl p-4 text-left"
+            style={{
+              background: "rgba(255,255,255,0.15)",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255,255,255,0.2)",
+            }}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              <span className="text-white/80 text-xs">
+                Real-time inventory sync
+              </span>
+            </div>
+            <p className="text-white font-semibold text-sm">
+              Dubai Premium Hotels
+            </p>
+            <p className="text-white/90 text-sm font-bold">
+              1,200 rooms · 94% occupancy
+            </p>
+            <p className="text-white/60 text-xs mt-1">Updated 2 minutes ago</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Right panel — form */}
+      <div className="w-full md:w-1/2 flex items-center justify-center bg-white py-12 px-6">
+        <div className="w-full max-w-md">
+          <div className="md:hidden text-center mb-8">
+            <img
+              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              alt="FiveStar Travel"
+              className="h-10 w-auto object-contain mx-auto"
+            />
+          </div>
+          <div className="mb-8">
+            <div
+              className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold text-white mb-4"
+              style={{
+                background: "linear-gradient(135deg, #F97316, #FB923C)",
+              }}
+            >
+              Supplier Portal
+            </div>
+            <h1 className="font-display text-2xl font-bold text-foreground mb-1">
+              Sign In to Supplier Portal
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              Manage your properties and services on FiveStar Travel
+            </p>
+          </div>
+
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-5"
+            data-ocid="supplier_login.form"
+          >
+            <div className="space-y-1.5">
+              <Label htmlFor="supplier-email" className="text-sm font-medium">
+                Business Email
+              </Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  id="supplier-email"
+                  type="email"
+                  placeholder="supplier@yourcompany.com"
+                  className="pl-9"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  data-ocid="supplier_login.email.input"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <Label
+                  htmlFor="supplier-password"
+                  className="text-sm font-medium"
+                >
+                  Password
+                </Label>
+                <button
+                  type="button"
+                  className="text-xs hover:underline"
+                  style={{ color: "#F97316" }}
+                >
+                  Forgot password?
+                </button>
+              </div>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  id="supplier-password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  className="pl-9 pr-10"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  data-ocid="supplier_login.password.input"
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  onClick={() => setShowPassword((v) => !v)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {error && (
+              <p
+                className="text-sm text-destructive bg-destructive/8 rounded-lg px-3 py-2"
+                data-ocid="supplier_login.error_state"
+              >
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              data-ocid="supplier_login.submit_button"
+              className="w-full text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5"
+              style={{
+                background: loading
+                  ? "#ccc"
+                  : "linear-gradient(135deg, #F97316, #FB923C)",
+                boxShadow: loading
+                  ? "none"
+                  : "0 10px 30px rgba(249,115,22,0.35)",
+              }}
+            >
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  <LogIn className="w-4 h-4" />
+                  Sign in to Supplier Portal
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <button
+              type="button"
+              onClick={() => onNavigate("home")}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              ← Back to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Admin Login Page ──────────────────────────────────────────────────────────
+export function AdminLoginPage({
+  onNavigate,
+}: { onNavigate: (page: Page) => void }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [twoFACode, setTwoFACode] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    if (!email || !password) {
+      setError("Please enter your email and password.");
+      return;
+    }
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      onNavigate("dashboard");
+    }, 800);
+  }
+
+  return (
+    <div className="min-h-screen flex">
+      {/* Left panel — hero */}
+      <div
+        className="hidden md:flex w-1/2 flex-col items-center justify-center p-12 relative overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #7C3AED, #A78BFA)" }}
+      >
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 30% 60%, #fff 0%, transparent 60%), radial-gradient(circle at 70% 10%, #fff 0%, transparent 50%)",
+          }}
+        />
+        <div className="relative z-10 text-center max-w-sm">
+          <div className="bg-white/90 rounded-xl px-4 py-2.5 inline-flex items-center mb-10">
+            <img
+              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              alt="FiveStar Travel"
+              className="h-9 w-auto object-contain"
+            />
+          </div>
+          <h2 className="font-display text-3xl font-bold text-white mb-3">
+            Admin Portal
+          </h2>
+          <p className="text-white/80 text-sm mb-10 leading-relaxed">
+            Full platform control and management. Oversee agents, suppliers,
+            bookings, and analytics from a single command center.
+          </p>
+          <div className="space-y-3 text-left">
+            {[
+              { icon: Shield, value: "16+", label: "Platform Modules" },
+              { icon: TrendingUp, value: "100%", label: "Platform Uptime" },
+              { icon: Users, value: "Real-time", label: "Analytics & Reports" },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="rounded-xl px-4 py-3 flex items-center gap-3"
+                style={{
+                  background: "rgba(255,255,255,0.15)",
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                }}
+              >
+                <div
+                  className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                  style={{ background: "rgba(255,255,255,0.2)" }}
+                >
+                  <item.icon className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-white font-semibold text-sm">
+                    {item.value}
+                  </p>
+                  <p className="text-white/70 text-xs">{item.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div
+            className="mt-8 rounded-xl p-4 text-left"
+            style={{
+              background: "rgba(255,255,255,0.15)",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255,255,255,0.2)",
+            }}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              <span className="text-white/80 text-xs">Secured with 2FA</span>
+            </div>
+            <p className="text-white font-semibold text-sm">
+              Two-Factor Authentication
+            </p>
+            <p className="text-white/80 text-xs mt-1">
+              Admin access requires TOTP verification for maximum security.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Right panel — form */}
+      <div className="w-full md:w-1/2 flex items-center justify-center bg-white py-12 px-6">
+        <div className="w-full max-w-md">
+          <div className="md:hidden text-center mb-8">
+            <img
+              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              alt="FiveStar Travel"
+              className="h-10 w-auto object-contain mx-auto"
+            />
+          </div>
+          <div className="mb-8">
+            <div
+              className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold text-white mb-4"
+              style={{
+                background: "linear-gradient(135deg, #7C3AED, #A78BFA)",
+              }}
+            >
+              Admin Portal
+            </div>
+            <h1 className="font-display text-2xl font-bold text-foreground mb-1">
+              Sign In to Admin Portal
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              Restricted access — authorized administrators only
+            </p>
+          </div>
+
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-5"
+            data-ocid="admin_login.form"
+          >
+            <div className="space-y-1.5">
+              <Label htmlFor="admin-email" className="text-sm font-medium">
+                Admin Email
+              </Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  id="admin-email"
+                  type="email"
+                  placeholder="admin@fivestartravel.in"
+                  className="pl-9"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  data-ocid="admin_login.email.input"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="admin-password" className="text-sm font-medium">
+                  Password
+                </Label>
+                <button
+                  type="button"
+                  className="text-xs hover:underline"
+                  style={{ color: "#7C3AED" }}
+                >
+                  Forgot password?
+                </button>
+              </div>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  id="admin-password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  className="pl-9 pr-10"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  data-ocid="admin_login.password.input"
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  onClick={() => setShowPassword((v) => !v)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="admin-2fa" className="text-sm font-medium">
+                2FA Code
+              </Label>
+              <div className="relative">
+                <Shield className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  id="admin-2fa"
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  placeholder="000000"
+                  className="pl-9 tracking-widest font-mono"
+                  value={twoFACode}
+                  onChange={(e) =>
+                    setTwoFACode(e.target.value.replace(/\D/g, "").slice(0, 6))
+                  }
+                  data-ocid="admin_login.2fa.input"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Enter the 6-digit code from your authenticator app
+              </p>
+            </div>
+
+            {error && (
+              <p
+                className="text-sm text-destructive bg-destructive/8 rounded-lg px-3 py-2"
+                data-ocid="admin_login.error_state"
+              >
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              data-ocid="admin_login.submit_button"
+              className="w-full text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5"
+              style={{
+                background: loading
+                  ? "#ccc"
+                  : "linear-gradient(135deg, #7C3AED, #A78BFA)",
+                boxShadow: loading
+                  ? "none"
+                  : "0 10px 30px rgba(124,58,237,0.35)",
+              }}
+            >
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  Verifying...
+                </>
+              ) : (
+                <>
+                  <LogIn className="w-4 h-4" />
+                  Sign in to Admin Portal
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <button
+              type="button"
+              onClick={() => onNavigate("home")}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              ← Back to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

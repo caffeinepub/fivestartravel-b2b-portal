@@ -1,6 +1,11 @@
 import { Package, TrendingUp, User } from "lucide-react";
 import { useState } from "react";
-import { AgentLoginPage, AgentRegisterPage } from "./components/AuthPages";
+import {
+  AdminLoginPage,
+  AgentLoginPage,
+  AgentRegisterPage,
+  SupplierLoginPage,
+} from "./components/AuthPages";
 import { CruiseBooking } from "./components/CruiseBooking";
 import type { DashboardPage } from "./components/DashboardLayout";
 import { ComingSoonPage, DashboardLayout } from "./components/DashboardLayout";
@@ -9,6 +14,8 @@ import { FlightSearch } from "./components/FlightSearch";
 import { HotelSearch } from "./components/HotelSearch";
 import { MyBookings } from "./components/MyBookings";
 import {
+  AboutPage,
+  ContactPage,
   Footer,
   Header,
   HomePage,
@@ -16,7 +23,7 @@ import {
   TopBar,
 } from "./components/PublicPages";
 import { RailwayBooking } from "./components/RailwayBooking";
-import { TourSearch } from "./components/TourSearch";
+import { RaynaTourModule } from "./components/RaynaTourModule";
 import { TransferBooking } from "./components/TransferBooking";
 import VisaServices from "./components/VisaServices";
 
@@ -57,7 +64,7 @@ export default function App() {
     navigate("home");
   }
 
-  // ── Public pages ──────────────────────────────────────────────────────────────────────────────────
+  // ── Public: Home ──────────────────────────────────────────────────────────────────────────────────
   if (page === "home") {
     return (
       <div className="min-h-screen flex flex-col">
@@ -66,11 +73,38 @@ export default function App() {
         <main className="flex-1">
           <HomePage onNavigate={navigate} />
         </main>
-        <Footer />
+        <Footer onNavigate={navigate} />
       </div>
     );
   }
 
+  // ── Public: About ──────────────────────────────────────────────────────────────────────────────────
+  if (page === "about") {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <TopBar />
+        <Header onNavigate={navigate} />
+        <main className="flex-1">
+          <AboutPage onNavigate={navigate} />
+        </main>
+      </div>
+    );
+  }
+
+  // ── Public: Contact ──────────────────────────────────────────────────────────────────────────────────
+  if (page === "contact") {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <TopBar />
+        <Header onNavigate={navigate} />
+        <main className="flex-1">
+          <ContactPage onNavigate={navigate} />
+        </main>
+      </div>
+    );
+  }
+
+  // ── Public: Login ──────────────────────────────────────────────────────────────────────────────────
   if (page === "login") {
     return (
       <div className="min-h-screen flex flex-col">
@@ -79,7 +113,7 @@ export default function App() {
         <main className="flex-1">
           <AgentLoginPage onNavigate={navigate} />
         </main>
-        <Footer />
+        <Footer onNavigate={navigate} />
       </div>
     );
   }
@@ -92,12 +126,38 @@ export default function App() {
         <main className="flex-1">
           <AgentRegisterPage onNavigate={navigate} />
         </main>
-        <Footer />
+        <Footer onNavigate={navigate} />
       </div>
     );
   }
 
   // ── Agent Dashboard ──────────────────────────────────────────────────────────────────────────────────────
+
+  if (page === "supplier-login") {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <TopBar />
+        <Header onNavigate={navigate} />
+        <main className="flex-1">
+          <SupplierLoginPage onNavigate={navigate} />
+        </main>
+        <Footer onNavigate={navigate} />
+      </div>
+    );
+  }
+
+  if (page === "admin-login") {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <TopBar />
+        <Header onNavigate={navigate} />
+        <main className="flex-1">
+          <AdminLoginPage onNavigate={navigate} />
+        </main>
+        <Footer onNavigate={navigate} />
+      </div>
+    );
+  }
   const dashboardTitles: Record<DashboardPage, string> = {
     dashboard: "Agent Dashboard",
     flights: "Flight Booking",
@@ -125,7 +185,7 @@ export default function App() {
       {dashNav === "dashboard" && <DashboardHome onNavChange={handleDashNav} />}
       {dashNav === "flights" && <FlightSearch />}
       {dashNav === "hotels" && <HotelSearch />}
-      {dashNav === "tours" && <TourSearch />}
+      {dashNav === "tours" && <RaynaTourModule />}
       {dashNav === "transfers" && <TransferBooking />}
       {dashNav === "visa" && <VisaServices />}
       {dashNav === "cruises" && <CruiseBooking />}

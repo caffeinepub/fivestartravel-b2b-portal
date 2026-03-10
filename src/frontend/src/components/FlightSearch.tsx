@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   ArrowLeftRight,
+  Calendar,
   ChevronDown,
   ChevronUp,
   Clock,
@@ -13,6 +14,7 @@ import {
   Search,
   SlidersHorizontal,
   Star,
+  Users,
   Zap,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -311,44 +313,83 @@ function CityInput({
 
   return (
     <div className="relative">
-      <Input
-        id={id}
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => {
-          onChange(e.target.value);
-          setOpen(true);
-        }}
-        onFocus={() => setOpen(true)}
-        onBlur={() => setTimeout(() => setOpen(false), 150)}
-        className="h-12 text-base font-medium"
-        data-ocid={ocid}
-        autoComplete="off"
-      />
+      <div className="relative">
+        <Plane
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 z-10"
+          style={{ color: "rgba(249,115,22,0.8)" }}
+        />
+        <Input
+          id={id}
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => {
+            onChange(e.target.value);
+            setOpen(true);
+          }}
+          onFocus={() => setOpen(true)}
+          onBlur={() => setTimeout(() => setOpen(false), 150)}
+          className="h-12 pl-9 text-sm font-medium"
+          style={{
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.12)",
+            color: "#fff",
+          }}
+          data-ocid={ocid}
+          autoComplete="off"
+        />
+      </div>
       {open && filtered.length > 0 && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border border-border rounded-xl shadow-lg overflow-hidden">
+        <div
+          className="absolute top-full left-0 right-0 z-50 mt-1 rounded-xl shadow-2xl overflow-hidden"
+          style={{
+            background: "#0f1e3d",
+            border: "1px solid rgba(249,115,22,0.25)",
+          }}
+        >
           {filtered.map((city) => (
             <button
               key={city.code}
               type="button"
-              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/60 text-left transition-colors"
+              className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors"
+              style={{ color: "#e2e8f0" }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = "rgba(249,115,22,0.1)";
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.background = "rgba(249,115,22,0.1)";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = "";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.background = "";
+              }}
               onMouseDown={() => {
                 onChange(`${city.name} (${city.code})`);
                 setOpen(false);
               }}
             >
-              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <Plane className="w-4 h-4 text-primary" />
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                style={{ background: "rgba(249,115,22,0.15)" }}
+              >
+                <Plane className="w-4 h-4" style={{ color: "#f97316" }} />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">
+                <p
+                  className="text-sm font-semibold"
+                  style={{ color: "#f1f5f9" }}
+                >
                   {city.name}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs" style={{ color: "#94a3b8" }}>
                   {city.airport} · {city.code}
                 </p>
               </div>
-              <span className="ml-auto text-xs font-bold text-muted-foreground">
+              <span
+                className="ml-auto text-xs font-bold"
+                style={{ color: "#f97316" }}
+              >
                 {city.code}
               </span>
             </button>
@@ -356,8 +397,14 @@ function CityInput({
         </div>
       )}
       {value && filtered.length === 0 && open && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border border-border rounded-xl shadow-lg px-4 py-3">
-          <p className="text-sm text-muted-foreground">
+        <div
+          className="absolute top-full left-0 right-0 z-50 mt-1 rounded-xl px-4 py-3"
+          style={{
+            background: "#0f1e3d",
+            border: "1px solid rgba(255,255,255,0.1)",
+          }}
+        >
+          <p className="text-sm" style={{ color: "#94a3b8" }}>
             No cities found for "{value}"
           </p>
         </div>
@@ -391,22 +438,37 @@ function PassengerSelector({
     <div className="relative">
       <button
         type="button"
-        className="w-full h-12 flex items-center justify-between px-3 border border-input rounded-md bg-background text-sm font-medium hover:border-primary/50 transition-colors"
+        className="w-full h-12 flex items-center justify-between px-3 rounded-xl text-sm font-medium transition-colors"
+        style={{
+          background: "rgba(255,255,255,0.06)",
+          border: "1px solid rgba(255,255,255,0.12)",
+          color: "#e2e8f0",
+        }}
         onClick={() => setOpen((v) => !v)}
         data-ocid="flight.passenger.select"
       >
-        <span>
+        <span className="flex items-center gap-2">
+          <Users
+            className="w-4 h-4"
+            style={{ color: "rgba(249,115,22,0.8)" }}
+          />
           {total} Passenger{total > 1 ? "s" : ""} · {cabinLabels[cabin]}
         </span>
         {open ? (
-          <ChevronUp className="w-4 h-4 text-muted-foreground" />
+          <ChevronUp className="w-4 h-4" style={{ color: "#94a3b8" }} />
         ) : (
-          <ChevronDown className="w-4 h-4 text-muted-foreground" />
+          <ChevronDown className="w-4 h-4" style={{ color: "#94a3b8" }} />
         )}
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border border-border rounded-xl shadow-xl p-4 min-w-[280px]">
+        <div
+          className="absolute top-full left-0 right-0 z-50 mt-1 rounded-xl shadow-2xl p-4 min-w-[280px]"
+          style={{
+            background: "#0f1e3d",
+            border: "1px solid rgba(249,115,22,0.25)",
+          }}
+        >
           {[
             {
               key: "adults" as keyof PassengerCount,
@@ -429,16 +491,25 @@ function PassengerSelector({
           ].map(({ key, label, hint, min }) => (
             <div
               key={key}
-              className="flex items-center justify-between py-3 border-b border-border last:border-b-0"
+              className="flex items-center justify-between py-3"
+              style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
             >
               <div>
-                <p className="text-sm font-medium text-foreground">{label}</p>
-                <p className="text-xs text-muted-foreground">{hint}</p>
+                <p className="text-sm font-medium" style={{ color: "#f1f5f9" }}>
+                  {label}
+                </p>
+                <p className="text-xs" style={{ color: "#64748b" }}>
+                  {hint}
+                </p>
               </div>
               <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-foreground hover:bg-muted disabled:opacity-40"
+                  className="w-8 h-8 rounded-full flex items-center justify-center disabled:opacity-40 transition-colors"
+                  style={{
+                    border: "1px solid rgba(249,115,22,0.3)",
+                    color: "#f97316",
+                  }}
                   disabled={passengers[key] <= min}
                   onClick={() =>
                     onPassengersChange({
@@ -449,12 +520,19 @@ function PassengerSelector({
                 >
                   −
                 </button>
-                <span className="w-5 text-center text-sm font-semibold">
+                <span
+                  className="w-5 text-center text-sm font-semibold"
+                  style={{ color: "#f1f5f9" }}
+                >
                   {passengers[key]}
                 </span>
                 <button
                   type="button"
-                  className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-foreground hover:bg-muted"
+                  className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                  style={{
+                    border: "1px solid rgba(249,115,22,0.3)",
+                    color: "#f97316",
+                  }}
                   onClick={() =>
                     onPassengersChange({
                       ...passengers,
@@ -469,7 +547,10 @@ function PassengerSelector({
           ))}
 
           <div className="mt-3">
-            <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">
+            <p
+              className="text-xs font-semibold mb-2 uppercase tracking-wider"
+              style={{ color: "#64748b" }}
+            >
               Cabin Class
             </p>
             <div className="grid grid-cols-2 gap-2">
@@ -484,11 +565,21 @@ function PassengerSelector({
                 <button
                   key={c}
                   type="button"
-                  className={`px-3 py-2 rounded-lg text-xs font-medium border transition-colors ${
+                  className="px-3 py-2 rounded-lg text-xs font-medium transition-colors"
+                  style={
                     cabin === c
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "border-border hover:bg-muted"
-                  }`}
+                      ? {
+                          background:
+                            "linear-gradient(135deg, #f97316, #ea580c)",
+                          color: "#fff",
+                          border: "none",
+                        }
+                      : {
+                          background: "rgba(255,255,255,0.05)",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          color: "#94a3b8",
+                        }
+                  }
                   onClick={() => onCabinChange(c)}
                 >
                   {cabinLabels[c]}
@@ -497,19 +588,35 @@ function PassengerSelector({
             </div>
           </div>
 
-          <Button
-            className="w-full mt-3 bg-primary text-primary-foreground"
-            size="sm"
+          <button
+            type="button"
+            className="w-full mt-3 py-2 rounded-lg text-sm font-semibold transition-colors"
+            style={{
+              background: "linear-gradient(135deg, #f97316, #ea580c)",
+              color: "#fff",
+            }}
             onClick={() => setOpen(false)}
             data-ocid="flight.passenger.confirm.button"
           >
             Done
-          </Button>
+          </button>
         </div>
       )}
     </div>
   );
 }
+
+// ── Airline color map ──────────────────────────────────────────────────────────
+const AIRLINE_COLORS: Record<string, string> = {
+  "6E": "#1a56db",
+  AI: "#c0392b",
+  SG: "#e74c3c",
+  UK: "#7b2d8b",
+  G8: "#16a34a",
+  I5: "#dc2626",
+  EK: "#b91c1c",
+  SQ: "#1d4ed8",
+};
 
 // ── Flight Result Card ────────────────────────────────────────────────────────
 function FlightCard({
@@ -526,40 +633,80 @@ function FlightCard({
   const refundBadge = () => {
     if (flight.rT === 1)
       return (
-        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-green-50 text-green-700">
-          Refundable
+        <span
+          className="text-xs px-2 py-0.5 rounded-full font-semibold"
+          style={{ background: "#dcfce7", color: "#15803d" }}
+        >
+          ✓ Refundable
         </span>
       );
     if (flight.rT === 2)
       return (
-        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-amber-50 text-amber-700">
+        <span
+          className="text-xs px-2 py-0.5 rounded-full font-semibold"
+          style={{ background: "#fef3c7", color: "#92400e" }}
+        >
           Partial Refund
         </span>
       );
     return (
-      <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-muted text-muted-foreground">
+      <span
+        className="text-xs px-2 py-0.5 rounded-full font-medium"
+        style={{ background: "#f1f5f9", color: "#64748b" }}
+      >
         Non-Refundable
       </span>
     );
   };
 
+  const airlineBg = AIRLINE_COLORS[flight.airlineCode] ?? "#0b5ed7";
+
   return (
     <div
-      className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-200"
+      className="bg-white rounded-2xl overflow-hidden transition-all duration-200"
+      style={{
+        boxShadow: "0 2px 12px rgba(11,20,55,0.08), 0 1px 3px rgba(0,0,0,0.05)",
+        border: "1px solid #e8edf5",
+      }}
       data-ocid={`flight.result.item.${index + 1}`}
     >
+      {/* Top accent line */}
+      {flight.badge && (
+        <div
+          className="h-0.5 w-full"
+          style={
+            flight.badge === "CHEAPEST"
+              ? { background: "linear-gradient(90deg, #22c55e, #16a34a)" }
+              : flight.badge === "FASTEST"
+                ? { background: "linear-gradient(90deg, #3b82f6, #1d4ed8)" }
+                : { background: "linear-gradient(90deg, #f97316, #ea580c)" }
+          }
+        />
+      )}
+
       <div className="p-4">
         <div className="flex items-center gap-4">
-          {/* Airline */}
+          {/* Airline logo circle */}
           <div className="flex items-center gap-2.5 w-28 flex-shrink-0">
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <Plane className="w-5 h-5 text-primary" />
+            <div
+              className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm"
+              style={{ background: airlineBg }}
+            >
+              <span
+                className="text-white font-bold text-xs"
+                style={{ letterSpacing: "-0.02em" }}
+              >
+                {flight.airlineCode}
+              </span>
             </div>
             <div>
-              <p className="text-xs font-semibold text-foreground leading-tight">
+              <p
+                className="text-xs font-bold leading-tight"
+                style={{ color: "#0b1437" }}
+              >
                 {flight.airline}
               </p>
-              <p className="text-[10px] text-muted-foreground">
+              <p className="text-[10px]" style={{ color: "#94a3b8" }}>
                 {flight.flightNo}
               </p>
             </div>
@@ -568,117 +715,177 @@ function FlightCard({
           {/* Route */}
           <div className="flex-1 flex items-center gap-2 min-w-0">
             <div className="text-center flex-shrink-0">
-              <p className="font-display text-xl font-bold text-foreground">
+              <p
+                className="text-2xl font-bold tabular-nums"
+                style={{ color: "#0b1437", fontFamily: "inherit" }}
+              >
                 {flight.depTime}
               </p>
-              <p className="text-xs text-muted-foreground font-medium">
+              <p
+                className="text-xs font-semibold mt-0.5"
+                style={{ color: "#64748b" }}
+              >
                 {flight.departure}
               </p>
             </div>
 
-            <div className="flex-1 flex flex-col items-center gap-1 min-w-0 px-2">
-              <p className="text-xs text-muted-foreground">{flight.duration}</p>
-              <div className="w-full flex items-center gap-1">
-                <div className="flex-1 h-px bg-border" />
-                {flight.stops === 0 ? (
-                  <span className="text-[10px] text-accent font-semibold flex-shrink-0">
-                    NON-STOP
-                  </span>
-                ) : (
-                  <span className="text-[10px] text-orange-500 font-semibold flex-shrink-0">
-                    1 STOP · {flight.stopCity}
-                  </span>
-                )}
-                <div className="flex-1 h-px bg-border" />
-              </div>
-              <p className="text-[10px] text-muted-foreground">
-                {flight.stops === 0 ? "Direct" : `Via ${flight.stopCity}`}
+            <div className="flex-1 flex flex-col items-center gap-0.5 min-w-0 px-2">
+              <p className="text-xs" style={{ color: "#94a3b8" }}>
+                {flight.duration}
               </p>
+              <div className="w-full flex items-center gap-1">
+                <div
+                  className="flex-1 h-px"
+                  style={{ background: "#e2e8f0" }}
+                />
+                <Plane
+                  className="w-3.5 h-3.5 flex-shrink-0"
+                  style={{ color: flight.stops === 0 ? "#22c55e" : "#f97316" }}
+                />
+                <div
+                  className="flex-1 h-px"
+                  style={{ background: "#e2e8f0" }}
+                />
+              </div>
+              {flight.stops === 0 ? (
+                <span
+                  className="text-[10px] font-bold tracking-wide"
+                  style={{ color: "#22c55e" }}
+                >
+                  NON-STOP
+                </span>
+              ) : (
+                <span
+                  className="text-[10px] font-bold tracking-wide"
+                  style={{ color: "#f97316" }}
+                >
+                  1 STOP · {flight.stopCity}
+                </span>
+              )}
             </div>
 
             <div className="text-center flex-shrink-0">
-              <p className="font-display text-xl font-bold text-foreground">
+              <p
+                className="text-2xl font-bold tabular-nums"
+                style={{ color: "#0b1437", fontFamily: "inherit" }}
+              >
                 {flight.arrTime}
               </p>
-              <p className="text-xs text-muted-foreground font-medium">
+              <p
+                className="text-xs font-semibold mt-0.5"
+                style={{ color: "#64748b" }}
+              >
                 {flight.arrival}
               </p>
             </div>
           </div>
 
           {/* Price + Book */}
-          <div className="text-right flex-shrink-0">
-            {flight.badge && (
-              <Badge
-                className={`text-[10px] mb-1.5 ${
-                  flight.badge === "CHEAPEST"
-                    ? "bg-green-100 text-green-700 border-green-200"
-                    : flight.badge === "FASTEST"
-                      ? "bg-blue-100 text-blue-700 border-blue-200"
-                      : "bg-amber-100 text-amber-700 border-amber-200"
-                }`}
-              >
-                {flight.badge === "CHEAPEST" && (
-                  <Zap className="w-2.5 h-2.5 mr-1" />
-                )}
-                {flight.badge === "FASTEST" && (
-                  <Clock className="w-2.5 h-2.5 mr-1" />
-                )}
-                {flight.badge === "BEST VALUE" && (
-                  <Star className="w-2.5 h-2.5 mr-1" />
-                )}
-                {flight.badge}
-              </Badge>
-            )}
-            {/* fareIdentifier badges */}
-            {flight.fareIdentifier === "TJ_FLEX" && (
-              <Badge className="text-[10px] mb-1.5 bg-amber-100 text-amber-700 border-amber-200 block">
-                TJ FLEX
-              </Badge>
-            )}
-            {flight.fareIdentifier === "SPECIAL_RETURN" && (
-              <Badge className="text-[10px] mb-1.5 bg-blue-100 text-blue-700 border-blue-200 block">
-                Special Return
-              </Badge>
-            )}
-            <p className="font-display text-2xl font-bold text-foreground">
+          <div className="text-right flex-shrink-0 min-w-[120px]">
+            <div className="flex flex-col items-end gap-1 mb-2">
+              {flight.badge && (
+                <Badge
+                  className={`text-[10px] font-bold ${
+                    flight.badge === "CHEAPEST"
+                      ? "bg-green-100 text-green-700 border-green-200"
+                      : flight.badge === "FASTEST"
+                        ? "bg-blue-100 text-blue-700 border-blue-200"
+                        : "bg-orange-100 text-orange-700 border-orange-200"
+                  }`}
+                >
+                  {flight.badge === "CHEAPEST" && (
+                    <Zap className="w-2.5 h-2.5 mr-1" />
+                  )}
+                  {flight.badge === "FASTEST" && (
+                    <Clock className="w-2.5 h-2.5 mr-1" />
+                  )}
+                  {flight.badge === "BEST VALUE" && (
+                    <Star className="w-2.5 h-2.5 mr-1" />
+                  )}
+                  {flight.badge}
+                </Badge>
+              )}
+              {flight.fareIdentifier === "TJ_FLEX" && (
+                <Badge className="text-[10px] font-bold bg-amber-100 text-amber-700 border-amber-200">
+                  TJ FLEX
+                </Badge>
+              )}
+              {flight.fareIdentifier === "SPECIAL_RETURN" && (
+                <Badge className="text-[10px] font-bold bg-blue-100 text-blue-700 border-blue-200">
+                  Special Return
+                </Badge>
+              )}
+            </div>
+            <p
+              className="text-2xl font-extrabold tabular-nums"
+              style={{ color: "#f97316" }}
+            >
               ₹{flight.price.toLocaleString("en-IN")}
             </p>
-            <p className="text-[10px] text-muted-foreground mb-2">per person</p>
-            <Button
-              size="sm"
-              className="bg-primary text-primary-foreground font-semibold text-xs px-4"
+            <p className="text-[10px] mb-2" style={{ color: "#94a3b8" }}>
+              per person
+            </p>
+            <button
+              type="button"
+              className="px-4 py-2 rounded-xl text-xs font-bold text-white transition-all duration-200 w-full"
+              style={{
+                background: "linear-gradient(135deg, #0b5ed7, #0a4fb8)",
+                boxShadow: "0 4px 12px rgba(11,94,215,0.35)",
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.boxShadow =
+                  "0 6px 18px rgba(11,94,215,0.5)";
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.boxShadow =
+                  "0 6px 18px rgba(11,94,215,0.5)";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.boxShadow =
+                  "0 4px 12px rgba(11,94,215,0.35)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.boxShadow =
+                  "0 4px 12px rgba(11,94,215,0.35)";
+              }}
               data-ocid={`flight.book.button.${index + 1}`}
               onClick={() => onSelect(flight)}
             >
               Book Now
-            </Button>
+            </button>
             {flight.seatsLeft <= 5 && (
-              <p className="text-[10px] text-red-600 font-medium mt-1">
-                {flight.seatsLeft} seats left!
+              <p
+                className="text-[10px] font-semibold mt-1.5"
+                style={{ color: "#dc2626" }}
+              >
+                Only {flight.seatsLeft} seats left!
               </p>
             )}
           </div>
         </div>
 
-        {/* Expandable details row */}
-        <div className="flex items-center gap-4 mt-3 pt-3 border-t border-border flex-wrap">
+        {/* Details row */}
+        <div
+          className="flex items-center gap-4 mt-3 pt-3 flex-wrap"
+          style={{ borderTop: "1px solid #f1f5f9" }}
+        >
           {refundBadge()}
-          <span className="text-xs text-muted-foreground">
+          <span className="text-xs" style={{ color: "#94a3b8" }}>
             Taxes: ₹{flight.taxes.toLocaleString("en-IN")}
           </span>
-          <span className="text-xs text-muted-foreground">
+          <span className="text-xs" style={{ color: "#94a3b8" }}>
             Base: ₹{flight.baseFare.toLocaleString("en-IN")}
           </span>
           {(flight.mf > 0 || flight.mft > 0) && (
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs" style={{ color: "#94a3b8" }}>
               MF: ₹{flight.mf.toLocaleString("en-IN")} · MFT: ₹
               {flight.mft.toLocaleString("en-IN")}
             </span>
           )}
           <button
             type="button"
-            className="ml-auto text-xs text-primary hover:underline flex items-center gap-1"
+            className="ml-auto text-xs font-semibold flex items-center gap-1 transition-colors"
+            style={{ color: "#0b5ed7" }}
             onClick={() => setExpanded((v) => !v)}
             data-ocid={`flight.details.toggle.${index + 1}`}
           >
@@ -692,35 +899,71 @@ function FlightCard({
         </div>
 
         {expanded && (
-          <div className="mt-3 pt-3 border-t border-border bg-muted/30 rounded-lg p-3">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <div>
-                <p className="text-muted-foreground mb-0.5">Cabin Class</p>
-                <p className="font-medium text-foreground">
-                  {flight.cabinClass}
-                </p>
-              </div>
-              <div>
-                <p className="text-muted-foreground mb-0.5">Check-in Baggage</p>
-                <p className="font-medium text-foreground">
-                  {flight.checkInBaggage || "15 kg"}
-                </p>
-              </div>
-              <div>
-                <p className="text-muted-foreground mb-0.5">Cabin Baggage</p>
-                <p className="font-medium text-foreground">
-                  {flight.cabinBaggage || "7 kg"}
-                </p>
-              </div>
-              <div>
-                <p className="text-muted-foreground mb-0.5">Meal</p>
-                <p className="font-medium text-foreground">
-                  {flight.mealIncluded ? "Meal included" : "Paid meal"}
-                </p>
-              </div>
+          <div
+            className="mt-3 pt-3 rounded-xl p-3 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs"
+            style={{ background: "#f8fafc", borderTop: "1px solid #f1f5f9" }}
+          >
+            <div>
+              <p className="mb-0.5" style={{ color: "#94a3b8" }}>
+                Cabin Class
+              </p>
+              <p className="font-semibold" style={{ color: "#0b1437" }}>
+                {flight.cabinClass}
+              </p>
+            </div>
+            <div>
+              <p className="mb-0.5" style={{ color: "#94a3b8" }}>
+                Check-in Baggage
+              </p>
+              <p className="font-semibold" style={{ color: "#0b1437" }}>
+                {flight.checkInBaggage || "15 kg"}
+              </p>
+            </div>
+            <div>
+              <p className="mb-0.5" style={{ color: "#94a3b8" }}>
+                Cabin Baggage
+              </p>
+              <p className="font-semibold" style={{ color: "#0b1437" }}>
+                {flight.cabinBaggage || "7 kg"}
+              </p>
+            </div>
+            <div>
+              <p className="mb-0.5" style={{ color: "#94a3b8" }}>
+                Meal
+              </p>
+              <p className="font-semibold" style={{ color: "#0b1437" }}>
+                {flight.mealIncluded ? "Meal included" : "Paid meal"}
+              </p>
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+// ── Skeleton loader ───────────────────────────────────────────────────────────
+function FlightSkeleton() {
+  return (
+    <div
+      className="bg-white rounded-2xl p-4 animate-pulse"
+      style={{ border: "1px solid #e8edf5" }}
+    >
+      <div className="flex items-center gap-4">
+        <div className="w-11 h-11 rounded-xl bg-slate-200 flex-shrink-0" />
+        <div className="flex-1 space-y-2">
+          <div className="h-4 bg-slate-200 rounded w-1/3" />
+          <div className="h-3 bg-slate-100 rounded w-1/4" />
+        </div>
+        <div className="flex-1 flex items-center gap-3">
+          <div className="h-6 bg-slate-200 rounded w-14" />
+          <div className="flex-1 h-px bg-slate-200" />
+          <div className="h-6 bg-slate-200 rounded w-14" />
+        </div>
+        <div className="w-28 space-y-2">
+          <div className="h-6 bg-slate-200 rounded" />
+          <div className="h-8 bg-slate-100 rounded-xl" />
+        </div>
       </div>
     </div>
   );
@@ -773,18 +1016,31 @@ function FlightResults({
     <div className="flex gap-5">
       {/* Filter sidebar */}
       <aside
-        className="w-56 flex-shrink-0 hidden lg:block"
+        className="w-60 flex-shrink-0 hidden lg:block"
         data-ocid="flight.filters.panel"
       >
-        <div className="bg-card border border-border rounded-xl p-4 space-y-5 sticky top-20">
+        <div
+          className="rounded-2xl p-4 space-y-5 sticky top-20"
+          style={{
+            background: "#0b1437",
+            border: "1px solid rgba(255,255,255,0.08)",
+          }}
+        >
           <div className="flex items-center justify-between">
-            <h3 className="font-display font-semibold text-sm text-foreground flex items-center gap-2">
-              <SlidersHorizontal className="w-4 h-4" />
+            <h3
+              className="font-semibold text-sm flex items-center gap-2"
+              style={{ color: "#f1f5f9" }}
+            >
+              <SlidersHorizontal
+                className="w-4 h-4"
+                style={{ color: "#f97316" }}
+              />
               Filters
             </h3>
             <button
               type="button"
-              className="text-xs text-primary hover:underline"
+              className="text-xs font-semibold transition-colors"
+              style={{ color: "#f97316" }}
               onClick={() => {
                 setFilterNonStop(false);
                 setFilterAirlines([]);
@@ -797,28 +1053,34 @@ function FlightResults({
 
           {/* Stops */}
           <div>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+            <p
+              className="text-xs font-semibold uppercase tracking-wider mb-2"
+              style={{ color: "#475569" }}
+            >
               Stops
             </p>
-            <div className="space-y-2">
-              <label
-                htmlFor="filter-nonstop"
-                className="flex items-center gap-2 cursor-pointer"
-              >
-                <Checkbox
-                  id="filter-nonstop"
-                  checked={filterNonStop}
-                  onCheckedChange={(v) => setFilterNonStop(!!v)}
-                  data-ocid="flight.filter.nonstop.checkbox"
-                />
-                <span className="text-sm">Non-stop only</span>
-              </label>
-            </div>
+            <label
+              htmlFor="filter-nonstop"
+              className="flex items-center gap-2 cursor-pointer"
+            >
+              <Checkbox
+                id="filter-nonstop"
+                checked={filterNonStop}
+                onCheckedChange={(v) => setFilterNonStop(!!v)}
+                data-ocid="flight.filter.nonstop.checkbox"
+              />
+              <span className="text-sm" style={{ color: "#cbd5e1" }}>
+                Non-stop only
+              </span>
+            </label>
           </div>
 
           {/* Price range */}
           <div>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+            <p
+              className="text-xs font-semibold uppercase tracking-wider mb-2"
+              style={{ color: "#475569" }}
+            >
               Max Price: ₹{maxPrice.toLocaleString("en-IN")}
             </p>
             <input
@@ -828,10 +1090,13 @@ function FlightResults({
               step={500}
               value={maxPrice}
               onChange={(e) => setMaxPrice(Number(e.target.value))}
-              className="w-full accent-primary"
+              className="w-full accent-orange-500"
               data-ocid="flight.filter.price.input"
             />
-            <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+            <div
+              className="flex justify-between text-[10px] mt-1"
+              style={{ color: "#475569" }}
+            >
               <span>₹3,000</span>
               <span>₹15,000</span>
             </div>
@@ -839,7 +1104,10 @@ function FlightResults({
 
           {/* Airlines */}
           <div>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+            <p
+              className="text-xs font-semibold uppercase tracking-wider mb-2"
+              style={{ color: "#475569" }}
+            >
               Airlines
             </p>
             <div className="space-y-2">
@@ -862,7 +1130,9 @@ function FlightResults({
                     onCheckedChange={() => toggleAirline(airline)}
                     data-ocid="flight.filter.airline.checkbox"
                   />
-                  <span className="text-sm">{airline}</span>
+                  <span className="text-sm" style={{ color: "#cbd5e1" }}>
+                    {airline}
+                  </span>
                 </label>
               ))}
             </div>
@@ -870,7 +1140,10 @@ function FlightResults({
 
           {/* Departure time */}
           <div>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+            <p
+              className="text-xs font-semibold uppercase tracking-wider mb-2"
+              style={{ color: "#475569" }}
+            >
               Departure Time
             </p>
             <div className="grid grid-cols-2 gap-1.5">
@@ -878,7 +1151,12 @@ function FlightResults({
                 <button
                   key={t}
                   type="button"
-                  className="px-2 py-1.5 rounded-lg border border-border text-xs hover:bg-primary/10 hover:border-primary/30 transition-colors"
+                  className="px-2 py-1.5 rounded-lg text-xs transition-colors"
+                  style={{
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    color: "#94a3b8",
+                    background: "rgba(255,255,255,0.04)",
+                  }}
                   data-ocid="flight.filter.time.button"
                 >
                   {t}
@@ -892,22 +1170,45 @@ function FlightResults({
       {/* Results */}
       <div className="flex-1 min-w-0">
         {/* Sort bar */}
-        <div className="flex items-center justify-between mb-3 bg-card border border-border rounded-xl px-4 py-3 flex-wrap gap-2">
-          <p className="text-sm font-medium text-foreground">
-            <span className="font-bold text-primary">{sorted.length}</span>{" "}
-            flights found
+        <div
+          className="flex items-center justify-between mb-3 rounded-xl px-4 py-3 flex-wrap gap-2"
+          style={{
+            background: "#0b1437",
+            border: "1px solid rgba(255,255,255,0.08)",
+          }}
+        >
+          <p className="text-sm font-medium" style={{ color: "#94a3b8" }}>
+            <span className="font-bold" style={{ color: "#f97316" }}>
+              {sorted.length}
+            </span>{" "}
+            <span style={{ color: "#cbd5e1" }}>flights found</span>
           </p>
           <div className="flex items-center gap-2 flex-wrap">
             {/* Session timer */}
             {sessionTimer > 0 && (
               <div
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border ${
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold"
+                style={
                   sessionTimer < 300
-                    ? "bg-red-50 text-red-700 border-red-200"
+                    ? {
+                        background: "rgba(220,38,38,0.15)",
+                        border: "1px solid rgba(220,38,38,0.3)",
+                        color: "#fca5a5",
+                        boxShadow: "0 0 12px rgba(220,38,38,0.2)",
+                      }
                     : sessionTimer < 600
-                      ? "bg-amber-50 text-amber-700 border-amber-200"
-                      : "bg-blue-50 text-blue-700 border-blue-200"
-                }`}
+                      ? {
+                          background: "rgba(249,115,22,0.15)",
+                          border: "1px solid rgba(249,115,22,0.35)",
+                          color: "#fdba74",
+                          boxShadow: "0 0 12px rgba(249,115,22,0.2)",
+                        }
+                      : {
+                          background: "rgba(34,197,94,0.12)",
+                          border: "1px solid rgba(34,197,94,0.25)",
+                          color: "#86efac",
+                        }
+                }
                 data-ocid="flight.session.timer"
               >
                 <Clock className="w-3.5 h-3.5" />
@@ -915,19 +1216,26 @@ function FlightResults({
                 {String(sessionTimer % 60).padStart(2, "0")}
               </div>
             )}
-            <Filter className="w-4 h-4 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground hidden sm:block">
-              Sort by:
+            <Filter className="w-4 h-4" style={{ color: "#475569" }} />
+            <span
+              className="text-xs hidden sm:block"
+              style={{ color: "#475569" }}
+            >
+              Sort:
             </span>
             {(["price", "duration", "departure"] as const).map((s) => (
               <button
                 key={s}
                 type="button"
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors capitalize ${
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors capitalize"
+                style={
                   sortBy === s
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-muted text-muted-foreground"
-                }`}
+                    ? {
+                        background: "linear-gradient(135deg, #f97316, #ea580c)",
+                        color: "#fff",
+                      }
+                    : { color: "#64748b" }
+                }
                 onClick={() => setSortBy(s)}
                 data-ocid={`flight.sort.${s}.button`}
               >
@@ -944,32 +1252,49 @@ function FlightResults({
         {/* Session expired banner */}
         {sessionExpired && (
           <div
-            className="p-3 mb-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-700 flex items-center justify-between"
+            className="p-3 mb-3 rounded-xl text-sm flex items-center justify-between"
+            style={{
+              background: "rgba(249,115,22,0.08)",
+              border: "1px solid rgba(249,115,22,0.25)",
+              color: "#f97316",
+            }}
             data-ocid="flight.session.error_state"
           >
             <span>Search session expired. Prices may have changed.</span>
-            <Button
-              size="sm"
-              variant="outline"
-              className="text-xs h-7 border-amber-300 text-amber-700"
+            <button
+              type="button"
+              className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
+              style={{
+                border: "1px solid rgba(249,115,22,0.4)",
+                color: "#f97316",
+              }}
               onClick={onNewSearch}
               data-ocid="flight.session.new_search.button"
             >
               New Search
-            </Button>
+            </button>
           </div>
         )}
 
         {sorted.length === 0 ? (
           <div
-            className="bg-card border border-border rounded-xl p-12 text-center"
+            className="rounded-2xl p-12 text-center"
+            style={{
+              background: "#fff",
+              border: "1px solid #e8edf5",
+            }}
             data-ocid="flight.results.empty_state"
           >
-            <Plane className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="font-display font-semibold text-foreground mb-2">
+            <div
+              className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center"
+              style={{ background: "rgba(11,94,215,0.08)" }}
+            >
+              <Plane className="w-8 h-8" style={{ color: "#0b5ed7" }} />
+            </div>
+            <h3 className="font-bold text-lg mb-2" style={{ color: "#0b1437" }}>
               No flights match your filters
             </h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm" style={{ color: "#64748b" }}>
               Try adjusting your filters to see more results.
             </p>
           </div>
@@ -988,7 +1313,8 @@ function FlightResults({
 
         <button
           type="button"
-          className="mt-4 text-sm text-primary hover:underline flex items-center gap-1"
+          className="mt-4 text-sm font-semibold flex items-center gap-1 transition-colors"
+          style={{ color: "#f97316" }}
           onClick={onBack}
           data-ocid="flight.back.link"
         >
@@ -1338,21 +1664,167 @@ export function FlightSearch() {
     }
   }
 
+  // ── Render: FlightReview ─────────────────────────────────────────────────
+  if (selectedFlight && !confirmedFlightId) {
+    const reviewFlight: FlightReviewFlight = {
+      id: selectedFlight.id,
+      priceId: selectedFlight.priceId,
+      airline: selectedFlight.airline,
+      airlineCode: selectedFlight.airlineCode,
+      flightNo: selectedFlight.flightNo,
+      departure: selectedFlight.departure,
+      depTime: selectedFlight.depTime,
+      arrival: selectedFlight.arrival,
+      arrTime: selectedFlight.arrTime,
+      duration: selectedFlight.duration,
+      stops: selectedFlight.stops,
+      price: selectedFlight.price,
+      baseFare: selectedFlight.baseFare,
+      taxes: selectedFlight.taxes,
+      mf: selectedFlight.mf,
+      mft: selectedFlight.mft,
+      refundable: selectedFlight.refundable,
+      rT: selectedFlight.rT,
+      fareIdentifier: selectedFlight.fareIdentifier,
+      cabinClass: selectedFlight.cabinClass,
+      checkInBaggage: selectedFlight.checkInBaggage,
+      cabinBaggage: selectedFlight.cabinBaggage,
+    };
+    return (
+      <FlightReview
+        flight={reviewFlight}
+        passengers={passengers}
+        onBack={() => setSelectedFlight(null)}
+        onConfirmed={(bookingId) => {
+          setConfirmedFlightId(bookingId);
+          setSelectedFlight(null);
+        }}
+      />
+    );
+  }
+
+  // ── Render: Booking confirmed ────────────────────────────────────────────
+  if (confirmedFlightId) {
+    return (
+      <div
+        className="rounded-2xl p-10 text-center"
+        style={{
+          background: "linear-gradient(135deg, #0b1437 0%, #0d2060 100%)",
+          border: "1px solid rgba(249,115,22,0.2)",
+        }}
+        data-ocid="flight.booking.success_state"
+      >
+        <div
+          className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5"
+          style={{
+            background: "linear-gradient(135deg, #22c55e20, #16a34a30)",
+            border: "2px solid #22c55e",
+          }}
+        >
+          <span className="text-3xl">✓</span>
+        </div>
+        <h2
+          className="text-2xl font-extrabold mb-2"
+          style={{ color: "#f1f5f9" }}
+        >
+          Booking Confirmed!
+        </h2>
+        <p className="text-sm mb-1" style={{ color: "#94a3b8" }}>
+          Booking Reference
+        </p>
+        <p
+          className="text-lg font-bold font-mono mb-6"
+          style={{ color: "#f97316" }}
+        >
+          {confirmedFlightId}
+        </p>
+        <button
+          type="button"
+          className="px-8 py-3 rounded-xl font-bold text-white transition-all"
+          style={{
+            background: "linear-gradient(135deg, #f97316, #ea580c)",
+            boxShadow: "0 4px 16px rgba(249,115,22,0.4)",
+          }}
+          onClick={() => {
+            setConfirmedFlightId(null);
+            setResults(null);
+            setSelectedFlight(null);
+          }}
+          data-ocid="flight.new_search.primary_button"
+        >
+          Search Another Flight
+        </button>
+      </div>
+    );
+  }
+
+  // ── Render: Results ──────────────────────────────────────────────────────
+  if (results) {
+    return (
+      <FlightResults
+        flights={results}
+        onBack={() => setResults(null)}
+        onSelect={setSelectedFlight}
+        sessionTimer={sessionTimer}
+        sessionExpired={sessionExpired}
+        onNewSearch={() => setResults(null)}
+      />
+    );
+  }
+
+  // ── Render: Search form ──────────────────────────────────────────────────
   return (
     <div className="space-y-5" data-ocid="flight.search.panel">
-      {/* Search form */}
-      <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+      {/* Premium Search form */}
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{
+          background:
+            "linear-gradient(145deg, #0b1437 0%, #0d2060 60%, #0f2878 100%)",
+          boxShadow:
+            "0 20px 60px rgba(11,20,55,0.5), 0 0 0 1px rgba(255,255,255,0.06)",
+        }}
+      >
         {/* Header */}
-        <div className="bg-primary px-6 py-4 flex items-center justify-between">
+        <div
+          className="px-6 py-5 flex items-center justify-between"
+          style={{
+            borderBottom: "1px solid rgba(255,255,255,0.07)",
+            background: "rgba(0,0,0,0.15)",
+          }}
+        >
           <div className="flex items-center gap-3">
-            <Plane className="w-5 h-5 text-white" />
-            <h2 className="font-display font-bold text-white text-lg">
-              Book Flights
-            </h2>
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{
+                background: "linear-gradient(135deg, #f97316, #ea580c)",
+                boxShadow: "0 4px 12px rgba(249,115,22,0.4)",
+              }}
+            >
+              <Plane className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h2
+                className="font-extrabold text-lg leading-tight"
+                style={{ color: "#f1f5f9" }}
+              >
+                Book Flights
+              </h2>
+              <p className="text-xs" style={{ color: "#64748b" }}>
+                Search 500+ airlines worldwide
+              </p>
+            </div>
             {smartPnr && (
-              <Badge className="bg-white/20 text-white border-white/30 text-xs">
+              <span
+                className="px-2.5 py-1 rounded-full text-xs font-bold ml-2"
+                style={{
+                  background: "rgba(249,115,22,0.15)",
+                  border: "1px solid rgba(249,115,22,0.3)",
+                  color: "#fdba74",
+                }}
+              >
                 Smart PNR Active
-              </Badge>
+              </span>
             )}
           </div>
           <button
@@ -1361,38 +1833,54 @@ export function FlightSearch() {
             onClick={() => setSmartPnr((v) => !v)}
             data-ocid="flight.smart_pnr.toggle"
           >
-            <span className="text-white/80 text-xs font-medium">Smart PNR</span>
+            <span className="text-xs font-medium" style={{ color: "#94a3b8" }}>
+              Smart PNR
+            </span>
             <div
-              className={`w-10 h-5 rounded-full transition-colors relative ${
-                smartPnr ? "bg-accent" : "bg-white/20"
-              }`}
+              className="w-10 h-5 rounded-full transition-all relative"
+              style={{
+                background: smartPnr
+                  ? "linear-gradient(135deg, #f97316, #ea580c)"
+                  : "rgba(255,255,255,0.12)",
+              }}
             >
               <div
-                className={`w-4 h-4 rounded-full bg-white shadow absolute top-0.5 transition-transform ${
-                  smartPnr ? "translate-x-5" : "translate-x-0.5"
-                }`}
+                className="w-4 h-4 rounded-full bg-white shadow absolute top-0.5 transition-transform"
+                style={{
+                  transform: smartPnr ? "translateX(20px)" : "translateX(2px)",
+                }}
               />
             </div>
           </button>
         </div>
 
         {/* Trip type tabs */}
-        <div className="flex border-b border-border bg-muted/30">
+        <div
+          className="flex"
+          style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
+        >
           {(["oneway", "roundtrip", "multicity"] as TripType[]).map((t) => (
             <button
               key={t}
               type="button"
-              className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
+              className="flex-1 py-3.5 text-sm font-semibold transition-all relative"
+              style={
                 tripType === t
-                  ? "text-primary bg-card"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+                  ? { color: "#f97316" }
+                  : { color: "rgba(255,255,255,0.4)" }
+              }
               onClick={() => setTripType(t)}
               data-ocid={`flight.trip_type.${t}.tab`}
             >
               {tripLabels[t]}
               {tripType === t && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                <div
+                  className="absolute bottom-0 left-0 right-0 h-0.5"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, transparent, #f97316, transparent)",
+                  }}
+                />
               )}
             </button>
           ))}
@@ -1410,11 +1898,18 @@ export function FlightSearch() {
               {multiCityRoutes.map((route, idx) => (
                 <div
                   key={route.id}
-                  className="flex gap-2 items-end p-3 bg-muted/30 rounded-xl border border-border"
+                  className="flex gap-2 items-end p-3 rounded-xl"
+                  style={{
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                  }}
                   data-ocid={`flight.multicity.item.${idx + 1}`}
                 >
                   <div className="flex-1 space-y-1">
-                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    <Label
+                      className="text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: "#475569" }}
+                    >
                       From
                     </Label>
                     <Input
@@ -1424,11 +1919,19 @@ export function FlightSearch() {
                         updateMultiCityRoute(idx, "from", e.target.value)
                       }
                       className="h-10"
+                      style={{
+                        background: "rgba(255,255,255,0.06)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        color: "#e2e8f0",
+                      }}
                       data-ocid={`flight.multicity.from.input.${idx + 1}`}
                     />
                   </div>
                   <div className="flex-1 space-y-1">
-                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    <Label
+                      className="text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: "#475569" }}
+                    >
                       To
                     </Label>
                     <Input
@@ -1438,11 +1941,19 @@ export function FlightSearch() {
                         updateMultiCityRoute(idx, "to", e.target.value)
                       }
                       className="h-10"
+                      style={{
+                        background: "rgba(255,255,255,0.06)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        color: "#e2e8f0",
+                      }}
                       data-ocid={`flight.multicity.to.input.${idx + 1}`}
                     />
                   </div>
                   <div className="flex-1 space-y-1">
-                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    <Label
+                      className="text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: "#475569" }}
+                    >
                       Date
                     </Label>
                     <Input
@@ -1452,13 +1963,22 @@ export function FlightSearch() {
                         updateMultiCityRoute(idx, "date", e.target.value)
                       }
                       className="h-10"
+                      style={{
+                        background: "rgba(255,255,255,0.06)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        color: "#e2e8f0",
+                      }}
                       data-ocid={`flight.multicity.date.input.${idx + 1}`}
                     />
                   </div>
                   {multiCityRoutes.length > 2 && (
                     <button
                       type="button"
-                      className="h-10 px-3 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 transition-colors flex-shrink-0"
+                      className="h-10 px-3 rounded-lg text-xs font-semibold transition-colors flex-shrink-0"
+                      style={{
+                        border: "1px solid rgba(220,38,38,0.3)",
+                        color: "#f87171",
+                      }}
                       onClick={() => removeMultiCityRoute(idx)}
                       data-ocid={`flight.multicity.delete_button.${idx + 1}`}
                     >
@@ -1470,7 +1990,8 @@ export function FlightSearch() {
               {multiCityRoutes.length < 6 && (
                 <button
                   type="button"
-                  className="text-sm text-primary hover:underline flex items-center gap-1"
+                  className="text-sm font-semibold flex items-center gap-1"
+                  style={{ color: "#f97316" }}
                   onClick={addMultiCityRoute}
                   data-ocid="flight.multicity.add.button"
                 >
@@ -1484,7 +2005,8 @@ export function FlightSearch() {
               <div className="flex-1 space-y-1">
                 <Label
                   htmlFor="flight-from"
-                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                  className="text-xs font-semibold uppercase tracking-wider"
+                  style={{ color: "#475569" }}
                 >
                   From
                 </Label>
@@ -1500,17 +2022,25 @@ export function FlightSearch() {
               {/* Swap button */}
               <button
                 type="button"
-                className="mt-7 w-10 h-10 rounded-full border border-border bg-card hover:bg-primary/10 hover:border-primary/30 flex items-center justify-center transition-colors flex-shrink-0"
+                className="mt-7 w-10 h-10 rounded-full flex items-center justify-center transition-all flex-shrink-0"
+                style={{
+                  background: "rgba(249,115,22,0.12)",
+                  border: "1px solid rgba(249,115,22,0.3)",
+                }}
                 onClick={swapCities}
                 data-ocid="flight.swap.button"
               >
-                <ArrowLeftRight className="w-4 h-4 text-muted-foreground" />
+                <ArrowLeftRight
+                  className="w-4 h-4"
+                  style={{ color: "#f97316" }}
+                />
               </button>
 
               <div className="flex-1 space-y-1">
                 <Label
                   htmlFor="flight-to"
-                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                  className="text-xs font-semibold uppercase tracking-wider"
+                  style={{ color: "#475569" }}
                 >
                   To
                 </Label>
@@ -1525,30 +2055,48 @@ export function FlightSearch() {
             </div>
           )}
 
-          {/* Dates row (not shown for multicity since dates are per-row) */}
+          {/* Dates row */}
           {tripType !== "multicity" && (
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
                 <Label
                   htmlFor="dep-date"
-                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                  className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5"
+                  style={{ color: "#475569" }}
                 >
+                  <Calendar
+                    className="w-3 h-3"
+                    style={{ color: "rgba(249,115,22,0.7)" }}
+                  />
                   Departure
                 </Label>
-                <Input
-                  id="dep-date"
-                  type="date"
-                  value={depDate}
-                  onChange={(e) => setDepDate(e.target.value)}
-                  className="h-12"
-                  data-ocid="flight.departure_date.input"
-                />
+                <div className="relative">
+                  <Input
+                    id="dep-date"
+                    type="date"
+                    value={depDate}
+                    onChange={(e) => setDepDate(e.target.value)}
+                    className="h-12 pl-3"
+                    style={{
+                      background: "rgba(255,255,255,0.06)",
+                      border: "1px solid rgba(255,255,255,0.12)",
+                      color: "#e2e8f0",
+                      colorScheme: "dark",
+                    }}
+                    data-ocid="flight.departure_date.input"
+                  />
+                </div>
               </div>
               <div className="space-y-1">
                 <Label
                   htmlFor="ret-date"
-                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                  className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5"
+                  style={{ color: "#475569" }}
                 >
+                  <Calendar
+                    className="w-3 h-3"
+                    style={{ color: "rgba(249,115,22,0.7)" }}
+                  />
                   {tripType === "roundtrip" ? "Return" : "Return (Optional)"}
                 </Label>
                 <Input
@@ -1557,8 +2105,14 @@ export function FlightSearch() {
                   value={retDate}
                   onChange={(e) => setRetDate(e.target.value)}
                   className={`h-12 ${
-                    tripType === "oneway" ? "opacity-50" : ""
+                    tripType === "oneway" ? "opacity-40" : ""
                   }`}
+                  style={{
+                    background: "rgba(255,255,255,0.06)",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    color: "#e2e8f0",
+                    colorScheme: "dark",
+                  }}
                   disabled={tripType === "oneway"}
                   data-ocid="flight.return_date.input"
                 />
@@ -1569,7 +2123,10 @@ export function FlightSearch() {
           {/* Passengers & class row */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              <Label
+                className="text-xs font-semibold uppercase tracking-wider"
+                style={{ color: "#475569" }}
+              >
                 Passengers & Class
               </Label>
               <PassengerSelector
@@ -1582,37 +2139,58 @@ export function FlightSearch() {
             <div className="space-y-1">
               <Label
                 htmlFor="preferred-airline"
-                className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                className="text-xs font-semibold uppercase tracking-wider"
+                style={{ color: "#475569" }}
               >
                 Preferred Airline
               </Label>
-              <select
-                id="preferred-airline"
-                className="w-full h-12 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                value={preferredAirline}
-                onChange={(e) => setPreferredAirline(e.target.value)}
-                data-ocid="flight.preferred_airline.select"
-              >
-                <option value="">Any Airline</option>
-                {AIRLINES.map((a) => (
-                  <option key={a.code} value={a.code}>
-                    {a.name}
+              <div className="relative">
+                <select
+                  id="preferred-airline"
+                  className="w-full h-12 rounded-xl px-3 text-sm focus:outline-none appearance-none"
+                  style={{
+                    background: "rgba(255,255,255,0.06)",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    color: "#e2e8f0",
+                  }}
+                  value={preferredAirline}
+                  onChange={(e) => setPreferredAirline(e.target.value)}
+                  data-ocid="flight.preferred_airline.select"
+                >
+                  <option value="" style={{ background: "#0b1437" }}>
+                    Any Airline
                   </option>
-                ))}
-              </select>
+                  {AIRLINES.map((a) => (
+                    <option
+                      key={a.code}
+                      value={a.code}
+                      style={{ background: "#0b1437" }}
+                    >
+                      {a.name}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+                  style={{ color: "#475569" }}
+                />
+              </div>
             </div>
           </div>
 
           {/* Fare type row */}
           <div className="space-y-2">
-            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            <Label
+              className="text-xs font-semibold uppercase tracking-wider"
+              style={{ color: "#475569" }}
+            >
               Fare Type
             </Label>
             <div className="flex flex-wrap gap-2">
               {(
                 [
                   { key: "regular", label: "Regular Fares" },
-                  { key: "student", label: "Student Fares" },
+                  { key: "student", label: "Student" },
                   { key: "senior", label: "Senior Citizen" },
                   { key: "soto", label: "SOTO" },
                   { key: "ndc", label: "NDC" },
@@ -1629,14 +2207,15 @@ export function FlightSearch() {
                     value={key}
                     checked={fareType === key}
                     onChange={() => setFareType(key)}
-                    className="accent-primary"
+                    className="accent-orange-500"
                   />
                   <span
-                    className={`text-sm ${
-                      fareType === key
-                        ? "font-semibold text-primary"
-                        : "text-foreground/70"
-                    }`}
+                    className="text-sm"
+                    style={{
+                      color:
+                        fareType === key ? "#f97316" : "rgba(255,255,255,0.45)",
+                      fontWeight: fareType === key ? 600 : 400,
+                    }}
                   >
                     {label}
                   </span>
@@ -1645,8 +2224,8 @@ export function FlightSearch() {
             </div>
           </div>
 
-          {/* Options row */}
-          <div className="flex items-center justify-between">
+          {/* Options + CTA row */}
+          <div className="flex items-center justify-between pt-1">
             <label
               htmlFor="direct-only"
               className="flex items-center gap-2 cursor-pointer"
@@ -1657,13 +2236,28 @@ export function FlightSearch() {
                 onCheckedChange={(v) => setDirectOnly(!!v)}
                 data-ocid="flight.direct_only.checkbox"
               />
-              <span className="text-sm font-medium">Direct Flights Only</span>
+              <span
+                className="text-sm font-medium"
+                style={{ color: "rgba(255,255,255,0.6)" }}
+              >
+                Direct Flights Only
+              </span>
             </label>
 
             <Button
               type="submit"
               size="lg"
-              className="bg-primary text-primary-foreground font-semibold px-8"
+              className="font-bold px-8 rounded-xl border-0 text-white"
+              style={{
+                background:
+                  loading || (tripType !== "multicity" && (!from || !to))
+                    ? "rgba(249,115,22,0.4)"
+                    : "linear-gradient(135deg, #f97316 0%, #ea580c 100%)",
+                boxShadow:
+                  loading || (tripType !== "multicity" && (!from || !to))
+                    ? "none"
+                    : "0 6px 20px rgba(249,115,22,0.45)",
+              }}
               disabled={loading || (tripType !== "multicity" && (!from || !to))}
               data-ocid="flight.search.primary_button"
             >
@@ -1686,13 +2280,27 @@ export function FlightSearch() {
         </form>
       </div>
 
-      {/* Recent searches (shown when no results) */}
+      {/* Loading skeletons */}
+      {loading && (
+        <div className="space-y-3" data-ocid="flight.search.loading_state">
+          {[1, 2, 3].map((i) => (
+            <FlightSkeleton key={i} />
+          ))}
+        </div>
+      )}
+
+      {/* Recent searches */}
       {!results && !loading && (
         <div
-          className="bg-card border border-border rounded-xl p-5"
+          className="rounded-2xl p-5"
+          style={{
+            background: "#fff",
+            border: "1px solid #e8edf5",
+            boxShadow: "0 2px 8px rgba(11,20,55,0.06)",
+          }}
           data-ocid="flight.recent_searches.panel"
         >
-          <h3 className="font-display font-semibold text-sm text-foreground mb-3">
+          <h3 className="font-bold text-sm mb-3" style={{ color: "#0b1437" }}>
             Your Recent Searches
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -1700,180 +2308,56 @@ export function FlightSearch() {
               <button
                 key={s.from + s.to}
                 type="button"
-                className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted/50 hover:border-primary/30 transition-colors text-left group"
+                className="flex items-center gap-3 p-3 rounded-xl text-left transition-all"
+                style={{
+                  border: "1px solid #e8edf5",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(11,94,215,0.3)";
+                  e.currentTarget.style.background = "rgba(11,94,215,0.03)";
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(11,94,215,0.3)";
+                  e.currentTarget.style.background = "rgba(11,94,215,0.03)";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.borderColor = "#e8edf5";
+                  e.currentTarget.style.background = "";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "#e8edf5";
+                  e.currentTarget.style.background = "";
+                }}
                 onClick={() => {
                   setFrom(s.from);
                   setTo(s.to);
                 }}
                 data-ocid={`flight.recent_search.item.${i + 1}`}
               >
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Plane className="w-5 h-5 text-primary" />
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ background: "rgba(11,94,215,0.08)" }}
+                >
+                  <Plane className="w-4 h-4" style={{ color: "#0b5ed7" }} />
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground group-hover:text-primary">
-                    {s.from} → {s.to}
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-sm" style={{ color: "#0b1437" }}>
+                    {s.from} <span style={{ color: "#f97316" }}>→</span> {s.to}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs" style={{ color: "#94a3b8" }}>
                     {s.date} · {s.pax}
                   </p>
                 </div>
-                <p className="ml-auto text-sm font-bold text-foreground">
+                <span
+                  className="text-xs font-bold flex-shrink-0"
+                  style={{ color: "#f97316" }}
+                >
                   {s.price}
-                </p>
+                </span>
               </button>
             ))}
           </div>
         </div>
-      )}
-
-      {/* Deals banner */}
-      {!results && !loading && (
-        <div
-          className="bg-gradient-to-r from-primary to-blue-600 rounded-xl p-5 text-white"
-          data-ocid="flight.deals.panel"
-        >
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div>
-              <Badge className="bg-white/20 text-white border-white/30 text-xs mb-2">
-                🔥 HOT DEALS
-              </Badge>
-              <h3 className="font-display font-bold text-lg">
-                Special Fare Offers This Week
-              </h3>
-              <p className="text-white/80 text-sm mt-1">
-                Exclusive fares for FiveStar Travel agents. Limited seats
-                available.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {[
-                { route: "DEL → DXB", price: "₹18,500", tag: "IndiGo" },
-                { route: "BOM → SIN", price: "₹22,800", tag: "Air India" },
-                { route: "BLR → BKK", price: "₹16,200", tag: "Vistara" },
-              ].map((deal, dealIdx) => (
-                <div
-                  key={deal.route}
-                  className="bg-white/15 rounded-xl px-4 py-2.5 text-center"
-                  data-ocid={`flight.deal.item.${dealIdx + 1}`}
-                >
-                  <p className="text-xs text-white/70 mb-0.5">{deal.route}</p>
-                  <p className="font-display font-bold text-base">
-                    {deal.price}
-                  </p>
-                  <p className="text-[10px] text-white/60">{deal.tag}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Loading state */}
-      {loading && (
-        <div
-          className="bg-card border border-border rounded-xl p-12 text-center"
-          data-ocid="flight.search.loading_state"
-        >
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-            <Plane className="w-8 h-8 text-primary animate-bounce" />
-          </div>
-          <h3 className="font-display font-semibold text-foreground mb-2">
-            Searching Flights
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            Checking Amadeus, Sabre, Travelport &amp; more for the best fares...
-          </p>
-          <div className="flex justify-center gap-1.5 mt-4">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className="w-2 h-2 rounded-full bg-primary animate-bounce"
-                style={{ animationDelay: `${i * 0.15}s` }}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Flight confirmed */}
-      {confirmedFlightId && (
-        <div
-          className="space-y-5 text-center py-16"
-          data-ocid="flight.confirm.panel"
-        >
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-            <svg
-              aria-labelledby="flight-confirmed-title"
-              className="w-8 h-8 text-green-600"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <title id="flight-confirmed-title">Booking confirmed</title>
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold mb-2">Flight Booked!</h2>
-            <p className="text-muted-foreground">Your booking reference is</p>
-            <p
-              className="text-xl font-mono font-bold text-primary mt-1"
-              data-ocid="flight.confirm.bookingid"
-            >
-              {confirmedFlightId}
-            </p>
-            <p className="text-sm text-muted-foreground mt-3">
-              Confirmation sent to your registered email.
-            </p>
-          </div>
-          <button
-            type="button"
-            className="mt-4 px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
-            onClick={() => {
-              setConfirmedFlightId(null);
-              setSelectedFlight(null);
-              setResults(null);
-            }}
-            data-ocid="flight.confirm.new_search.button"
-          >
-            New Search
-          </button>
-        </div>
-      )}
-
-      {/* Flight Review */}
-      {!confirmedFlightId && selectedFlight && (
-        <FlightReview
-          flight={{
-            ...selectedFlight,
-            cabinClass: cabin,
-            priceId: selectedFlight.priceId,
-          }}
-          passengers={passengers}
-          onBack={() => setSelectedFlight(null)}
-          onConfirmed={(id) => setConfirmedFlightId(id)}
-        />
-      )}
-
-      {/* Results */}
-      {!confirmedFlightId && !selectedFlight && results && (
-        <FlightResults
-          flights={results}
-          onBack={() => setResults(null)}
-          onSelect={(f) => setSelectedFlight(f)}
-          sessionTimer={sessionTimer}
-          sessionExpired={sessionExpired}
-          onNewSearch={() => {
-            setResults(null);
-            setSessionExpired(false);
-          }}
-        />
       )}
     </div>
   );

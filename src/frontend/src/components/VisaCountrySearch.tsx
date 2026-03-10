@@ -1307,7 +1307,7 @@ function CountryCard({
     country.visaType === "e-Visa" || country.visaType === "Visa on Arrival";
   return (
     <Card
-      className="group overflow-hidden border border-border hover:border-primary/40 hover:shadow-lg transition-all duration-200 cursor-pointer bg-card"
+      className="group overflow-hidden border border-slate-200 hover:border-orange-300 hover:shadow-xl transition-all duration-300 cursor-pointer bg-white hover:scale-[1.02]"
       data-ocid={`visa.country.item.${index}`}
     >
       <CardContent className="p-5">
@@ -1349,7 +1349,7 @@ function CountryCard({
 
         <Button
           size="sm"
-          className={`w-full ${isEvisa ? "bg-emerald-600 hover:bg-emerald-700" : "bg-[#0B5ED7] hover:bg-blue-700"} text-white`}
+          className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-sm"
           onClick={onSelect}
           data-ocid={`visa.apply.button.${index}`}
         >
@@ -1393,24 +1393,24 @@ export default function VisaCountrySearch({
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-[#0B5ED7] via-[#1044a3] to-[#1E293B] py-12 px-4">
+      <div className="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 py-16 px-4 relative overflow-hidden">
         <div className="max-w-4xl mx-auto text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Globe className="w-7 h-7 text-white/80" />
-            <span className="text-white/80 text-sm font-medium tracking-widest uppercase">
+            <span className="text-orange-400 text-sm font-semibold tracking-widest uppercase">
               Visa Services
             </span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-3 tracking-tight">
             Where do you want to go?
           </h1>
-          <p className="text-white/70 mb-8 text-base">
+          <p className="text-white/70 mb-8 text-base md:text-lg">
             Fast, hassle-free visa processing for 180+ countries
           </p>
           <div className="relative max-w-xl mx-auto">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
-              className="pl-12 h-13 text-base rounded-xl border-0 shadow-xl"
+              className="pl-12 h-14 text-base rounded-2xl border-0 shadow-2xl bg-white/95 backdrop-blur-sm focus-visible:ring-2 focus-visible:ring-orange-400 placeholder:text-slate-400"
               placeholder="Search country, e.g. Dubai, USA, Thailand…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -1435,7 +1435,7 @@ export default function VisaCountrySearch({
                 <button
                   type="button"
                   key={c.code}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-card hover:border-primary hover:bg-primary/5 transition-all text-sm font-medium text-foreground"
+                  className="flex items-center gap-2 px-3 py-2 rounded-full border border-slate-200 bg-white hover:border-orange-400 hover:shadow-md transition-all text-sm font-medium text-slate-700"
                   onClick={() => onSelectCountry(c)}
                   data-ocid="visa.popular.button"
                 >
@@ -1462,7 +1462,7 @@ export default function VisaCountrySearch({
               aria-selected={region === r}
               className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
                 region === r
-                  ? "bg-primary text-primary-foreground border-primary"
+                  ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white border-orange-500 shadow-sm"
                   : "bg-card text-muted-foreground border-border hover:border-primary/50"
               }`}
               onClick={() => setRegion(r)}
@@ -1483,7 +1483,7 @@ export default function VisaCountrySearch({
               aria-selected={visaType === v}
               className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${
                 visaType === v
-                  ? "bg-[#1E293B] text-white border-[#1E293B]"
+                  ? "bg-gradient-to-r from-slate-800 to-blue-900 text-white border-transparent shadow-sm"
                   : "bg-card text-muted-foreground border-border hover:border-[#1E293B]/50"
               }`}
               onClick={() => setVisaType(v)}

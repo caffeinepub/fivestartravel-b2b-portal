@@ -428,10 +428,11 @@ export function HotelReview({
       {/* Breadcrumb */}
       <div className="flex items-center gap-3 flex-wrap">
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={onBack}
           disabled={loading}
+          className="border-slate-300 hover:border-slate-500 hover:bg-slate-50"
           data-ocid="hotel.review.back.button"
         >
           <ArrowLeft className="w-4 h-4 mr-1" /> Back to Rooms
@@ -460,43 +461,47 @@ export function HotelReview({
         {/* Left: Forms */}
         <div className="lg:col-span-2 space-y-5">
           {/* Booking type */}
-          <div className="bg-card border border-border rounded-xl p-4">
-            <h3 className="font-semibold text-sm mb-3">Booking Type</h3>
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => setBookingType("instant")}
-                disabled={loading}
-                data-ocid="hotel.review.instant.toggle"
-                className={`flex-1 border rounded-lg p-3 text-sm font-medium transition-colors ${
-                  bookingType === "instant"
-                    ? "border-primary bg-primary/5 text-primary"
-                    : "border-border text-muted-foreground hover:border-muted-foreground"
-                }`}
-              >
-                <CreditCard className="w-4 h-4 mx-auto mb-1" />
-                Instant Booking
-                <div className="text-xs font-normal mt-0.5">
-                  Confirm &amp; pay now
-                </div>
-              </button>
-              <button
-                type="button"
-                onClick={() => setBookingType("hold")}
-                disabled={loading}
-                data-ocid="hotel.review.hold.toggle"
-                className={`flex-1 border rounded-lg p-3 text-sm font-medium transition-colors ${
-                  bookingType === "hold"
-                    ? "border-amber-500 bg-amber-50 text-amber-700"
-                    : "border-border text-muted-foreground hover:border-muted-foreground"
-                }`}
-              >
-                <Clock className="w-4 h-4 mx-auto mb-1" />
-                Hold Booking
-                <div className="text-xs font-normal mt-0.5">
-                  Reserve now, pay later
-                </div>
-              </button>
+          <div className="bg-card border border-border rounded-xl overflow-hidden">
+            <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-4 py-3 border-b border-slate-600/50">
+              <h3 className="font-semibold text-sm text-white">Booking Type</h3>
+            </div>
+            <div className="p-4">
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setBookingType("instant")}
+                  disabled={loading}
+                  data-ocid="hotel.review.instant.toggle"
+                  className={`flex-1 border rounded-xl p-3 text-sm font-medium transition-all duration-200 ${
+                    bookingType === "instant"
+                      ? "border-orange-500 bg-gradient-to-br from-orange-50 to-orange-100 text-orange-700 shadow-md shadow-orange-200"
+                      : "border-border text-muted-foreground hover:border-slate-400 hover:bg-muted/50"
+                  }`}
+                >
+                  <CreditCard className="w-4 h-4 mx-auto mb-1" />
+                  Instant Booking
+                  <div className="text-xs font-normal mt-0.5">
+                    Confirm &amp; pay now
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBookingType("hold")}
+                  disabled={loading}
+                  data-ocid="hotel.review.hold.toggle"
+                  className={`flex-1 border rounded-xl p-3 text-sm font-medium transition-all duration-200 ${
+                    bookingType === "hold"
+                      ? "border-amber-500 bg-gradient-to-br from-amber-50 to-amber-100 text-amber-700 shadow-md shadow-amber-200"
+                      : "border-border text-muted-foreground hover:border-slate-400 hover:bg-muted/50"
+                  }`}
+                >
+                  <Clock className="w-4 h-4 mx-auto mb-1" />
+                  Hold Booking
+                  <div className="text-xs font-normal mt-0.5">
+                    Reserve now, pay later
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -591,7 +596,7 @@ export function HotelReview({
           )}
 
           <Button
-            className="w-full"
+            className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold shadow-lg shadow-orange-500/30 border-0"
             size="lg"
             onClick={() => {
               void handleBook();
@@ -614,102 +619,112 @@ export function HotelReview({
 
         {/* Right: Price Summary */}
         <div className="space-y-4">
-          <div className="bg-card border border-border rounded-xl p-4 space-y-3 sticky top-4">
-            <h3 className="font-semibold text-sm">{hotelName}</h3>
-            <div className="text-xs text-muted-foreground space-y-1">
-              <div>
-                {checkIn} → {checkOut} · {nights} night{nights > 1 ? "s" : ""}
-              </div>
-              <div>
-                {rooms.length} room{rooms.length > 1 ? "s" : ""} ·{" "}
-                {option.mealBasis}
-              </div>
-              <div>
-                <Badge variant="outline" className="text-xs">
-                  {option.optionType}
-                </Badge>
-              </div>
+          <div className="bg-card border border-border rounded-xl overflow-hidden shadow-lg sticky top-4">
+            <div className="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 px-4 py-3 border-b border-slate-700/60">
+              <h3 className="font-semibold text-sm text-white">{hotelName}</h3>
             </div>
-
-            {option.cancellation.isRefundable && freeCancelPenalty && (
-              <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 text-xs text-green-700">
-                Free cancellation until{" "}
-                {new Date(freeCancelPenalty.to).toLocaleDateString("en-IN", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                })}
+            <div className="p-4 space-y-3">
+              <div className="text-xs text-muted-foreground space-y-1">
+                <div>
+                  {checkIn} → {checkOut} · {nights} night{nights > 1 ? "s" : ""}
+                </div>
+                <div>
+                  {rooms.length} room{rooms.length > 1 ? "s" : ""} ·{" "}
+                  {option.mealBasis}
+                </div>
+                <div>
+                  <Badge variant="outline" className="text-xs">
+                    {option.optionType}
+                  </Badge>
+                </div>
               </div>
-            )}
 
-            <div className="border-t border-border pt-3 space-y-1.5 text-xs">
-              <div className="flex justify-between text-muted-foreground">
-                <span>Base Price</span>
-                <span>
-                  {currency}{" "}
-                  {basePrice.toLocaleString("en-IN", {
-                    minimumFractionDigits: 2,
+              {option.cancellation.isRefundable && freeCancelPenalty && (
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg px-3 py-2 text-xs text-green-700 flex items-center gap-1.5">
+                  Free cancellation until{" "}
+                  {new Date(freeCancelPenalty.to).toLocaleDateString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
                   })}
-                </span>
-              </div>
-              {discount > 0 && (
-                <div className="flex justify-between text-green-600">
-                  <span>Discount</span>
+                </div>
+              )}
+
+              <div className="border-t border-border pt-3 space-y-1.5 text-xs">
+                <div className="flex justify-between text-muted-foreground">
+                  <span>Base Price</span>
                   <span>
-                    - {currency}{" "}
-                    {discount.toLocaleString("en-IN", {
+                    {currency}{" "}
+                    {basePrice.toLocaleString("en-IN", {
                       minimumFractionDigits: 2,
                     })}
                   </span>
                 </div>
+                {discount > 0 && (
+                  <div className="flex justify-between text-green-600">
+                    <span>Discount</span>
+                    <span>
+                      - {currency}{" "}
+                      {discount.toLocaleString("en-IN", {
+                        minimumFractionDigits: 2,
+                      })}
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between text-muted-foreground">
+                  <span>Taxes</span>
+                  <span>
+                    {currency}{" "}
+                    {taxes.toLocaleString("en-IN", {
+                      minimumFractionDigits: 2,
+                    })}
+                  </span>
+                </div>
+                <div className="flex justify-between text-muted-foreground">
+                  <span>Management Fee</span>
+                  <span>
+                    {currency}{" "}
+                    {mf.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <div className="flex justify-between text-muted-foreground">
+                  <span>MF Tax</span>
+                  <span>
+                    {currency}{" "}
+                    {mft.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <div className="flex justify-between font-bold text-sm border-t border-border pt-2 mt-2">
+                  <span>Total</span>
+                  <span className="text-orange-600 font-bold text-base">
+                    {currency}{" "}
+                    {totalPrice.toLocaleString("en-IN", {
+                      minimumFractionDigits: 2,
+                    })}
+                  </span>
+                </div>
+              </div>
+
+              {option.compliance.gstType !== "NA" && (
+                <div className="text-xs text-muted-foreground bg-muted/50 rounded px-2 py-1">
+                  GST Type:{" "}
+                  <span className="font-medium">
+                    {option.compliance.gstType}
+                  </span>
+                </div>
               )}
-              <div className="flex justify-between text-muted-foreground">
-                <span>Taxes</span>
-                <span>
-                  {currency}{" "}
-                  {taxes.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                </span>
-              </div>
-              <div className="flex justify-between text-muted-foreground">
-                <span>Management Fee</span>
-                <span>
-                  {currency}{" "}
-                  {mf.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                </span>
-              </div>
-              <div className="flex justify-between text-muted-foreground">
-                <span>MF Tax</span>
-                <span>
-                  {currency}{" "}
-                  {mft.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                </span>
-              </div>
-              <div className="flex justify-between font-bold text-sm border-t border-border pt-2 mt-2">
-                <span>Total</span>
-                <span className="text-primary">
-                  {currency}{" "}
-                  {totalPrice.toLocaleString("en-IN", {
-                    minimumFractionDigits: 2,
-                  })}
-                </span>
-              </div>
+
+              {option.bookingNotes && (
+                <div className="border-t border-border pt-3">
+                  <div className="text-xs font-semibold mb-1">
+                    Booking Notes
+                  </div>
+                  <p className="text-xs text-muted-foreground whitespace-pre-line">
+                    {option.bookingNotes}
+                  </p>
+                </div>
+              )}
             </div>
-
-            {option.compliance.gstType !== "NA" && (
-              <div className="text-xs text-muted-foreground bg-muted/50 rounded px-2 py-1">
-                GST Type:{" "}
-                <span className="font-medium">{option.compliance.gstType}</span>
-              </div>
-            )}
-
-            {option.bookingNotes && (
-              <div className="border-t border-border pt-3">
-                <div className="text-xs font-semibold mb-1">Booking Notes</div>
-                <p className="text-xs text-muted-foreground whitespace-pre-line">
-                  {option.bookingNotes}
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </div>

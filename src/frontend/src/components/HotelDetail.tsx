@@ -307,7 +307,7 @@ function OptionCard({
 
   return (
     <div
-      className="border border-border rounded-xl p-4 bg-card hover:border-primary/50 transition-colors"
+      className="border border-border rounded-xl p-4 bg-card hover:border-orange-400/50 hover:shadow-md transition-all duration-200 border-l-4 border-l-primary/60"
       data-ocid={`hotel.detail.option.item.${index + 1}`}
     >
       <div className="flex flex-col md:flex-row md:items-start gap-4">
@@ -372,7 +372,7 @@ function OptionCard({
         </div>
 
         <div className="md:text-right md:min-w-[180px] flex-shrink-0">
-          <div className="bg-muted/40 rounded-lg p-3">
+          <div className="bg-gradient-to-b from-slate-50 to-slate-100 rounded-xl p-3 border border-slate-200 shadow-sm">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
               Price Breakup
             </p>
@@ -415,7 +415,7 @@ function OptionCard({
             </div>
             <Button
               size="sm"
-              className="mt-3 w-full bg-primary text-primary-foreground font-semibold text-xs"
+              className="mt-3 w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold text-xs shadow-md shadow-orange-500/25 border-0"
               onClick={onSelect}
               disabled={soldOut}
               data-ocid={`hotel.detail.select.button.${index + 1}`}
@@ -468,7 +468,7 @@ export function HotelDetail({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-colors bg-slate-800/50 rounded-lg px-3 py-1.5 border border-slate-600/50 hover:border-slate-400/50"
           data-ocid="hotel.detail.back.button"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -525,13 +525,13 @@ export function HotelDetail({
       )}
 
       {/* Hotel header card */}
-      <div className="bg-card border border-border rounded-xl overflow-hidden">
-        <div className="flex gap-4 p-4">
-          <div className="w-24 h-24 bg-gradient-to-br from-primary/20 to-blue-200 rounded-lg flex-shrink-0 flex items-center justify-center">
-            <Hotel className="w-10 h-10 text-primary/40" />
+      <div className="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 border border-slate-700/60 rounded-xl overflow-hidden shadow-xl">
+        <div className="flex gap-4 p-4 text-white">
+          <div className="w-24 h-24 bg-white/10 backdrop-blur-sm rounded-lg flex-shrink-0 flex items-center justify-center border border-white/20">
+            <Hotel className="w-10 h-10 text-white/40" />
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="font-display font-bold text-lg text-foreground">
+            <h2 className="font-display font-bold text-lg text-white">
               {hotelName}
             </h2>
             <div className="flex items-center gap-1 mt-0.5">
@@ -542,7 +542,7 @@ export function HotelDetail({
                 />
               ))}
             </div>
-            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+            <p className="text-xs text-white/60 flex items-center gap-1 mt-1">
               <MapPin className="w-3 h-3" /> New Delhi, India
             </p>
             <div className="flex flex-wrap gap-2 mt-2">
@@ -564,7 +564,7 @@ export function HotelDetail({
 
       {/* Options list */}
       <div>
-        <h3 className="text-sm font-semibold text-foreground mb-2">
+        <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
           {options.length} rate option{options.length !== 1 ? "s" : ""}{" "}
           available
           <span className="text-xs font-normal text-muted-foreground ml-2">
@@ -588,7 +588,7 @@ export function HotelDetail({
       <div className="border border-border rounded-xl overflow-hidden">
         <button
           type="button"
-          className="w-full flex items-center justify-between px-4 py-3 bg-muted/40 hover:bg-muted/70 transition-colors text-left"
+          className="w-full flex items-center justify-between px-4 py-3 bg-gradient-to-r from-slate-50 to-slate-100 hover:from-slate-100 hover:to-slate-200 transition-colors text-left"
           onClick={() => setShowStaticInfo((v) => !v)}
           data-ocid="hotel.static.toggle"
         >

@@ -16,9 +16,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['"Bricolage Grotesque"', "sans-serif"],
-        body: ['"Plus Jakarta Sans"', "sans-serif"],
-        sans: ['"Plus Jakarta Sans"', "sans-serif"],
+        heading: ['Sora', 'sans-serif'],
+        display: ['Sora', 'sans-serif'],
+        body: ['"Plus Jakarta Sans"', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
       },
       colors: {
         brand: {
@@ -85,10 +86,13 @@ export default {
       },
       boxShadow: {
         xs: "0 1px 2px 0 rgba(0,0,0,0.05)",
-        glow: "0 0 20px oklch(0.65 0.22 42 / 0.3)",
-        "navy-sm": "0 2px 8px oklch(0.22 0.08 260 / 0.1)",
-        "navy-md": "0 8px 24px oklch(0.22 0.08 260 / 0.15)",
-        premium: "0 20px 60px oklch(0.22 0.08 260 / 0.2)",
+        glow: "0 0 30px rgba(37,99,235,0.4)",
+        "glow-green": "0 0 30px rgba(0,229,168,0.3)",
+        "glow-gold": "0 0 30px rgba(250,204,21,0.3)",
+        "navy-sm": "0 2px 8px rgba(15,23,42,0.2)",
+        "navy-md": "0 8px 24px rgba(15,23,42,0.4)",
+        premium: "0 20px 60px rgba(15,23,42,0.5)",
+        "premium-blue": "0 20px 60px rgba(37,99,235,0.3)",
       },
       keyframes: {
         "accordion-down": {
