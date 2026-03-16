@@ -1,4 +1,5 @@
 import {
+  Briefcase,
   Building2,
   CheckCircle2,
   Globe,
@@ -82,6 +83,15 @@ const LOGIN_BUTTONS = [
     gradient: "linear-gradient(135deg, #7C3AED, #A78BFA)",
     glow: "rgba(124,58,237,0.45)",
     border: "rgba(124,58,237,0.5)",
+  },
+  {
+    key: "staff",
+    icon: Briefcase,
+    label: "Staff Login",
+    desc: "Operations & booking staff",
+    gradient: "linear-gradient(135deg, #064E3B, #059669)",
+    glow: "rgba(5,150,105,0.45)",
+    border: "rgba(5,150,105,0.5)",
   },
 ] as const;
 
@@ -371,7 +381,7 @@ export function HeroSection({
           </div>
 
           {/* Login Buttons Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             {LOGIN_BUTTONS.map((btn) => {
               const Icon = btn.icon;
               const isHovered = hoveredBtn === btn.key;
@@ -382,6 +392,8 @@ export function HeroSection({
                   onClick={() => {
                     if (btn.key === "supplier") onNavigate("supplier-login");
                     else if (btn.key === "admin") onNavigate("admin-login");
+                    else if (btn.key === "dmc") onNavigate("dmc-login");
+                    else if (btn.key === "staff") onNavigate("staff-login");
                     else onNavigate("login");
                   }}
                   onMouseEnter={() => setHoveredBtn(btn.key)}

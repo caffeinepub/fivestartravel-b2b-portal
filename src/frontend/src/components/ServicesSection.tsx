@@ -81,186 +81,74 @@ const SERVICES = [
   },
 ];
 
-const NETWORK_CARDS = [
-  {
-    emoji: "👤",
-    title: "Travel Agents",
-    desc: "Access global travel inventory and earn higher margins with our powerful booking platform designed for professionals.",
-    cta: "Register as Agent",
-    page: "register" as Page,
-    gradient:
-      "linear-gradient(135deg, rgba(37,99,235,0.8), rgba(30,58,138,0.9))",
-    border: "rgba(37,99,235,0.4)",
-    btnColor: "#2563EB",
-  },
-  {
-    emoji: "🔗",
-    title: "Distributors",
-    desc: "Expand your network and manage sub-agents with advanced distribution tools and real-time reporting.",
-    cta: "Join as Distributor",
-    page: "register" as Page,
-    gradient:
-      "linear-gradient(135deg, rgba(249,115,22,0.7), rgba(234,88,12,0.8))",
-    border: "rgba(249,115,22,0.4)",
-    btnColor: "#F97316",
-  },
-  {
-    emoji: "🏢",
-    title: "Suppliers",
-    desc: "Connect your hotels, tours, and travel services with a growing global network of travel partners.",
-    cta: "Become a Supplier",
-    page: "register" as Page,
-    gradient:
-      "linear-gradient(135deg, rgba(16,185,129,0.7), rgba(5,150,105,0.8))",
-    border: "rgba(16,185,129,0.4)",
-    btnColor: "#10B981",
-  },
-];
-
 export function NewServicesSection({
   onNavigate,
 }: { onNavigate: (page: Page) => void }) {
   const { ref: servicesRef, visible: servicesVisible } = useScrollReveal();
-  const { ref: networkRef, visible: networkVisible } = useScrollReveal();
 
   return (
-    <>
-      {/* ── Part A: Travel Services Grid ── */}
-      <section
-        className="py-24"
-        style={{ background: "#F8FAFC" }}
-        ref={servicesRef}
-      >
-        <div className="container">
-          <div className="text-center mb-14">
-            <div
-              className="inline-block mb-3"
+    <section
+      className="py-24"
+      style={{ background: "#F8FAFC" }}
+      ref={servicesRef}
+    >
+      <div className="container">
+        <div className="text-center mb-14">
+          <div
+            className="inline-block mb-3"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(249,115,22,0.12), rgba(37,99,235,0.12))",
+              border: "1px solid rgba(249,115,22,0.25)",
+              borderRadius: "100px",
+              padding: "6px 16px",
+            }}
+          >
+            <span
+              className="text-xs font-bold uppercase tracking-widest"
+              style={{ color: "#F97316", fontFamily: "'Sora', sans-serif" }}
+            >
+              Our Services
+            </span>
+          </div>
+          <h2
+            className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4"
+            style={{ color: "#0F172A", fontFamily: "'Sora', sans-serif" }}
+          >
+            Everything You Need to{" "}
+            <span
               style={{
-                background:
-                  "linear-gradient(135deg, rgba(249,115,22,0.12), rgba(37,99,235,0.12))",
-                border: "1px solid rgba(249,115,22,0.25)",
-                borderRadius: "100px",
-                padding: "6px 16px",
+                background: "linear-gradient(135deg, #1E3A8A, #2563EB)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
               }}
             >
-              <span
-                className="text-xs font-bold uppercase tracking-widest"
-                style={{ color: "#F97316", fontFamily: "'Sora', sans-serif" }}
-              >
-                Our Services
-              </span>
-            </div>
-            <h2
-              className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4"
-              style={{ color: "#0F172A", fontFamily: "'Sora', sans-serif" }}
-            >
-              Everything You Need to{" "}
-              <span
-                style={{
-                  background: "linear-gradient(135deg, #1E3A8A, #2563EB)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              >
-                Grow Your Travel Business
-              </span>
-            </h2>
-            <div
-              className="mx-auto rounded-full"
-              style={{
-                width: "80px",
-                height: "4px",
-                background: "linear-gradient(90deg, #F97316, #FDBA74)",
-              }}
+              Grow Your Travel Business
+            </span>
+          </h2>
+          <div
+            className="mx-auto rounded-full"
+            style={{
+              width: "80px",
+              height: "4px",
+              background: "linear-gradient(90deg, #F97316, #FDBA74)",
+            }}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          {SERVICES.map((service, i) => (
+            <ServiceCard
+              key={service.title}
+              service={service}
+              index={i}
+              visible={servicesVisible}
+              onNavigate={onNavigate}
             />
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {SERVICES.map((service, i) => (
-              <ServiceCard
-                key={service.title}
-                service={service}
-                index={i}
-                visible={servicesVisible}
-                onNavigate={onNavigate}
-              />
-            ))}
-          </div>
+          ))}
         </div>
-      </section>
-
-      {/* ── Part B: Join Our Network ── */}
-      <section
-        className="py-24"
-        ref={networkRef}
-        style={{
-          background:
-            "linear-gradient(135deg, #0F172A 0%, #1E3A8A 50%, #0F172A 100%)",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.04]"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
-            backgroundSize: "32px 32px",
-          }}
-        />
-        <div
-          className="absolute pointer-events-none"
-          style={{
-            bottom: "-100px",
-            right: "-100px",
-            width: "400px",
-            height: "400px",
-            background:
-              "radial-gradient(ellipse, rgba(249,115,22,0.2) 0%, transparent 70%)",
-            filter: "blur(60px)",
-          }}
-        />
-
-        <div className="container relative z-10">
-          <div className="text-center mb-14">
-            <h2
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4"
-              style={{ fontFamily: "'Sora', sans-serif" }}
-            >
-              Built for Every{" "}
-              <span
-                style={{
-                  background: "linear-gradient(135deg, #F97316, #FDBA74)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              >
-                Travel Business
-              </span>
-            </h2>
-            <p
-              className="text-white/60 text-lg max-w-2xl mx-auto"
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-            >
-              Whether you're an agent, distributor, or supplier — our platform
-              is built to power your growth.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {NETWORK_CARDS.map((card, i) => (
-              <NetworkCard
-                key={card.title}
-                card={card}
-                index={i}
-                visible={networkVisible}
-                onNavigate={onNavigate}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
 
@@ -332,77 +220,6 @@ function ServiceCard({
         {service.desc}
       </p>
     </button>
-  );
-}
-
-function NetworkCard({
-  card,
-  index,
-  visible,
-  onNavigate,
-}: {
-  card: (typeof NETWORK_CARDS)[number];
-  index: number;
-  visible: boolean;
-  onNavigate: (page: Page) => void;
-}) {
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <div
-      className="rounded-2xl p-8 flex flex-col"
-      style={{
-        background: "rgba(255,255,255,0.05)",
-        backdropFilter: "blur(12px)",
-        border: `1px solid ${hovered ? card.border : "rgba(255,255,255,0.12)"}`,
-        boxShadow: hovered
-          ? `0 20px 60px rgba(0,0,0,0.3), 0 0 30px ${card.border}`
-          : "0 4px 20px rgba(0,0,0,0.2)",
-        transform: hovered ? "translateY(-6px)" : "translateY(0)",
-        transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
-        opacity: visible ? 1 : 0,
-        transitionDelay: `${index * 100}ms`,
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      data-ocid={`network.item.${index + 1}`}
-    >
-      <div
-        className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 text-3xl"
-        style={{ background: card.gradient }}
-      >
-        {card.emoji}
-      </div>
-      <h3
-        className="text-xl font-bold text-white mb-3"
-        style={{ fontFamily: "'Sora', sans-serif" }}
-      >
-        {card.title}
-      </h3>
-      <p
-        className="text-white/65 text-sm leading-relaxed mb-6 flex-1"
-        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-      >
-        {card.desc}
-      </p>
-      <button
-        type="button"
-        onClick={() => onNavigate(card.page)}
-        className="w-full py-3 rounded-xl font-semibold text-white text-sm transition-all hover:-translate-y-0.5"
-        style={{
-          background: hovered
-            ? `linear-gradient(135deg, ${card.btnColor}, ${card.btnColor}cc)`
-            : "rgba(255,255,255,0.1)",
-          border: `1px solid ${hovered ? card.btnColor : "rgba(255,255,255,0.2)"}`,
-          boxShadow: hovered ? `0 8px 20px ${card.btnColor}44` : "none",
-          transition: "all 0.3s ease",
-          fontFamily: "'Sora', sans-serif",
-        }}
-        data-ocid={`network.item.${index + 1}.primary_button`}
-      >
-        {card.cta} →
-      </button>
-    </div>
   );
 }
 

@@ -2,15 +2,19 @@ import { Badge } from "@/components/ui/badge";
 import {
   Award,
   Bell,
+  BellRing,
   Car,
   FileText,
-  Globe,
   Hotel,
   Layers,
   LogOut,
+  MessageCircle,
   Package,
   Plane,
+  QrCode,
+  Share2,
   Ship,
+  Store,
   Train,
   TrendingUp,
   User,
@@ -38,7 +42,12 @@ export type DashboardPage =
   | "support"
   | "gds"
   | "whitelabel"
-  | "notifications";
+  | "notifications"
+  | "smart-pnr"
+  | "social-media"
+  | "supplier-marketplace"
+  | "reminders"
+  | "whatsapp-bot";
 
 export const DASHBOARD_NAV: {
   icon: React.ElementType;
@@ -54,13 +63,27 @@ export const DASHBOARD_NAV: {
   { icon: FileText, label: "Visa", key: "visa" },
   { icon: Ship, label: "Cruises", key: "cruises" },
   { icon: Train, label: "Railway", key: "railway" },
-  { icon: Globe, label: "GDS", key: "gds", badge: "NEW" },
   { icon: Package, label: "Packages", key: "packages" },
+  {
+    icon: Store,
+    label: "Supplier Marketplace",
+    key: "supplier-marketplace",
+    badge: "NEW",
+  },
   { icon: FileText, label: "My Bookings", key: "bookings" },
   { icon: Wallet, label: "Wallet", key: "wallet" },
   { icon: Award, label: "Reports", key: "reports" },
-  { icon: Users, label: "CRM", key: "crm", badge: "NEW" },
-  { icon: Layers, label: "White Label", key: "whitelabel", badge: "NEW" },
+  { icon: Users, label: "CRM", key: "crm" },
+  { icon: QrCode, label: "Smart PNR", key: "smart-pnr", badge: "NEW" },
+  { icon: Share2, label: "Social Media", key: "social-media", badge: "NEW" },
+  { icon: BellRing, label: "Reminders", key: "reminders", badge: "NEW" },
+  {
+    icon: MessageCircle,
+    label: "WhatsApp Bot",
+    key: "whatsapp-bot",
+    badge: "NEW",
+  },
+  { icon: Layers, label: "White Label", key: "whitelabel" },
   { icon: Bell, label: "Notifications", key: "notifications", badge: "3" },
   { icon: User, label: "Support", key: "support" },
 ];
@@ -105,7 +128,7 @@ export function DashboardLayout({
         <div className="px-4 py-5 border-b border-sidebar-border">
           <div className="bg-white/90 rounded-lg px-2 py-1.5 inline-flex items-center">
             <img
-              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              src="/assets/uploads/image-3-1.png"
               alt="FiveStar Travel"
               className="h-8 w-auto object-contain"
             />
@@ -214,8 +237,8 @@ export function DashboardLayout({
   );
 }
 
-// ── Coming Soon placeholder ───────────────────────────────────────────────────
-export function ComingSoonPage({
+// ── Coming Soon placeholder ────────────────────────────────────────────────────────────────────
+function ComingSoonPageInternal({
   title,
   icon: Icon,
   onNavigateFlights,
@@ -256,7 +279,9 @@ export function ComingSoonPage({
   );
 }
 
-// ── Navigate helper (maps Page → DashboardPage) ─────────────────────────────
+export const ComingSoonPage = ComingSoonPageInternal;
+
+// ── Navigate helper (maps Page → DashboardPage) ──────────────────────────────────────────────
 export function pageToDashboard(page: Page): DashboardPage | null {
   const map: Partial<Record<Page, DashboardPage>> = {
     dashboard: "dashboard",

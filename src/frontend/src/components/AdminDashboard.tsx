@@ -22,18 +22,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Activity,
+  AlertTriangle,
+  Bell,
   Building2,
   CheckCircle,
   Clock,
   DollarSign,
+  FileText,
+  Globe,
+  Info,
+  List,
   LogOut,
+  Plane,
+  Plus,
   Search,
   Settings,
   Shield,
+  Sliders,
+  Star,
   Ticket,
   TrendingUp,
   Users,
   XCircle,
+  Zap,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -444,7 +455,7 @@ export function AdminDashboard({
 
       <div className="p-6">
         <Tabs defaultValue="overview">
-          <TabsList className="mb-6 bg-white/5 border border-white/10">
+          <TabsList className="mb-6 bg-white/5 border border-white/10 flex flex-wrap h-auto gap-1 p-1">
             <TabsTrigger
               value="overview"
               data-ocid="admin.overview.tab"
@@ -465,6 +476,41 @@ export function AdminDashboard({
               className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-300"
             >
               <DollarSign className="w-4 h-4 mr-2" /> Financials
+            </TabsTrigger>
+            <TabsTrigger
+              value="suppliers"
+              data-ocid="admin.suppliers.tab"
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-300"
+            >
+              <Building2 className="w-4 h-4 mr-2" /> Suppliers
+            </TabsTrigger>
+            <TabsTrigger
+              value="markup"
+              data-ocid="admin.markup.tab"
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-300"
+            >
+              <Sliders className="w-4 h-4 mr-2" /> Markup Rules
+            </TabsTrigger>
+            <TabsTrigger
+              value="logs"
+              data-ocid="admin.logs.tab"
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-300"
+            >
+              <List className="w-4 h-4 mr-2" /> System Logs
+            </TabsTrigger>
+            <TabsTrigger
+              value="automation"
+              data-ocid="admin.automation.tab"
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-300"
+            >
+              <Zap className="w-4 h-4 mr-2" /> Automation
+            </TabsTrigger>
+            <TabsTrigger
+              value="manual-booking"
+              data-ocid="admin.manual_booking.tab"
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-300"
+            >
+              <Plus className="w-4 h-4 mr-2" /> Manual Booking
             </TabsTrigger>
             <TabsTrigger
               value="settings"
@@ -1057,6 +1103,1205 @@ export function AdminDashboard({
                   >
                     Save Announcement
                   </Button>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Suppliers */}
+          <TabsContent value="suppliers">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              {[
+                { label: "Total Suppliers", value: 34, color: "#7C3AED" },
+                { label: "Active", value: 28, color: "#16A34A" },
+                { label: "Pending Approval", value: 4, color: "#D97706" },
+                { label: "Blocked", value: 2, color: "#DC2626" },
+              ].map((s, i) => (
+                <div
+                  key={s.label}
+                  className="rounded-2xl p-4"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                  }}
+                  data-ocid={`admin.suppliers.stat.${i + 1}`}
+                >
+                  <p className="text-slate-400 text-xs mb-1">{s.label}</p>
+                  <p className="text-3xl font-bold" style={{ color: s.color }}>
+                    {s.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div
+              className="rounded-2xl overflow-hidden"
+              style={{ border: "1px solid rgba(255,255,255,0.1)" }}
+            >
+              <Table>
+                <TableHeader>
+                  <TableRow style={{ background: "rgba(255,255,255,0.05)" }}>
+                    {[
+                      "Company",
+                      "Contact",
+                      "City",
+                      "Services",
+                      "Rating",
+                      "Priority",
+                      "Status",
+                      "Actions",
+                    ].map((h) => (
+                      <TableHead key={h} className="text-slate-400 text-xs">
+                        {h}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {[
+                    {
+                      name: "Alpine Hotels Group",
+                      contact: "Ravi Kumar",
+                      city: "Mumbai",
+                      services: ["Hotel", "Tour"],
+                      rating: 4.8,
+                      priority: 1,
+                      status: "Active",
+                    },
+                    {
+                      name: "SkyWings Aviation",
+                      contact: "Neha Sharma",
+                      city: "Delhi",
+                      services: ["Flight"],
+                      rating: 4.5,
+                      priority: 2,
+                      status: "Active",
+                    },
+                    {
+                      name: "TransAsia Transfers",
+                      contact: "Ali Hassan",
+                      city: "Chennai",
+                      services: ["Transfer"],
+                      rating: 4.2,
+                      priority: 3,
+                      status: "Active",
+                    },
+                    {
+                      name: "VisaXpress",
+                      contact: "Priya Singh",
+                      city: "Bangalore",
+                      services: ["Visa"],
+                      rating: 4.7,
+                      priority: 1,
+                      status: "Active",
+                    },
+                    {
+                      name: "OceanBlue Cruises",
+                      contact: "David Nair",
+                      city: "Kochi",
+                      services: ["Cruise"],
+                      rating: 4.6,
+                      priority: 2,
+                      status: "Active",
+                    },
+                    {
+                      name: "SecureTravel Insurance",
+                      contact: "Anjali Patel",
+                      city: "Ahmedabad",
+                      services: ["Insurance"],
+                      rating: 4.3,
+                      priority: 3,
+                      status: "Active",
+                    },
+                    {
+                      name: "Heritage Tours India",
+                      contact: "Mohan Das",
+                      city: "Jaipur",
+                      services: ["Tour", "Transfer"],
+                      rating: 3.9,
+                      priority: 4,
+                      status: "Active",
+                    },
+                    {
+                      name: "Pacific Hotel Network",
+                      contact: "Chen Wei",
+                      city: "Hyderabad",
+                      services: ["Hotel"],
+                      rating: 4.1,
+                      priority: 3,
+                      status: "Pending",
+                    },
+                    {
+                      name: "FastTrack Visas",
+                      contact: "Rahul Gupta",
+                      city: "Pune",
+                      services: ["Visa"],
+                      rating: 3.5,
+                      priority: 5,
+                      status: "Pending",
+                    },
+                    {
+                      name: "GlobalBus Transfers",
+                      contact: "Sanjay Mehta",
+                      city: "Kolkata",
+                      services: ["Transfer"],
+                      rating: 2.8,
+                      priority: 5,
+                      status: "Blocked",
+                    },
+                    {
+                      name: "Sunset Beach Resorts",
+                      contact: "Lisa D'Souza",
+                      city: "Goa",
+                      services: ["Hotel", "Tour"],
+                      rating: 4.9,
+                      priority: 1,
+                      status: "Active",
+                    },
+                    {
+                      name: "NorthStar Aviation",
+                      contact: "Vikram Rao",
+                      city: "Chandigarh",
+                      services: ["Flight"],
+                      rating: 4.0,
+                      priority: 4,
+                      status: "Pending",
+                    },
+                  ].map((sup, i) => (
+                    <TableRow
+                      key={sup.name}
+                      className="border-white/10"
+                      data-ocid={`admin.suppliers.row.${i + 1}`}
+                    >
+                      <TableCell className="text-white text-sm font-medium">
+                        {sup.name}
+                      </TableCell>
+                      <TableCell className="text-slate-300 text-sm">
+                        {sup.contact}
+                      </TableCell>
+                      <TableCell className="text-slate-400 text-xs">
+                        {sup.city}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1">
+                          {sup.services.map((s) => (
+                            <span
+                              key={s}
+                              className="text-xs px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400"
+                            >
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-yellow-400 text-sm font-medium">
+                          {"★".repeat(Math.floor(sup.rating))} {sup.rating}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <select
+                          className="bg-white/5 border border-white/10 text-white text-xs rounded-lg px-2 py-1"
+                          defaultValue={sup.priority}
+                          data-ocid={`admin.suppliers.priority_select.${i + 1}`}
+                        >
+                          {[1, 2, 3, 4, 5].map((n) => (
+                            <option
+                              key={n}
+                              value={n}
+                              style={{ background: "#1e293b" }}
+                            >
+                              {n}
+                            </option>
+                          ))}
+                        </select>
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`text-xs px-2 py-0.5 rounded-full font-medium ${sup.status === "Active" ? "bg-green-500/20 text-green-400" : sup.status === "Pending" ? "bg-yellow-500/20 text-yellow-400" : "bg-red-500/20 text-red-400"}`}
+                        >
+                          {sup.status}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-1">
+                          {sup.status === "Pending" && (
+                            <Button
+                              size="sm"
+                              className="bg-green-600/30 text-green-400 hover:bg-green-600/50 border-0 h-6 text-xs"
+                              data-ocid={`admin.suppliers.approve_button.${i + 1}`}
+                            >
+                              Approve
+                            </Button>
+                          )}
+                          {sup.status !== "Blocked" && (
+                            <Button
+                              size="sm"
+                              className="bg-red-600/30 text-red-400 hover:bg-red-600/50 border-0 h-6 text-xs"
+                              data-ocid={`admin.suppliers.block_button.${i + 1}`}
+                            >
+                              Block
+                            </Button>
+                          )}
+                          {sup.status === "Blocked" && (
+                            <Button
+                              size="sm"
+                              className="bg-blue-600/30 text-blue-400 hover:bg-blue-600/50 border-0 h-6 text-xs"
+                              data-ocid={`admin.suppliers.unblock_button.${i + 1}`}
+                            >
+                              Unblock
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </TabsContent>
+
+          {/* Markup Rules */}
+          <TabsContent value="markup">
+            <div className="grid md:grid-cols-3 gap-6 mb-6">
+              {/* Global Markup */}
+              <div
+                className="rounded-2xl p-5"
+                style={{
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                }}
+              >
+                <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-purple-400" /> Global Markup
+                </h3>
+                <div className="space-y-3">
+                  {[
+                    "Flight",
+                    "Hotel",
+                    "Tour",
+                    "Transfer",
+                    "Visa",
+                    "Cruise",
+                    "Insurance",
+                  ].map((svc) => (
+                    <div
+                      key={svc}
+                      className="flex items-center justify-between gap-2"
+                    >
+                      <span className="text-slate-300 text-sm w-20">{svc}</span>
+                      <div className="flex items-center gap-1.5 flex-1">
+                        <select
+                          className="bg-white/5 border border-white/10 text-white text-xs rounded-lg px-2 py-1"
+                          style={{ minWidth: 36 }}
+                        >
+                          <option style={{ background: "#1e293b" }}>%</option>
+                          <option style={{ background: "#1e293b" }}>₹</option>
+                        </select>
+                        <input
+                          className="flex-1 bg-white/5 border border-white/10 text-white text-sm rounded-lg px-3 py-1"
+                          defaultValue="10"
+                          type="number"
+                          min="0"
+                          data-ocid="admin.markup.global_input"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Agent-Specific Markup */}
+              <div
+                className="rounded-2xl p-5"
+                style={{
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                }}
+              >
+                <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                  <Users className="w-4 h-4 text-orange-400" /> Agent-Specific
+                  Markup
+                </h3>
+                <div className="mb-3">
+                  <Select>
+                    <SelectTrigger
+                      className="bg-white/5 border-white/10 text-white mb-3"
+                      data-ocid="admin.markup.agent_select"
+                    >
+                      <SelectValue placeholder="Select agent..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[
+                        "Rajiv Mehta Travels",
+                        "Priya Tours",
+                        "Global Holidays",
+                        "Sunrise Travel",
+                      ].map((a) => (
+                        <SelectItem key={a} value={a}>
+                          {a}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-3">
+                  {["Flight", "Hotel", "Tour", "Transfer"].map((svc) => (
+                    <div
+                      key={svc}
+                      className="flex items-center justify-between gap-2"
+                    >
+                      <span className="text-slate-300 text-sm w-20">{svc}</span>
+                      <input
+                        className="flex-1 bg-white/5 border border-white/10 text-white text-sm rounded-lg px-3 py-1"
+                        defaultValue="12"
+                        type="number"
+                        min="0"
+                      />
+                      <span className="text-slate-400 text-xs">%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Destination Markup */}
+              <div
+                className="rounded-2xl p-5"
+                style={{
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                }}
+              >
+                <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-blue-400" /> Destination Markup
+                </h3>
+                <div className="space-y-2 mb-3">
+                  {[
+                    { dest: "Bangkok", markup: "15" },
+                    { dest: "Dubai", markup: "12" },
+                    { dest: "Singapore", markup: "10" },
+                    { dest: "Bali", markup: "18" },
+                  ].map((d, i) => (
+                    <div key={d.dest} className="flex items-center gap-2">
+                      <input
+                        className="flex-1 bg-white/5 border border-white/10 text-white text-sm rounded-lg px-3 py-1.5"
+                        defaultValue={d.dest}
+                      />
+                      <input
+                        className="w-16 bg-white/5 border border-white/10 text-white text-sm rounded-lg px-2 py-1.5 text-center"
+                        defaultValue={d.markup}
+                        type="number"
+                      />
+                      <span className="text-slate-400 text-xs">%</span>
+                      <button
+                        type="button"
+                        className="text-red-400 hover:text-red-300 text-xs"
+                        data-ocid={`admin.markup.dest_delete_button.${i + 1}`}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-dashed border-white/20 text-slate-400 hover:bg-white/5 w-full text-xs"
+                >
+                  <Plus className="w-3 h-3 mr-1" /> Add Destination
+                </Button>
+              </div>
+            </div>
+
+            {/* Seasonal Pricing */}
+            <div
+              className="rounded-2xl p-5 mb-5"
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.1)",
+              }}
+            >
+              <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                <Star className="w-4 h-4 text-yellow-400" /> Seasonal Pricing
+                Rules
+              </h3>
+              <div className="space-y-3">
+                {[
+                  {
+                    label: "Summer Peak",
+                    from: "2026-04-01",
+                    to: "2026-06-30",
+                    svc: "Hotel",
+                    markup: "20",
+                  },
+                  {
+                    label: "Diwali Season",
+                    from: "2026-10-15",
+                    to: "2026-11-05",
+                    svc: "Flight",
+                    markup: "25",
+                  },
+                  {
+                    label: "New Year Rush",
+                    from: "2026-12-25",
+                    to: "2027-01-05",
+                    svc: "Tour",
+                    markup: "30",
+                  },
+                ].map((r, i) => (
+                  <div
+                    key={r.label}
+                    className="grid grid-cols-5 gap-3 items-center"
+                  >
+                    <input
+                      className="bg-white/5 border border-white/10 text-white text-sm rounded-lg px-3 py-1.5"
+                      defaultValue={r.label}
+                    />
+                    <input
+                      type="date"
+                      className="bg-white/5 border border-white/10 text-white text-sm rounded-lg px-3 py-1.5"
+                      defaultValue={r.from}
+                      style={{ colorScheme: "dark" }}
+                    />
+                    <input
+                      type="date"
+                      className="bg-white/5 border border-white/10 text-white text-sm rounded-lg px-3 py-1.5"
+                      defaultValue={r.to}
+                      style={{ colorScheme: "dark" }}
+                    />
+                    <select
+                      className="bg-white/5 border border-white/10 text-white text-sm rounded-lg px-2 py-1.5"
+                      defaultValue={r.svc}
+                    >
+                      {["Flight", "Hotel", "Tour", "Transfer"].map((s) => (
+                        <option key={s} style={{ background: "#1e293b" }}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="flex items-center gap-1">
+                      <input
+                        className="flex-1 bg-white/5 border border-white/10 text-white text-sm rounded-lg px-2 py-1.5 text-center"
+                        defaultValue={r.markup}
+                        type="number"
+                      />
+                      <span className="text-slate-400 text-xs">%</span>
+                      <button
+                        type="button"
+                        className="text-red-400 hover:text-red-300"
+                        data-ocid={`admin.markup.seasonal_delete.${i + 1}`}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <Button
+              style={{ background: "#7C3AED" }}
+              className="text-white hover:opacity-90"
+              data-ocid="admin.markup.save_button"
+            >
+              <CheckCircle className="w-4 h-4 mr-2" /> Save All Rules
+            </Button>
+          </TabsContent>
+
+          {/* System Logs */}
+          <TabsContent value="logs">
+            <div className="flex flex-wrap gap-3 mb-5 items-center">
+              <Select defaultValue="all">
+                <SelectTrigger
+                  className="w-44 bg-white/5 border-white/10 text-white"
+                  data-ocid="admin.logs.filter_select"
+                >
+                  <SelectValue placeholder="Log type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {["all", "Auth", "Booking", "Payment", "API", "Error"].map(
+                    (t) => (
+                      <SelectItem key={t} value={t}>
+                        {t === "all" ? "All Types" : t}
+                      </SelectItem>
+                    ),
+                  )}
+                </SelectContent>
+              </Select>
+              <input
+                className="bg-white/5 border border-white/10 text-white text-sm rounded-lg px-3 py-2 w-44 placeholder:text-slate-600"
+                placeholder="Search user..."
+              />
+              <input
+                type="date"
+                className="bg-white/5 border border-white/10 text-white text-sm rounded-lg px-3 py-2"
+                style={{ colorScheme: "dark" }}
+              />
+              <div className="flex-1" />
+              <Button
+                variant="outline"
+                className="border-white/20 text-slate-300 hover:bg-white/10"
+                data-ocid="admin.logs.export_button"
+              >
+                <FileText className="w-4 h-4 mr-2" /> Export CSV
+              </Button>
+            </div>
+
+            <div
+              className="rounded-2xl overflow-hidden"
+              style={{ border: "1px solid rgba(255,255,255,0.1)" }}
+            >
+              <Table>
+                <TableHeader>
+                  <TableRow style={{ background: "rgba(255,255,255,0.05)" }}>
+                    {[
+                      "Timestamp",
+                      "Level",
+                      "Module",
+                      "User",
+                      "Message",
+                      "IP",
+                    ].map((h) => (
+                      <TableHead key={h} className="text-slate-400 text-xs">
+                        {h}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {[
+                    {
+                      ts: "16 Mar 10:42:31",
+                      level: "Info",
+                      module: "Auth",
+                      user: "rajiv.mehta",
+                      msg: "User login successful",
+                      ip: "103.45.67.89",
+                    },
+                    {
+                      ts: "16 Mar 10:41:55",
+                      level: "Success",
+                      module: "Booking",
+                      user: "priya.kapoor",
+                      msg: "Booking FST-4001 confirmed",
+                      ip: "182.73.12.4",
+                    },
+                    {
+                      ts: "16 Mar 10:40:20",
+                      level: "Warning",
+                      module: "Payment",
+                      user: "suresh.nair",
+                      msg: "Wallet balance below threshold",
+                      ip: "49.207.88.11",
+                    },
+                    {
+                      ts: "16 Mar 10:38:07",
+                      level: "Error",
+                      module: "API",
+                      user: "system",
+                      msg: "TripJack API timeout after 30s",
+                      ip: "internal",
+                    },
+                    {
+                      ts: "16 Mar 10:36:44",
+                      level: "Info",
+                      module: "Auth",
+                      user: "anita.sharma",
+                      msg: "Password reset requested",
+                      ip: "117.96.55.22",
+                    },
+                    {
+                      ts: "16 Mar 10:35:11",
+                      level: "Success",
+                      module: "Payment",
+                      user: "mohit.jain",
+                      msg: "Wallet topped up ₹50,000",
+                      ip: "106.215.33.70",
+                    },
+                    {
+                      ts: "16 Mar 10:33:48",
+                      level: "Info",
+                      module: "Booking",
+                      user: "deepika.rao",
+                      msg: "Booking FST-4002 created",
+                      ip: "59.88.44.155",
+                    },
+                    {
+                      ts: "16 Mar 10:31:22",
+                      level: "Warning",
+                      module: "Auth",
+                      user: "kiran.patel",
+                      msg: "3 failed login attempts",
+                      ip: "45.123.78.201",
+                    },
+                    {
+                      ts: "16 Mar 10:29:05",
+                      level: "Error",
+                      module: "API",
+                      user: "system",
+                      msg: "Hotel search returned empty results",
+                      ip: "internal",
+                    },
+                    {
+                      ts: "16 Mar 10:27:40",
+                      level: "Info",
+                      module: "Booking",
+                      user: "vivek.singh",
+                      msg: "Voucher FST-4003 downloaded",
+                      ip: "103.21.55.88",
+                    },
+                    {
+                      ts: "16 Mar 10:25:18",
+                      level: "Success",
+                      module: "Auth",
+                      user: "meena.verma",
+                      msg: "2FA verification passed",
+                      ip: "122.183.44.9",
+                    },
+                    {
+                      ts: "16 Mar 10:23:55",
+                      level: "Info",
+                      module: "API",
+                      user: "system",
+                      msg: "Viator API sync completed — 234 tours",
+                      ip: "internal",
+                    },
+                    {
+                      ts: "16 Mar 10:22:10",
+                      level: "Warning",
+                      module: "Booking",
+                      user: "ashish.gupta",
+                      msg: "Booking amendment request pending",
+                      ip: "49.88.23.167",
+                    },
+                    {
+                      ts: "16 Mar 10:20:44",
+                      level: "Error",
+                      module: "Payment",
+                      user: "system",
+                      msg: "UPI payment callback timeout",
+                      ip: "internal",
+                    },
+                    {
+                      ts: "16 Mar 10:18:32",
+                      level: "Success",
+                      module: "Booking",
+                      user: "sakshi.arora",
+                      msg: "Visa application FST-V001 submitted",
+                      ip: "106.215.77.44",
+                    },
+                    {
+                      ts: "16 Mar 10:17:11",
+                      level: "Info",
+                      module: "Auth",
+                      user: "ramesh.tiwari",
+                      msg: "User session expired, auto logout",
+                      ip: "45.115.23.99",
+                    },
+                    {
+                      ts: "16 Mar 10:15:30",
+                      level: "Info",
+                      module: "API",
+                      user: "system",
+                      msg: "TripJack PNR monitoring cycle complete",
+                      ip: "internal",
+                    },
+                    {
+                      ts: "16 Mar 10:14:05",
+                      level: "Warning",
+                      module: "Auth",
+                      user: "rajiv.mehta",
+                      msg: "Login from new IP address",
+                      ip: "199.45.77.21",
+                    },
+                    {
+                      ts: "16 Mar 10:12:44",
+                      level: "Success",
+                      module: "Booking",
+                      user: "priya.kapoor",
+                      msg: "Supplier confirmed FST-4004",
+                      ip: "182.73.12.4",
+                    },
+                    {
+                      ts: "16 Mar 10:11:22",
+                      level: "Error",
+                      module: "API",
+                      user: "system",
+                      msg: "Amadeus rate limit exceeded",
+                      ip: "internal",
+                    },
+                    {
+                      ts: "16 Mar 10:09:58",
+                      level: "Info",
+                      module: "Payment",
+                      user: "suresh.nair",
+                      msg: "Invoice INV-0892 generated",
+                      ip: "49.207.88.11",
+                    },
+                    {
+                      ts: "16 Mar 10:08:35",
+                      level: "Success",
+                      module: "Booking",
+                      user: "admin",
+                      msg: "Manual booking FST-4010 created",
+                      ip: "192.168.1.1",
+                    },
+                    {
+                      ts: "16 Mar 10:07:12",
+                      level: "Info",
+                      module: "Auth",
+                      user: "anita.sharma",
+                      msg: "Role updated: Agent → Senior Agent",
+                      ip: "117.96.55.22",
+                    },
+                    {
+                      ts: "16 Mar 10:05:49",
+                      level: "Warning",
+                      module: "API",
+                      user: "system",
+                      msg: "Slow response from Hotelbeds (4.2s)",
+                      ip: "internal",
+                    },
+                    {
+                      ts: "16 Mar 10:04:28",
+                      level: "Success",
+                      module: "Payment",
+                      user: "mohit.jain",
+                      msg: "Refund processed for FST-3998",
+                      ip: "106.215.33.70",
+                    },
+                  ].map((log, i) => {
+                    const levelColors: Record<string, string> = {
+                      Info: "bg-blue-500/20 text-blue-400",
+                      Warning: "bg-orange-500/20 text-orange-400",
+                      Error: "bg-red-500/20 text-red-400",
+                      Success: "bg-green-500/20 text-green-400",
+                    };
+                    return (
+                      <TableRow
+                        key={`${log.ts}-${i}`}
+                        className="border-white/10"
+                        data-ocid={`admin.logs.row.${i + 1}`}
+                      >
+                        <TableCell className="text-slate-400 text-xs font-mono">
+                          {log.ts}
+                        </TableCell>
+                        <TableCell>
+                          <span
+                            className={`text-xs px-2 py-0.5 rounded-full font-medium ${levelColors[log.level]}`}
+                          >
+                            {log.level}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-slate-300 text-xs">
+                          {log.module}
+                        </TableCell>
+                        <TableCell className="text-white text-xs">
+                          {log.user}
+                        </TableCell>
+                        <TableCell className="text-slate-300 text-xs max-w-xs truncate">
+                          {log.msg}
+                        </TableCell>
+                        <TableCell className="text-slate-500 text-xs font-mono">
+                          {log.ip}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          </TabsContent>
+
+          {/* Automation */}
+          <TabsContent value="automation">
+            <div className="flex justify-between items-center mb-5">
+              <h3 className="text-white font-semibold text-lg">
+                Automation Rules
+              </h3>
+              <Button
+                style={{ background: "#7C3AED" }}
+                className="text-white hover:opacity-90"
+                data-ocid="admin.automation.add_rule_button"
+              >
+                <Plus className="w-4 h-4 mr-2" /> Add New Rule
+              </Button>
+            </div>
+            <div className="grid md:grid-cols-2 gap-4">
+              {[
+                {
+                  name: "Auto Voucher Generation",
+                  desc: "Automatically generate PDF vouchers when booking is confirmed",
+                  trigger: "Booking Confirmed",
+                  lastRun: "5 min ago",
+                  active: true,
+                },
+                {
+                  name: "Auto Supplier Selection",
+                  desc: "Select best supplier based on price, rating, and speed",
+                  trigger: "Search Query",
+                  lastRun: "2 min ago",
+                  active: true,
+                },
+                {
+                  name: "Auto Markup Calculation",
+                  desc: "Apply agent-specific markup when fetching supplier prices",
+                  trigger: "Price Fetch",
+                  lastRun: "1 min ago",
+                  active: true,
+                },
+                {
+                  name: "Auto Payment Deduction",
+                  desc: "Deduct wallet balance when booking is confirmed",
+                  trigger: "Booking Confirmed",
+                  lastRun: "8 min ago",
+                  active: true,
+                },
+                {
+                  name: "Auto Cancellation Policy Check",
+                  desc: "Validate and enforce cancellation rules on every request",
+                  trigger: "Cancellation Request",
+                  lastRun: "25 min ago",
+                  active: true,
+                },
+                {
+                  name: "Auto Email Notification",
+                  desc: "Send email to agent and customer on booking status change",
+                  trigger: "Status Change",
+                  lastRun: "3 min ago",
+                  active: true,
+                },
+                {
+                  name: "Auto WhatsApp Alert",
+                  desc: "Send WhatsApp message when payment is received",
+                  trigger: "Payment Received",
+                  lastRun: "12 min ago",
+                  active: false,
+                },
+                {
+                  name: "PNR Monitoring",
+                  desc: "Check for flight schedule changes and cancellations",
+                  trigger: "Every 6 Hours",
+                  lastRun: "2 h ago",
+                  active: true,
+                },
+                {
+                  name: "Supplier Confirmation Reminder",
+                  desc: "Auto-remind supplier if no response in 3 hours",
+                  trigger: "3h No Response",
+                  lastRun: "1 h ago",
+                  active: true,
+                },
+                {
+                  name: "Wallet Low Balance Alert",
+                  desc: "Notify agent when wallet drops below configured threshold",
+                  trigger: "Balance < Threshold",
+                  lastRun: "45 min ago",
+                  active: false,
+                },
+              ].map((rule, i) => (
+                <div
+                  key={rule.name}
+                  className="rounded-2xl p-5"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                  }}
+                  data-ocid={`admin.automation.rule.card.${i + 1}`}
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center ${rule.active ? "bg-purple-500/20" : "bg-slate-700"}`}
+                      >
+                        <Zap
+                          className={`w-4 h-4 ${rule.active ? "text-purple-400" : "text-slate-500"}`}
+                        />
+                      </div>
+                      <h4 className="text-white text-sm font-semibold">
+                        {rule.name}
+                      </h4>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        checked={rule.active}
+                        data-ocid={`admin.automation.rule.toggle.${i + 1}`}
+                      />
+                    </div>
+                  </div>
+                  <p className="text-slate-400 text-xs mb-3">{rule.desc}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                        {rule.trigger}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-slate-500 text-xs flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> {rule.lastRun}
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 text-xs text-slate-400 hover:text-white"
+                        data-ocid={`admin.automation.rule.edit_button.${i + 1}`}
+                      >
+                        Edit
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Manual Booking (Admin) */}
+          <TabsContent value="manual-booking">
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="md:col-span-2">
+                <div
+                  className="rounded-2xl p-5 mb-4"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                  }}
+                >
+                  <h3 className="text-white font-semibold mb-4">
+                    Admin Manual Booking
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <Label className="text-slate-400 text-xs mb-1 block">
+                        Service Type
+                      </Label>
+                      <Tabs defaultValue="Flight">
+                        <TabsList
+                          className="bg-white/5 border border-white/10"
+                          data-ocid="admin.manual.service_tab"
+                        >
+                          {["Flight", "Hotel", "Tour", "Transfer", "Visa"].map(
+                            (s) => (
+                              <TabsTrigger
+                                key={s}
+                                value={s}
+                                className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-400 text-xs"
+                              >
+                                {s}
+                              </TabsTrigger>
+                            ),
+                          )}
+                        </TabsList>
+                      </Tabs>
+                    </div>
+                    <div>
+                      <Label className="text-slate-400 text-xs mb-1 block">
+                        Assign to Agent
+                      </Label>
+                      <Select>
+                        <SelectTrigger
+                          className="bg-white/5 border-white/10 text-white"
+                          data-ocid="admin.manual.agent_select"
+                        >
+                          <SelectValue placeholder="Select agent..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[
+                            "Rajiv Mehta Travels",
+                            "Priya Tours & Travels",
+                            "Global Holidays India",
+                            "Sunrise Travel Agency",
+                          ].map((a) => (
+                            <SelectItem key={a} value={a}>
+                              {a}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {[
+                      "Client Name",
+                      "Email",
+                      "Phone",
+                      "Travel Date",
+                      "Passengers",
+                    ].map((f) => (
+                      <div key={f}>
+                        <Label className="text-slate-400 text-xs mb-1 block">
+                          {f}
+                        </Label>
+                        <Input className="bg-white/5 border-white/10 text-white" />
+                      </div>
+                    ))}
+                    <div>
+                      <Label className="text-slate-400 text-xs mb-1 block">
+                        Supplier
+                      </Label>
+                      <Select>
+                        <SelectTrigger
+                          className="bg-white/5 border-white/10 text-white"
+                          data-ocid="admin.manual.supplier_select"
+                        >
+                          <SelectValue placeholder="Select supplier..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[
+                            "Alpine Hotels Group",
+                            "SkyWings Aviation",
+                            "TransAsia Transfers",
+                            "VisaXpress",
+                          ].map((s) => (
+                            <SelectItem key={s} value={s}>
+                              {s}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-slate-400 text-xs mb-1 block">
+                        Payment Status
+                      </Label>
+                      <Select>
+                        <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                          <SelectValue placeholder="Select..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {["Paid", "Pending", "Credit"].map((s) => (
+                            <SelectItem key={s} value={s}>
+                              {s}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <Label className="text-slate-400 text-xs mb-1 block">
+                      Admin Override Reason
+                    </Label>
+                    <Textarea
+                      className="bg-white/5 border-white/10 text-white resize-none placeholder:text-slate-600"
+                      rows={2}
+                      placeholder="Reason for manual booking..."
+                      data-ocid="admin.manual.override_textarea"
+                    />
+                  </div>
+                  <Button
+                    className="w-full mt-4"
+                    style={{ background: "#7C3AED" }}
+                    onClick={() => {}}
+                    data-ocid="admin.manual.create_button"
+                  >
+                    <Plus className="w-4 h-4 mr-2" /> Create Booking
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <div
+                  className="rounded-2xl p-5"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                  }}
+                >
+                  <h4 className="text-white font-semibold mb-4">
+                    Recent Manual Bookings
+                  </h4>
+                  <div className="space-y-3">
+                    {[
+                      {
+                        id: "FST-M001",
+                        svc: "Hotel",
+                        client: "Raj Corp",
+                        agent: "Priya Tours",
+                        amount: "₹45,000",
+                        by: "admin",
+                        date: "16 Mar",
+                        status: "Confirmed",
+                      },
+                      {
+                        id: "FST-M002",
+                        svc: "Flight",
+                        client: "Singh Group",
+                        agent: "Sunrise Travel",
+                        amount: "₹28,500",
+                        by: "admin",
+                        date: "15 Mar",
+                        status: "Pending",
+                      },
+                      {
+                        id: "FST-M003",
+                        svc: "Visa",
+                        client: "Mehta Family",
+                        agent: "Global Holidays",
+                        amount: "₹12,000",
+                        by: "staff",
+                        date: "14 Mar",
+                        status: "Confirmed",
+                      },
+                      {
+                        id: "FST-M004",
+                        svc: "Transfer",
+                        client: "Gupta Tours",
+                        agent: "Rajiv Mehta",
+                        amount: "₹8,400",
+                        by: "admin",
+                        date: "13 Mar",
+                        status: "Completed",
+                      },
+                    ].map((b, i) => (
+                      <div
+                        key={b.id}
+                        className="rounded-xl p-3"
+                        style={{
+                          background: "rgba(255,255,255,0.03)",
+                          border: "1px solid rgba(255,255,255,0.06)",
+                        }}
+                        data-ocid={`admin.manual.booking.${i + 1}`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-purple-400 font-mono text-xs">
+                            {b.id}
+                          </span>
+                          <span
+                            className={`text-xs px-2 py-0.5 rounded-full font-medium ${b.status === "Confirmed" || b.status === "Completed" ? "bg-green-500/20 text-green-400" : "bg-yellow-500/20 text-yellow-400"}`}
+                          >
+                            {b.status}
+                          </span>
+                        </div>
+                        <p className="text-white text-sm">{b.client}</p>
+                        <div className="flex items-center justify-between mt-1">
+                          <span className="text-xs px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400">
+                            {b.svc}
+                          </span>
+                          <span className="text-orange-400 font-medium text-sm">
+                            {b.amount}
+                          </span>
+                        </div>
+                        <p className="text-slate-500 text-xs mt-1">
+                          {b.date} · via {b.agent} · by {b.by}
+                        </p>
+                        <div className="flex gap-1 mt-2">
+                          <Button
+                            size="sm"
+                            className="flex-1 bg-white/5 text-slate-400 hover:bg-white/10 border-0 h-6 text-xs"
+                            data-ocid={`admin.manual.invoice_button.${i + 1}`}
+                          >
+                            Invoice
+                          </Button>
+                          <Button
+                            size="sm"
+                            className="flex-1 bg-white/5 text-slate-400 hover:bg-white/10 border-0 h-6 text-xs"
+                            data-ocid={`admin.manual.voucher_button.${i + 1}`}
+                          >
+                            Voucher
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

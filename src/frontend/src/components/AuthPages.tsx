@@ -59,7 +59,7 @@ export function AgentLoginPage({
           {/* Logo */}
           <div className="bg-white/90 rounded-xl px-4 py-2.5 inline-flex items-center mb-10">
             <img
-              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              src="/assets/uploads/image-3-1.png"
               alt="FiveStar Travel"
               className="h-9 w-auto object-contain"
             />
@@ -121,7 +121,7 @@ export function AgentLoginPage({
           {/* Mobile logo */}
           <div className="md:hidden text-center mb-8">
             <img
-              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              src="/assets/uploads/image-3-1.png"
               alt="FiveStar Travel"
               className="h-10 w-auto object-contain mx-auto"
             />
@@ -362,7 +362,7 @@ export function AgentRegisterPage({
         <div className="container">
           <div className="flex items-center justify-between mb-6">
             <img
-              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              src="/assets/uploads/image-3-1.png"
               alt="FiveStar Travel"
               className="h-8 w-auto object-contain bg-white/90 rounded-lg px-2 py-1"
             />
@@ -804,7 +804,7 @@ export function SupplierLoginPage({
         <div className="relative z-10 text-center max-w-sm">
           <div className="bg-white/90 rounded-xl px-4 py-2.5 inline-flex items-center mb-10">
             <img
-              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              src="/assets/uploads/image-3-1.png"
               alt="FiveStar Travel"
               className="h-9 w-auto object-contain"
             />
@@ -876,7 +876,7 @@ export function SupplierLoginPage({
         <div className="w-full max-w-md">
           <div className="md:hidden text-center mb-8">
             <img
-              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              src="/assets/uploads/image-3-1.png"
               alt="FiveStar Travel"
               className="h-10 w-auto object-contain mx-auto"
             />
@@ -1056,7 +1056,7 @@ export function AdminLoginPage({
         <div className="relative z-10 text-center max-w-sm">
           <div className="bg-white/90 rounded-xl px-4 py-2.5 inline-flex items-center mb-10">
             <img
-              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              src="/assets/uploads/image-3-1.png"
               alt="FiveStar Travel"
               className="h-9 w-auto object-contain"
             />
@@ -1125,7 +1125,7 @@ export function AdminLoginPage({
         <div className="w-full max-w-md">
           <div className="md:hidden text-center mb-8">
             <img
-              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              src="/assets/uploads/image-3-1.png"
               alt="FiveStar Travel"
               className="h-10 w-auto object-contain mx-auto"
             />
@@ -1326,7 +1326,7 @@ export function DMCLoginPage({
         <div className="relative z-10 text-center max-w-sm">
           <div className="bg-white/90 rounded-xl px-4 py-2.5 inline-flex items-center mb-10">
             <img
-              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              src="/assets/uploads/image-3-1.png"
               alt="FiveStar Travel"
               className="h-9 w-auto object-contain"
             />
@@ -1401,7 +1401,7 @@ export function DMCLoginPage({
         <div className="w-full max-w-md">
           <div className="md:hidden flex items-center mb-8">
             <img
-              src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+              src="/assets/uploads/image-3-1.png"
               alt="FiveStar Travel"
               className="h-8 w-auto object-contain"
             />
@@ -1502,6 +1502,199 @@ export function DMCLoginPage({
               onClick={() => onNavigate("home")}
               className="text-slate-400 text-sm hover:text-slate-600 bg-transparent border-0 p-0 cursor-pointer"
               data-ocid="dmc-login.link"
+            >
+              ← Back to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Staff Login Page ──────────────────────────────────────────────────────────
+export function StaffLoginPage({
+  onNavigate,
+}: { onNavigate: (page: Page) => void }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    if (!email || !password) {
+      setError("Please enter your email and password.");
+      return;
+    }
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      onNavigate("staff-dashboard");
+    }, 800);
+  }
+
+  return (
+    <div className="min-h-screen flex">
+      {/* Left panel */}
+      <div
+        className="hidden md:flex w-1/2 flex-col items-center justify-center p-12 relative overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #064E3B, #059669)" }}
+      >
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 20% 50%, #fff 0%, transparent 60%), radial-gradient(circle at 80% 20%, #fff 0%, transparent 50%)",
+          }}
+        />
+        <div className="relative z-10 text-center max-w-sm">
+          <div className="bg-white/90 rounded-xl px-4 py-2.5 inline-flex items-center mb-10">
+            <img
+              src="/assets/uploads/image-3-1.png"
+              alt="FiveStar Travel"
+              className="h-9 w-auto object-contain"
+            />
+          </div>
+          <h2 className="font-display text-3xl font-bold text-white mb-3">
+            Staff Operations
+          </h2>
+          <p className="text-white/80 text-sm mb-10 leading-relaxed">
+            Manage offline bookings, handle supplier confirmations, and process
+            manual reservations for agents and walk-in clients.
+          </p>
+          <div className="space-y-3 text-left">
+            {[
+              { icon: Users, value: "1,000+", label: "Bookings Managed Daily" },
+              { icon: Shield, value: "99.9%", label: "Operational Uptime" },
+              { icon: Star, value: "24/7", label: "Operations Support" },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="rounded-xl px-4 py-3 flex items-center gap-3"
+                style={{
+                  background: "rgba(255,255,255,0.15)",
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                }}
+              >
+                <div
+                  className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                  style={{ background: "rgba(255,255,255,0.2)" }}
+                >
+                  <item.icon className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-white font-semibold text-sm">
+                    {item.value}
+                  </p>
+                  <p className="text-white/70 text-xs">{item.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Right panel */}
+      <div
+        className="flex-1 flex flex-col items-center justify-center p-8"
+        style={{ background: "#0F172A" }}
+      >
+        <div className="w-full max-w-sm">
+          <div className="mb-8 text-center">
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
+              style={{
+                background: "linear-gradient(135deg, #064E3B, #059669)",
+              }}
+            >
+              <Shield className="w-7 h-7 text-white" />
+            </div>
+            <h1 className="text-white text-2xl font-bold mb-1">
+              Staff Operations Login
+            </h1>
+            <p className="text-slate-400 text-sm">
+              Access the staff operations dashboard
+            </p>
+          </div>
+
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm px-4 py-3 rounded-xl mb-4">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label className="text-slate-400 text-sm mb-1.5 block">
+                Email Address
+              </Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="staff@fivestartravel.in"
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-slate-600"
+                  autoComplete="email"
+                  data-ocid="staff.login.email_input"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-slate-400 text-sm mb-1.5 block">
+                Password
+              </Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                  className="pl-10 pr-10 bg-white/5 border-white/10 text-white placeholder:text-slate-600"
+                  autoComplete="current-password"
+                  data-ocid="staff.login.password_input"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 rounded-xl text-white font-semibold transition-all mt-2 disabled:opacity-60"
+              style={{
+                background: "linear-gradient(135deg, #064E3B, #059669)",
+                boxShadow: "0 10px 25px rgba(5,150,105,0.35)",
+              }}
+              data-ocid="staff.login.submit_button"
+            >
+              {loading ? "Signing in…" : "Sign In to Staff Portal"}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <button
+              type="button"
+              onClick={() => onNavigate("home")}
+              className="text-slate-400 text-sm hover:text-slate-600 bg-transparent border-0 p-0 cursor-pointer"
+              data-ocid="staff.login.back_link"
             >
               ← Back to Home
             </button>

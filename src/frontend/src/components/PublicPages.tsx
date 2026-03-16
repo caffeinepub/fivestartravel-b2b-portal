@@ -63,12 +63,26 @@ export type Page =
   | "support"
   | "supplier-login"
   | "admin-login"
+  | "staff-login"
+  | "staff-dashboard"
   | "gds"
   | "dmc-login"
   | "dmc-dashboard"
   | "admin-dashboard"
   | "supplier-dashboard"
-  | "crm";
+  | "crm"
+  | "api-integration"
+  | "agent-registration"
+  | "supplier-portal"
+  | "careers"
+  | "blog"
+  | "help-center"
+  | "terms"
+  | "privacy"
+  | "distributors"
+  | "suppliers-page"
+  | "api-xml"
+  | "testimonials-page";
 
 // ── Scroll Animation Hook ─────────────────────────────────────────────────────
 function useScrollReveal() {
@@ -200,7 +214,7 @@ export function Header({ onNavigate }: { onNavigate: (page: Page) => void }) {
           data-ocid="nav.home_link"
         >
           <img
-            src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+            src="/assets/uploads/image-3-1.png"
             alt="FiveStarTravel.in"
             className="h-10 w-auto rounded-lg"
           />
@@ -1615,18 +1629,25 @@ const SERVICE_LINKS = [
 
 const COMPANY_LINKS = [
   { label: "About Us", page: "about" as Page },
-  { label: "API Integration", page: "dashboard" as Page },
-  { label: "Agent Registration", page: "register" as Page },
-  { label: "Supplier Portal", page: "login" as Page },
-  { label: "Careers", page: "about" as Page },
-  { label: "Blog", page: "about" as Page },
+  { label: "API Integration", page: "api-integration" as Page },
+  { label: "Agent Registration", page: "agent-registration" as Page },
+  { label: "Supplier Portal", page: "supplier-portal" as Page },
+  { label: "Careers", page: "careers" as Page },
+  { label: "Blog", page: "blog" as Page },
+];
+
+const PARTNER_LINKS = [
+  { label: "Distributors", page: "distributors" as Page },
+  { label: "Suppliers", page: "suppliers-page" as Page },
+  { label: "API & XML", page: "api-xml" as Page },
+  { label: "Testimonials", page: "testimonials-page" as Page },
 ];
 
 const SUPPORT_LINKS = [
   { label: "Contact Us", page: "contact" as Page },
-  { label: "Help Center", page: "support" as Page },
-  { label: "Terms & Conditions", page: "contact" as Page },
-  { label: "Privacy Policy", page: "contact" as Page },
+  { label: "Help Center", page: "help-center" as Page },
+  { label: "Terms & Conditions", page: "terms" as Page },
+  { label: "Privacy Policy", page: "privacy" as Page },
 ];
 
 export function Footer({ onNavigate }: { onNavigate?: (page: Page) => void }) {
@@ -1637,7 +1658,7 @@ export function Footer({ onNavigate }: { onNavigate?: (page: Page) => void }) {
       className="text-white border-t border-white/10"
     >
       <div className="container py-16">
-        <div className="grid md:grid-cols-4 gap-10">
+        <div className="grid md:grid-cols-5 gap-8">
           {/* Column 1: Logo + Description */}
           <div className="md:col-span-1">
             <button
@@ -1647,7 +1668,7 @@ export function Footer({ onNavigate }: { onNavigate?: (page: Page) => void }) {
               data-ocid="footer.home.link"
             >
               <img
-                src="/assets/uploads/Screenshot_20260310_040546_Samsung-Internet-1.jpg"
+                src="/assets/uploads/image-3-1.png"
                 alt="FiveStarTravel.in"
                 className="h-10 w-auto rounded-xl"
               />
@@ -1719,7 +1740,28 @@ export function Footer({ onNavigate }: { onNavigate?: (page: Page) => void }) {
             </ul>
           </div>
 
-          {/* Column 4: Support & Contact */}
+          {/* Column 4: Partners */}
+          <div>
+            <h4 className="font-heading font-bold text-white mb-5 text-sm uppercase tracking-wider">
+              Partners
+            </h4>
+            <ul className="space-y-2.5">
+              {PARTNER_LINKS.map(({ label, page }) => (
+                <li key={label}>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate?.(page)}
+                    className="text-white/50 hover:text-[#f97316] text-sm transition-colors duration-200"
+                    data-ocid={`footer.partners.${label.toLowerCase().replace(/\s/g, "_")}.link`}
+                  >
+                    {label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Column 5: Support & Contact */}
           <div>
             <h4 className="font-heading font-bold text-white mb-5 text-sm uppercase tracking-wider">
               Support & Contact
