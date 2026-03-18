@@ -1,5 +1,6 @@
 import { User } from "lucide-react";
 import { useState } from "react";
+import { AIItineraryGenerator } from "./components/AIItineraryGenerator";
 import { AdminDashboard } from "./components/AdminDashboard";
 import {
   AdminLoginPage,
@@ -23,6 +24,7 @@ import {
   TermsPage,
   TestimonialsPage,
 } from "./components/ContentPages";
+import { CorporatePortal } from "./components/CorporatePortal";
 import { CrmModule } from "./components/CrmModule";
 import { CruiseBooking } from "./components/CruiseBooking";
 import { DMCDashboard } from "./components/DMCDashboard";
@@ -30,6 +32,7 @@ import type { DashboardPage } from "./components/DashboardLayout";
 import { ComingSoonPage, DashboardLayout } from "./components/DashboardLayout";
 import { DashboardHome } from "./components/DashboardPage";
 import { FlightSearch } from "./components/FlightSearch";
+import { GDSPNRAutomation } from "./components/GDSPNRAutomation";
 import { HotelSearch } from "./components/HotelSearch";
 import { MyBookings } from "./components/MyBookings";
 import { NotificationsModule } from "./components/NotificationsModule";
@@ -59,14 +62,20 @@ import { WhatsAppBot } from "./components/WhatsAppBot";
 import { WhiteLabelSettings } from "./components/WhiteLabelSettings";
 
 // ── Auth State ────────────────────────────────────────────────────────────────
-type AuthRole = "agent" | "supplier" | "admin" | "dmc" | "staff" | null;
+type AuthRole =
+  | "agent"
+  | "supplier"
+  | "admin"
+  | "dmc"
+  | "staff"
+  | "corporate"
+  | null;
 
 interface AuthState {
   role: AuthRole;
   name: string;
 }
 
-// Public pages that never require login
 // Public pages (for reference)
 const _PUBLIC_PAGES: Page[] = [
   "home",
@@ -306,7 +315,6 @@ export default function App() {
     navigate("home");
   }
 
-  // ── Handle login page submissions by setting auth state and routing to correct portal
   function handleAgentLogin() {
     setAuth({ role: "agent", name: "Rahul Sharma" });
     navigate("dashboard");
@@ -349,6 +357,7 @@ export default function App() {
     "admin-dashboard",
     "dmc-dashboard",
     "staff-dashboard",
+    "corporate-dashboard",
   ];
 
   const pageFriendlyNames: Partial<Record<Page, string>> = {
@@ -370,6 +379,7 @@ export default function App() {
     "admin-dashboard": "Admin Panel",
     "dmc-dashboard": "DMC Portal",
     "staff-dashboard": "Staff Operations",
+    "corporate-dashboard": "Corporate Portal",
   };
 
   if (PROTECTED_PAGES.includes(page) && auth.role === null) {
@@ -651,7 +661,7 @@ export default function App() {
     reports: "Reports",
     crm: "CRM & Leads",
     support: "Support",
-    gds: "GDS Integrations",
+    gds: "GDS Terminal",
     whitelabel: "White Label Settings",
     notifications: "Notifications",
     "smart-pnr": "Smart PNR Import",
@@ -659,6 +669,8 @@ export default function App() {
     "supplier-marketplace": "Supplier Marketplace",
     reminders: "Reminders & Automation",
     "whatsapp-bot": "WhatsApp Bot Hub",
+    "ai-itinerary": "AI Itinerary Generator",
+    corporate: "Corporate Travel Portal",
   };
 
   return (
@@ -689,6 +701,9 @@ export default function App() {
       {dashNav === "notifications" && <NotificationsModule />}
       {dashNav === "reminders" && <RemindersCenter />}
       {dashNav === "whatsapp-bot" && <WhatsAppBot />}
+      {dashNav === "gds" && <GDSPNRAutomation />}
+      {dashNav === "ai-itinerary" && <AIItineraryGenerator />}
+      {dashNav === "corporate" && <CorporatePortal />}
       {dashNav === "support" && (
         <ComingSoonPage
           title="Support"

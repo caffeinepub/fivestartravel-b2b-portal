@@ -3,6 +3,8 @@ import {
   Award,
   Bell,
   BellRing,
+  Brain,
+  Building2,
   Car,
   FileText,
   Hotel,
@@ -14,7 +16,9 @@ import {
   QrCode,
   Share2,
   Ship,
+  Sparkles,
   Store,
+  Terminal,
   Train,
   TrendingUp,
   User,
@@ -47,13 +51,16 @@ export type DashboardPage =
   | "social-media"
   | "supplier-marketplace"
   | "reminders"
-  | "whatsapp-bot";
+  | "whatsapp-bot"
+  | "ai-itinerary"
+  | "corporate";
 
 export const DASHBOARD_NAV: {
   icon: React.ElementType;
   label: string;
   key: DashboardPage;
   badge?: string;
+  section?: string;
 }[] = [
   { icon: TrendingUp, label: "Dashboard", key: "dashboard" },
   { icon: Plane, label: "Flights", key: "flights", badge: "LIVE" },
@@ -74,6 +81,7 @@ export const DASHBOARD_NAV: {
   { icon: Wallet, label: "Wallet", key: "wallet" },
   { icon: Award, label: "Reports", key: "reports" },
   { icon: Users, label: "CRM", key: "crm" },
+  { icon: Building2, label: "Corporate", key: "corporate", badge: "NEW" },
   { icon: QrCode, label: "Smart PNR", key: "smart-pnr", badge: "NEW" },
   { icon: Share2, label: "Social Media", key: "social-media", badge: "NEW" },
   { icon: BellRing, label: "Reminders", key: "reminders", badge: "NEW" },
@@ -82,6 +90,20 @@ export const DASHBOARD_NAV: {
     label: "WhatsApp Bot",
     key: "whatsapp-bot",
     badge: "NEW",
+  },
+  {
+    icon: Terminal,
+    label: "GDS Terminal",
+    key: "gds",
+    badge: "NEW",
+    section: "Tools & Automation",
+  },
+  {
+    icon: Sparkles,
+    label: "AI Itinerary",
+    key: "ai-itinerary",
+    badge: "AI",
+    section: "Tools & Automation",
   },
   { icon: Layers, label: "White Label", key: "whitelabel" },
   { icon: Bell, label: "Notifications", key: "notifications", badge: "3" },
@@ -117,6 +139,9 @@ export function DashboardLayout({
     };
   }, []);
 
+  // Group nav items by section for display
+  let lastSection = "";
+
   return (
     <div className="min-h-screen bg-muted/30 flex">
       {/* Sidebar */}
@@ -143,31 +168,43 @@ export function DashboardLayout({
         </div>
 
         <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto pb-4">
-          {DASHBOARD_NAV.map((item, i) => (
-            <button
-              key={item.key}
-              type="button"
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
-                activeNav === item.key
-                  ? "nav-active text-white"
-                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-              }`}
-              onClick={() => onNavChange(item.key)}
-              data-ocid={`dashboard.nav.item.${i + 1}`}
-            >
-              <item.icon
-                className={`w-4 h-4 flex-shrink-0 ${
-                  activeNav === item.key ? "text-accent" : "opacity-60"
-                }`}
-              />
-              <span className="flex-1 text-left">{item.label}</span>
-              {item.badge && (
-                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-accent/20 text-accent leading-none">
-                  {item.badge}
-                </span>
-              )}
-            </button>
-          ))}
+          {DASHBOARD_NAV.map((item, i) => {
+            const showSection = item.section && item.section !== lastSection;
+            if (item.section) lastSection = item.section;
+            return (
+              <div key={item.key}>
+                {showSection && (
+                  <div className="px-3 pt-3 pb-1">
+                    <span className="text-[9px] font-bold tracking-widest text-sidebar-foreground/30 uppercase">
+                      {item.section}
+                    </span>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
+                    activeNav === item.key
+                      ? "nav-active text-white"
+                      : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                  }`}
+                  onClick={() => onNavChange(item.key)}
+                  data-ocid={`dashboard.nav.item.${i + 1}`}
+                >
+                  <item.icon
+                    className={`w-4 h-4 flex-shrink-0 ${
+                      activeNav === item.key ? "text-accent" : "opacity-60"
+                    }`}
+                  />
+                  <span className="flex-1 text-left">{item.label}</span>
+                  {item.badge && (
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-accent/20 text-accent leading-none">
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              </div>
+            );
+          })}
         </nav>
 
         {/* Bottom user area */}

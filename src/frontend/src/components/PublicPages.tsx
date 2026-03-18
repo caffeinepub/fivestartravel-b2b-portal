@@ -82,7 +82,8 @@ export type Page =
   | "distributors"
   | "suppliers-page"
   | "api-xml"
-  | "testimonials-page";
+  | "testimonials-page"
+  | "corporate-dashboard";
 
 // ── Scroll Animation Hook ─────────────────────────────────────────────────────
 function useScrollReveal() {
