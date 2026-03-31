@@ -43,11 +43,10 @@ import {
   Users,
 } from "lucide-react";
 import { useState } from "react";
+import { useTheme } from "../ThemeContext";
+import { DARK, LIGHT } from "../design-tokens";
 
-const CARD = {
-  background: "rgba(255,255,255,0.05)",
-  border: "1px solid rgba(255,255,255,0.1)",
-};
+// CARD styles now use theme tokens
 
 const SERVICE_TYPES = ["Flight", "Hotel", "Tour", "Transfer", "Visa"];
 
@@ -419,6 +418,9 @@ function serviceIcon(s: string) {
 export function StaffDashboard({
   onNavigate,
 }: { onNavigate: (page: string) => void }) {
+  const { theme } = useTheme();
+  const t = theme === "light" ? LIGHT : DARK;
+
   const [queueFilter, setQueueFilter] = useState("All");
   const [bookingService, setBookingService] = useState("Flight");
   const [bookingForm, setBookingForm] = useState<Record<string, string>>({});
@@ -569,7 +571,10 @@ export function StaffDashboard({
                 <div
                   key={k.label}
                   className="rounded-2xl p-4"
-                  style={CARD}
+                  style={{
+                    background: t.cardBg,
+                    border: `1px solid ${t.border}`,
+                  }}
                   data-ocid={`staff.ops.card.${i + 1}`}
                 >
                   <p className="text-slate-400 text-xs mb-1">{k.label}</p>
@@ -604,10 +609,13 @@ export function StaffDashboard({
               ))}
             </div>
 
-            <div className="rounded-2xl overflow-hidden" style={CARD}>
+            <div
+              className="rounded-2xl overflow-hidden"
+              style={{ background: t.cardBg, border: `1px solid ${t.border}` }}
+            >
               <Table>
                 <TableHeader>
-                  <TableRow style={{ background: "rgba(255,255,255,0.05)" }}>
+                  <TableRow style={{ background: t.cardBg }}>
                     {[
                       "Request ID",
                       "Agent/Client",
@@ -689,7 +697,13 @@ export function StaffDashboard({
                   </TabsList>
 
                   {/* Common Fields */}
-                  <div className="rounded-2xl p-5 mb-4" style={CARD}>
+                  <div
+                    className="rounded-2xl p-5 mb-4"
+                    style={{
+                      background: t.cardBg,
+                      border: `1px solid ${t.border}`,
+                    }}
+                  >
                     <h3 className="text-white font-semibold mb-4">
                       Client Information
                     </h3>
@@ -754,7 +768,13 @@ export function StaffDashboard({
 
                   {/* Service-specific fields */}
                   {bookingService === "Flight" && (
-                    <div className="rounded-2xl p-5 mb-4" style={CARD}>
+                    <div
+                      className="rounded-2xl p-5 mb-4"
+                      style={{
+                        background: t.cardBg,
+                        border: `1px solid ${t.border}`,
+                      }}
+                    >
                       <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
                         <Plane className="w-4 h-4 text-blue-400" /> Flight
                         Details
@@ -784,7 +804,13 @@ export function StaffDashboard({
                   )}
 
                   {bookingService === "Hotel" && (
-                    <div className="rounded-2xl p-5 mb-4" style={CARD}>
+                    <div
+                      className="rounded-2xl p-5 mb-4"
+                      style={{
+                        background: t.cardBg,
+                        border: `1px solid ${t.border}`,
+                      }}
+                    >
                       <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
                         <Hotel className="w-4 h-4 text-orange-400" /> Hotel
                         Details
@@ -859,7 +885,13 @@ export function StaffDashboard({
                   )}
 
                   {bookingService === "Tour" && (
-                    <div className="rounded-2xl p-5 mb-4" style={CARD}>
+                    <div
+                      className="rounded-2xl p-5 mb-4"
+                      style={{
+                        background: t.cardBg,
+                        border: `1px solid ${t.border}`,
+                      }}
+                    >
                       <h3 className="text-white font-semibold mb-4">
                         Tour Details
                       </h3>
@@ -888,7 +920,13 @@ export function StaffDashboard({
                   )}
 
                   {bookingService === "Transfer" && (
-                    <div className="rounded-2xl p-5 mb-4" style={CARD}>
+                    <div
+                      className="rounded-2xl p-5 mb-4"
+                      style={{
+                        background: t.cardBg,
+                        border: `1px solid ${t.border}`,
+                      }}
+                    >
                       <h3 className="text-white font-semibold mb-4">
                         Transfer Details
                       </h3>
@@ -947,7 +985,13 @@ export function StaffDashboard({
                   )}
 
                   {bookingService === "Visa" && (
-                    <div className="rounded-2xl p-5 mb-4" style={CARD}>
+                    <div
+                      className="rounded-2xl p-5 mb-4"
+                      style={{
+                        background: t.cardBg,
+                        border: `1px solid ${t.border}`,
+                      }}
+                    >
                       <h3 className="text-white font-semibold mb-4">
                         Visa Details
                       </h3>
@@ -988,7 +1032,7 @@ export function StaffDashboard({
                   <div
                     className="rounded-2xl p-6"
                     style={{
-                      ...CARD,
+                      background: t.cardBg,
                       border: "1px solid rgba(16,185,129,0.4)",
                     }}
                     data-ocid="staff.booking.success_panel"
@@ -1034,7 +1078,13 @@ export function StaffDashboard({
                     </div>
                   </div>
                 ) : (
-                  <div className="rounded-2xl p-6 text-center" style={CARD}>
+                  <div
+                    className="rounded-2xl p-6 text-center"
+                    style={{
+                      background: t.cardBg,
+                      border: `1px solid ${t.border}`,
+                    }}
+                  >
                     <Briefcase className="w-12 h-12 text-slate-600 mx-auto mb-3" />
                     <p className="text-slate-500 text-sm">
                       Fill the form and click &ldquo;Create Booking&rdquo; to
@@ -1050,7 +1100,14 @@ export function StaffDashboard({
           <TabsContent value="tasks">
             <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-5">
               {STAFF_MEMBERS.map((staff, si) => (
-                <div key={staff.name} className="rounded-2xl p-5" style={CARD}>
+                <div
+                  key={staff.name}
+                  className="rounded-2xl p-5"
+                  style={{
+                    background: t.cardBg,
+                    border: `1px solid ${t.border}`,
+                  }}
+                >
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <p className="text-white font-semibold text-sm">
@@ -1069,7 +1126,7 @@ export function StaffDashboard({
                         key={`${task.client}-${ti}`}
                         className="rounded-xl p-3"
                         style={{
-                          background: "rgba(255,255,255,0.03)",
+                          background: t.cardBg,
                           border: "1px solid rgba(255,255,255,0.06)",
                         }}
                       >
@@ -1186,7 +1243,10 @@ export function StaffDashboard({
                 <div
                   key={k.label}
                   className="rounded-2xl p-4"
-                  style={CARD}
+                  style={{
+                    background: t.cardBg,
+                    border: `1px solid ${t.border}`,
+                  }}
                   data-ocid={`staff.supplier.stat.${i + 1}`}
                 >
                   <p className="text-slate-400 text-xs mb-1">{k.label}</p>
@@ -1197,10 +1257,13 @@ export function StaffDashboard({
               ))}
             </div>
 
-            <div className="rounded-2xl overflow-hidden" style={CARD}>
+            <div
+              className="rounded-2xl overflow-hidden"
+              style={{ background: t.cardBg, border: `1px solid ${t.border}` }}
+            >
               <Table>
                 <TableHeader>
-                  <TableRow style={{ background: "rgba(255,255,255,0.05)" }}>
+                  <TableRow style={{ background: t.cardBg }}>
                     {[
                       "Booking ID",
                       "Service",
@@ -1272,7 +1335,13 @@ export function StaffDashboard({
           <TabsContent value="payments">
             <div className="grid md:grid-cols-2 gap-6">
               {/* Record Payment Form */}
-              <div className="rounded-2xl p-6" style={CARD}>
+              <div
+                className="rounded-2xl p-6"
+                style={{
+                  background: t.cardBg,
+                  border: `1px solid ${t.border}`,
+                }}
+              >
                 <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
                   <DollarSign className="w-4 h-4 text-emerald-400" /> Record
                   Offline Payment
@@ -1357,7 +1426,10 @@ export function StaffDashboard({
               <div>
                 <div
                   className="rounded-2xl p-4 mb-4"
-                  style={{ ...CARD, border: "1px solid rgba(16,185,129,0.3)" }}
+                  style={{
+                    background: t.cardBg,
+                    border: "1px solid rgba(16,185,129,0.3)",
+                  }}
                 >
                   <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-emerald-400" /> Profit
@@ -1390,7 +1462,13 @@ export function StaffDashboard({
                   </div>
                 </div>
 
-                <div className="rounded-2xl overflow-hidden" style={CARD}>
+                <div
+                  className="rounded-2xl overflow-hidden"
+                  style={{
+                    background: t.cardBg,
+                    border: `1px solid ${t.border}`,
+                  }}
+                >
                   <div className="px-4 py-3 border-b border-white/10">
                     <h4 className="text-white font-semibold text-sm">
                       Payment History
@@ -1398,9 +1476,7 @@ export function StaffDashboard({
                   </div>
                   <Table>
                     <TableHeader>
-                      <TableRow
-                        style={{ background: "rgba(255,255,255,0.05)" }}
-                      >
+                      <TableRow style={{ background: t.cardBg }}>
                         {[
                           "Agent",
                           "Booking",
@@ -1452,7 +1528,13 @@ export function StaffDashboard({
             <div className="grid md:grid-cols-2 gap-6">
               {/* Builder */}
               <div>
-                <div className="rounded-2xl p-5 mb-4" style={CARD}>
+                <div
+                  className="rounded-2xl p-5 mb-4"
+                  style={{
+                    background: t.cardBg,
+                    border: `1px solid ${t.border}`,
+                  }}
+                >
                   <h3 className="text-white font-semibold mb-4">
                     Quick Quotation Builder
                   </h3>
@@ -1546,7 +1628,7 @@ export function StaffDashboard({
 
                   <div
                     className="rounded-xl p-3 mb-4"
-                    style={{ background: "rgba(255,255,255,0.03)" }}
+                    style={{ background: t.cardBg }}
                   >
                     <div className="flex justify-between text-sm mb-1">
                       <span className="text-slate-400">Total Cost</span>
@@ -1624,15 +1706,19 @@ export function StaffDashboard({
 
               {/* Saved Quotes */}
               <div>
-                <div className="rounded-2xl overflow-hidden" style={CARD}>
+                <div
+                  className="rounded-2xl overflow-hidden"
+                  style={{
+                    background: t.cardBg,
+                    border: `1px solid ${t.border}`,
+                  }}
+                >
                   <div className="px-5 py-4 border-b border-white/10">
                     <h4 className="text-white font-semibold">Saved Quotes</h4>
                   </div>
                   <Table>
                     <TableHeader>
-                      <TableRow
-                        style={{ background: "rgba(255,255,255,0.05)" }}
-                      >
+                      <TableRow style={{ background: t.cardBg }}>
                         {[
                           "Quote ID",
                           "Client",

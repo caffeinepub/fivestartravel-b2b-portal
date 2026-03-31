@@ -47,6 +47,8 @@ import {
   Zap,
 } from "lucide-react";
 import { useState } from "react";
+import { useTheme } from "../ThemeContext";
+import { DARK, LIGHT } from "../design-tokens";
 
 export function AdminDashboard({
   onNavigate,
@@ -69,6 +71,9 @@ export function AdminDashboard({
     visa: "4",
     transfer: "3",
   });
+
+  const { theme, toggleTheme } = useTheme();
+  const t = theme === "light" ? LIGHT : DARK;
 
   const [agents, setAgents] = useState([
     {
@@ -423,7 +428,10 @@ export function AdminDashboard({
   };
 
   return (
-    <div className="min-h-screen" style={{ background: "#0F172A" }}>
+    <div
+      className="min-h-screen"
+      style={{ background: t.pageBg, color: t.text }}
+    >
       {/* Header */}
       <div
         className="flex items-center justify-between px-6 py-4"
@@ -442,80 +450,94 @@ export function AdminDashboard({
             </p>
           </div>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onNavigate("home")}
-          className="border-white/30 text-white hover:bg-white/10"
-          data-ocid="admin.logout_button"
-        >
-          <LogOut className="w-4 h-4 mr-2" /> Logout
-        </Button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="w-8 h-8 rounded-lg flex items-center justify-center border border-white/30 text-white hover:bg-white/10 transition-all"
+            title="Toggle theme"
+            data-ocid="admin.theme.toggle"
+          >
+            {theme === "light" ? "🌙" : "☀️"}
+          </button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onNavigate("home")}
+            className="border-white/30 text-white hover:bg-white/10"
+            data-ocid="admin.logout_button"
+          >
+            <LogOut className="w-4 h-4 mr-2" /> Logout
+          </Button>
+        </div>
       </div>
 
       <div className="p-6">
         <Tabs defaultValue="overview">
-          <TabsList className="mb-6 bg-white/5 border border-white/10 flex flex-wrap h-auto gap-1 p-1">
+          <TabsList
+            className="mb-6 flex flex-wrap h-auto gap-1 p-1"
+            style={{ background: t.cardBg, border: `1px solid ${t.border}` }}
+          >
             <TabsTrigger
               value="overview"
               data-ocid="admin.overview.tab"
-              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-300"
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
             >
               <Activity className="w-4 h-4 mr-2" /> Overview
             </TabsTrigger>
             <TabsTrigger
               value="agents"
               data-ocid="admin.agents.tab"
-              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-300"
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
             >
               <Users className="w-4 h-4 mr-2" /> Agents
             </TabsTrigger>
             <TabsTrigger
               value="financials"
               data-ocid="admin.financials.tab"
-              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-300"
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
             >
               <DollarSign className="w-4 h-4 mr-2" /> Financials
             </TabsTrigger>
             <TabsTrigger
               value="suppliers"
               data-ocid="admin.suppliers.tab"
-              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-300"
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
             >
               <Building2 className="w-4 h-4 mr-2" /> Suppliers
             </TabsTrigger>
             <TabsTrigger
               value="markup"
               data-ocid="admin.markup.tab"
-              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-300"
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
             >
               <Sliders className="w-4 h-4 mr-2" /> Markup Rules
             </TabsTrigger>
             <TabsTrigger
               value="logs"
               data-ocid="admin.logs.tab"
-              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-300"
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
             >
               <List className="w-4 h-4 mr-2" /> System Logs
             </TabsTrigger>
             <TabsTrigger
               value="automation"
               data-ocid="admin.automation.tab"
-              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-300"
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
             >
               <Zap className="w-4 h-4 mr-2" /> Automation
             </TabsTrigger>
             <TabsTrigger
               value="manual-booking"
               data-ocid="admin.manual_booking.tab"
-              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-300"
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
             >
               <Plus className="w-4 h-4 mr-2" /> Manual Booking
             </TabsTrigger>
             <TabsTrigger
               value="settings"
               data-ocid="admin.settings.tab"
-              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-300"
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
             >
               <Settings className="w-4 h-4 mr-2" /> Settings
             </TabsTrigger>

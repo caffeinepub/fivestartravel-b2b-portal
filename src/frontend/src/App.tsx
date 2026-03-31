@@ -1,5 +1,5 @@
-import { User } from "lucide-react";
 import { useState } from "react";
+import { ThemeProvider } from "./ThemeContext";
 import { AIItineraryGenerator } from "./components/AIItineraryGenerator";
 import { AdminDashboard } from "./components/AdminDashboard";
 import {
@@ -29,7 +29,7 @@ import { CrmModule } from "./components/CrmModule";
 import { CruiseBooking } from "./components/CruiseBooking";
 import { DMCDashboard } from "./components/DMCDashboard";
 import type { DashboardPage } from "./components/DashboardLayout";
-import { ComingSoonPage, DashboardLayout } from "./components/DashboardLayout";
+import { DashboardLayout } from "./components/DashboardLayout";
 import { DashboardHome } from "./components/DashboardPage";
 import { FlightSearch } from "./components/FlightSearch";
 import { GDSPNRAutomation } from "./components/GDSPNRAutomation";
@@ -55,6 +55,7 @@ import { SocialMediaModule } from "./components/SocialMediaModule";
 import { StaffDashboard } from "./components/StaffDashboard";
 import { SupplierDashboard } from "./components/SupplierDashboard";
 import { SupplierMarketplace } from "./components/SupplierMarketplace";
+import { SupportModule } from "./components/SupportModule";
 import { TransferBooking } from "./components/TransferBooking";
 import VisaServices from "./components/VisaServices";
 import { WalletModule } from "./components/WalletModule";
@@ -275,7 +276,7 @@ function LoginRequiredPage({
 }
 
 // ── App Root ───────────────────────────────────────────────────────────────────
-export default function App() {
+function AppInner() {
   const [page, setPage] = useState<Page>("home");
   const [dashNav, setDashNav] = useState<DashboardPage>("dashboard");
   const [auth, setAuth] = useState<AuthState>({ role: null, name: "" });
@@ -699,13 +700,15 @@ export default function App() {
       {dashNav === "gds" && <GDSPNRAutomation />}
       {dashNav === "ai-itinerary" && <AIItineraryGenerator />}
       {dashNav === "corporate" && <CorporatePortal />}
-      {dashNav === "support" && (
-        <ComingSoonPage
-          title="Support"
-          icon={User}
-          onNavigateFlights={() => handleDashNav("flights")}
-        />
-      )}
+      {dashNav === "support" && <SupportModule />}
     </DashboardLayout>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppInner />
+    </ThemeProvider>
   );
 }

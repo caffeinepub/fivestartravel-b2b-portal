@@ -32,10 +32,15 @@ import {
   Users,
 } from "lucide-react";
 import { useState } from "react";
+import { useTheme } from "../ThemeContext";
+import { DARK, LIGHT } from "../design-tokens";
 
 export function DMCDashboard({
   onNavigate,
 }: { onNavigate: (page: string) => void }) {
+  const { theme } = useTheme();
+  const t = theme === "light" ? LIGHT : DARK;
+
   const [pkgSearch, setPkgSearch] = useState("");
   const [pkgStatus, setPkgStatus] = useState("all");
   const [agentSearch, setAgentSearch] = useState("");
@@ -350,9 +355,7 @@ export function DMCDashboard({
             <Globe className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-white font-bold text-lg">
-              FiveStar Travel — DMC Portal
-            </h1>
+            <h1 className="font-bold text-lg">FiveStar Travel — DMC Portal</h1>
             <p className="text-blue-200 text-xs">
               Destination Management Dashboard
             </p>
@@ -410,8 +413,8 @@ export function DMCDashboard({
                   key={s.label}
                   className="rounded-2xl p-5"
                   style={{
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.1)",
+                    background: t.cardBg,
+                    border: `1px solid ${t.border}`,
                   }}
                   data-ocid={`dmc.stat.card.${i + 1}`}
                 >
@@ -433,8 +436,8 @@ export function DMCDashboard({
               <div
                 className="rounded-2xl p-5"
                 style={{
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  background: t.cardBg,
+                  border: `1px solid ${t.border}`,
                 }}
               >
                 <h3 className="text-white font-semibold mb-4">
@@ -483,8 +486,8 @@ export function DMCDashboard({
               <div
                 className="rounded-2xl p-5"
                 style={{
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  background: t.cardBg,
+                  border: `1px solid ${t.border}`,
                 }}
               >
                 <h3 className="text-white font-semibold mb-4">
@@ -511,7 +514,9 @@ export function DMCDashboard({
                           <p className="text-white text-sm font-medium">
                             {a.name}
                           </p>
-                          <p className="text-slate-400 text-xs">{a.agency}</p>
+                          <p className="text-xs" style={{ color: t.muted }}>
+                            {a.agency}
+                          </p>
                         </TableCell>
                         <TableCell className="text-slate-300 text-sm">
                           {a.bookings}
@@ -561,8 +566,8 @@ export function DMCDashboard({
                   key={p.name}
                   className="rounded-2xl p-5"
                   style={{
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.1)",
+                    background: t.cardBg,
+                    border: `1px solid ${t.border}`,
                   }}
                   data-ocid={`dmc.packages.item.${i + 1}`}
                 >
@@ -650,11 +655,11 @@ export function DMCDashboard({
             </div>
             <div
               className="rounded-2xl overflow-hidden"
-              style={{ border: "1px solid rgba(255,255,255,0.1)" }}
+              style={{ border: `1px solid ${t.border}` }}
             >
               <Table>
                 <TableHeader>
-                  <TableRow style={{ background: "rgba(255,255,255,0.05)" }}>
+                  <TableRow style={{ background: t.cardBg }}>
                     <TableHead className="text-slate-400">Agent Name</TableHead>
                     <TableHead className="text-slate-400">Agency</TableHead>
                     <TableHead className="text-slate-400">City</TableHead>
@@ -730,21 +735,21 @@ export function DMCDashboard({
                   key={d.name}
                   className="rounded-2xl p-5 group hover:scale-[1.02] transition-transform cursor-pointer"
                   style={{
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.1)",
+                    background: t.cardBg,
+                    border: `1px solid ${t.border}`,
                   }}
                   data-ocid={`dmc.destinations.card.${i + 1}`}
                 >
                   <div className="text-4xl mb-3">{d.flag}</div>
-                  <h4 className="text-white font-bold text-lg">{d.name}</h4>
+                  <h4 className="font-bold text-lg">{d.name}</h4>
                   <div className="space-y-1 my-3">
-                    <p className="text-slate-400 text-xs">
+                    <p className="text-xs" style={{ color: t.muted }}>
                       {d.packages} active packages
                     </p>
                     <p className="text-orange-400 text-sm font-semibold">
                       Avg {d.avgPrice}/pax
                     </p>
-                    <p className="text-slate-400 text-xs">
+                    <p className="text-xs" style={{ color: t.muted }}>
                       {d.bookings} bookings this month
                     </p>
                   </div>

@@ -14,21 +14,11 @@ import {
   Users,
   Wallet,
 } from "lucide-react";
+import { useTheme } from "../ThemeContext";
+import { DARK, LIGHT } from "../design-tokens";
 import type { DashboardPage } from "./DashboardLayout";
 
-// ── Color System ──────────────────────────────────────────────────────────────
-const BG = "#0B1220";
-const CARD = "#111827";
-const BORDER = "#1E2A3A";
-const TEXT = "#FFFFFF";
-const MUTED = "#9CA3AF";
-const PRIMARY = "#2563EB";
-// const ACCENT = "#F97316";
-const SUCCESS = "#16A34A";
-// const WARNING = "#F59E0B";
-// const ERROR = "#DC2626";
-
-// ── Recent Bookings ───────────────────────────────────────────────────────────
+// ── Static Data ───────────────────────────────────────────────────────────────────────────────
 const RECENT_BOOKINGS = [
   {
     id: "FST-8821",
@@ -77,122 +67,89 @@ const RECENT_BOOKINGS = [
   },
 ];
 
-const STATUS_CONFIG: Record<string, { bg: string; color: string }> = {
-  Confirmed: { bg: "#16A34A", color: "#FFFFFF" },
-  Pending: { bg: "#F59E0B", color: "#FFFFFF" },
-  Processing: { bg: "#2563EB", color: "#FFFFFF" },
-  Cancelled: { bg: "#DC2626", color: "#FFFFFF" },
-};
-
-// ── Quick Actions ─────────────────────────────────────────────────────────────
 const QUICK_ACTIONS = [
   {
     icon: Plane,
     label: "Flights",
     key: "flights" as DashboardPage,
     gradient: "from-blue-600 to-blue-800",
+    lightBg: "#EFF6FF",
+    lightColor: "#2563EB",
   },
   {
     icon: Hotel,
     label: "Hotels",
     key: "hotels" as DashboardPage,
     gradient: "from-orange-500 to-orange-700",
+    lightBg: "#FFF7ED",
+    lightColor: "#EA580C",
   },
   {
     icon: Package,
     label: "Tours",
     key: "tours" as DashboardPage,
     gradient: "from-purple-600 to-purple-800",
+    lightBg: "#F5F3FF",
+    lightColor: "#7C3AED",
   },
   {
     icon: Car,
     label: "Transfers",
     key: "transfers" as DashboardPage,
     gradient: "from-teal-500 to-teal-700",
+    lightBg: "#F0FDFA",
+    lightColor: "#0F766E",
   },
   {
     icon: FileText,
     label: "Visa",
     key: "visa" as DashboardPage,
     gradient: "from-indigo-500 to-indigo-700",
+    lightBg: "#EEF2FF",
+    lightColor: "#4338CA",
   },
   {
     icon: Ship,
     label: "Cruises",
     key: "cruises" as DashboardPage,
     gradient: "from-cyan-500 to-cyan-700",
+    lightBg: "#ECFEFF",
+    lightColor: "#0E7490",
   },
   {
     icon: Train,
     label: "Railway",
     key: "railway" as DashboardPage,
     gradient: "from-rose-500 to-rose-700",
+    lightBg: "#FFF1F2",
+    lightColor: "#BE123C",
   },
   {
     icon: Package,
     label: "Packages",
     key: "packages" as DashboardPage,
     gradient: "from-amber-500 to-amber-700",
+    lightBg: "#FFFBEB",
+    lightColor: "#B45309",
   },
   {
     icon: Users,
     label: "Add Client",
     key: "crm" as DashboardPage,
     gradient: "from-green-600 to-green-800",
+    lightBg: "#F0FDF4",
+    lightColor: "#15803D",
   },
   {
     icon: Brain,
-    label: "Create Itinerary",
+    label: "AI Itinerary",
     key: "ai-itinerary" as DashboardPage,
     gradient: "from-violet-600 to-violet-800",
+    lightBg: "#F5F3FF",
+    lightColor: "#6D28D9",
   },
 ];
 
-// ── Stat Cards ────────────────────────────────────────────────────────────────
-const STAT_CARDS = [
-  {
-    label: "Total Bookings",
-    value: "312",
-    change: "+12% this month",
-    up: true,
-    icon: Package,
-    accentColor: PRIMARY,
-    accentLight: "rgba(37,99,235,0.12)",
-    borderColor: PRIMARY,
-  },
-  {
-    label: "Wallet Balance",
-    value: "₹1,24,800",
-    change: "Available credit",
-    up: true,
-    icon: Wallet,
-    accentColor: SUCCESS,
-    accentLight: "rgba(22,163,74,0.12)",
-    borderColor: SUCCESS,
-  },
-  {
-    label: "Monthly Revenue",
-    value: "₹4,28,500",
-    change: "+18% vs last month",
-    up: true,
-    icon: Award,
-    accentColor: SUCCESS,
-    accentLight: "rgba(22,163,74,0.12)",
-    borderColor: SUCCESS,
-  },
-  {
-    label: "Active Clients",
-    value: "87",
-    change: "+5 this week",
-    up: true,
-    icon: Users,
-    accentColor: PRIMARY,
-    accentLight: "rgba(37,99,235,0.12)",
-    borderColor: PRIMARY,
-  },
-];
-
-// ── Performance Graph Data ────────────────────────────────────────────────────
 const PERF_DATA = [
   { month: "Oct", bookings: 48 },
   { month: "Nov", bookings: 56 },
@@ -203,29 +160,10 @@ const PERF_DATA = [
 ];
 const MAX_BOOKINGS = Math.max(...PERF_DATA.map((d) => d.bookings));
 
-// ── Top Destinations ──────────────────────────────────────────────────────────
 const TOP_DESTINATIONS = [
-  {
-    name: "Dubai",
-    country: "UAE",
-    flag: "🇦🇪",
-    bookings: 142,
-    gradient: "from-orange-500/20 to-amber-600/10",
-  },
-  {
-    name: "Thailand",
-    country: "Thailand",
-    flag: "🇹🇭",
-    bookings: 98,
-    gradient: "from-blue-500/20 to-cyan-600/10",
-  },
-  {
-    name: "Bali",
-    country: "Indonesia",
-    flag: "🇮🇩",
-    bookings: 76,
-    gradient: "from-green-500/20 to-teal-600/10",
-  },
+  { name: "Dubai", country: "UAE", flag: "🇦🇪", bookings: 142 },
+  { name: "Thailand", country: "Thailand", flag: "🇹🇭", bookings: 98 },
+  { name: "Bali", country: "Indonesia", flag: "🇮🇩", bookings: 76 },
 ];
 
 export interface DashboardHomeProps {
@@ -233,6 +171,62 @@ export interface DashboardHomeProps {
 }
 
 export function DashboardHome({ onNavChange }: DashboardHomeProps) {
+  const { theme } = useTheme();
+  const t = theme === "light" ? LIGHT : DARK;
+
+  const PRIMARY = t.primary;
+  const SUCCESS = t.success;
+
+  const STAT_CARDS = [
+    {
+      label: "Total Bookings",
+      value: "312",
+      change: "+12% this month",
+      up: true,
+      icon: Package,
+      accentColor: PRIMARY,
+      accentLight: theme === "light" ? "#EFF6FF" : "rgba(37,99,235,0.12)",
+      borderColor: PRIMARY,
+    },
+    {
+      label: "Wallet Balance",
+      value: "₹1,24,800",
+      change: "Available credit",
+      up: true,
+      icon: Wallet,
+      accentColor: SUCCESS,
+      accentLight: theme === "light" ? "#F0FDF4" : "rgba(22,163,74,0.12)",
+      borderColor: SUCCESS,
+    },
+    {
+      label: "Monthly Revenue",
+      value: "₹4,28,500",
+      change: "+18% vs last month",
+      up: true,
+      icon: Award,
+      accentColor: SUCCESS,
+      accentLight: theme === "light" ? "#F0FDF4" : "rgba(22,163,74,0.12)",
+      borderColor: SUCCESS,
+    },
+    {
+      label: "Active Clients",
+      value: "87",
+      change: "+5 this week",
+      up: true,
+      icon: Users,
+      accentColor: PRIMARY,
+      accentLight: theme === "light" ? "#EFF6FF" : "rgba(37,99,235,0.12)",
+      borderColor: PRIMARY,
+    },
+  ];
+
+  const STATUS_CONFIG: Record<string, { bg: string; color: string }> = {
+    Confirmed: { bg: t.confirmedBg, color: t.confirmedText },
+    Pending: { bg: t.pendingBg, color: t.pendingText },
+    Processing: { bg: t.processingBg, color: t.processingText },
+    Cancelled: { bg: t.cancelledBg, color: t.cancelledText },
+  };
+
   return (
     <div className="space-y-5">
       {/* ── Stat Cards ── */}
@@ -245,25 +239,24 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
             key={card.label}
             className="rounded-xl p-5 cursor-default transition-all duration-200 hover:scale-[1.02]"
             style={{
-              background: CARD,
-              border: `1px solid ${BORDER}`,
+              background: t.cardBg,
+              border: `1px solid ${t.border}`,
               borderLeft: `3px solid ${card.borderColor}`,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+              boxShadow: t.shadow,
             }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.boxShadow =
-                `0 8px 24px ${card.accentColor}33`;
+                `0 8px 24px ${card.accentColor}22`;
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.boxShadow =
-                "0 2px 8px rgba(0,0,0,0.3)";
+              (e.currentTarget as HTMLElement).style.boxShadow = t.shadow;
             }}
             data-ocid={`dashboard.stats.item.${i + 1}`}
           >
             <div className="flex items-start justify-between mb-3">
               <p
                 className="text-xs font-medium uppercase tracking-wider"
-                style={{ color: MUTED }}
+                style={{ color: t.muted }}
               >
                 {card.label}
               </p>
@@ -293,7 +286,7 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
                   style={{ color: card.accentColor }}
                 />
               )}
-              <span className="text-xs" style={{ color: MUTED }}>
+              <span className="text-xs" style={{ color: t.muted }}>
                 {card.change}
               </span>
             </div>
@@ -306,8 +299,10 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
         className="rounded-xl p-5 relative overflow-hidden"
         style={{
           background:
-            "linear-gradient(135deg, #16A34A 0%, #15803D 50%, #14532D 100%)",
-          boxShadow: "0 8px 32px rgba(22,163,74,0.3)",
+            theme === "light"
+              ? "linear-gradient(135deg, #16A34A 0%, #15803D 50%, #14532D 100%)"
+              : "linear-gradient(135deg, #15803D 0%, #166534 50%, #14532D 100%)",
+          boxShadow: "0 8px 32px rgba(22,163,74,0.25)",
         }}
         data-ocid="dashboard.wallet.card"
       >
@@ -328,7 +323,7 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
             </p>
             <p
               className="text-3xl font-bold"
-              style={{ color: TEXT, fontFamily: "'Sora', sans-serif" }}
+              style={{ color: "#FFFFFF", fontFamily: "'Sora', sans-serif" }}
             >
               ₹1,24,800
             </p>
@@ -351,7 +346,7 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
               className="px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
               style={{
                 background: "rgba(255,255,255,0.15)",
-                color: TEXT,
+                color: "#FFFFFF",
                 border: "1px solid rgba(255,255,255,0.4)",
               }}
               onClick={() => onNavChange("wallet")}
@@ -375,11 +370,15 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
       {/* ── Quick Actions ── */}
       <div
         className="rounded-xl p-5"
-        style={{ background: CARD, border: `1px solid ${BORDER}` }}
+        style={{
+          background: t.cardBg,
+          border: `1px solid ${t.border}`,
+          boxShadow: t.shadow,
+        }}
       >
         <h2
           className="font-semibold mb-4"
-          style={{ color: TEXT, fontFamily: "'Sora', sans-serif" }}
+          style={{ color: t.text, fontFamily: "'Sora', sans-serif" }}
         >
           Quick Actions
         </h2>
@@ -395,14 +394,26 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
               onClick={() => onNavChange(item.key)}
               data-ocid={`dashboard.quick_actions.item.${i + 1}`}
             >
-              <div
-                className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center transition-all duration-200 group-hover:scale-[1.05] group-hover:shadow-lg`}
-              >
-                <item.icon className="w-6 h-6 text-white" />
-              </div>
+              {theme === "light" ? (
+                <div
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200 group-hover:scale-[1.05] group-hover:shadow-md"
+                  style={{ background: item.lightBg }}
+                >
+                  <item.icon
+                    className="w-6 h-6"
+                    style={{ color: item.lightColor }}
+                  />
+                </div>
+              ) : (
+                <div
+                  className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center transition-all duration-200 group-hover:scale-[1.05] group-hover:shadow-lg`}
+                >
+                  <item.icon className="w-6 h-6 text-white" />
+                </div>
+              )}
               <span
                 className="text-[10px] font-medium text-center leading-tight transition-colors"
-                style={{ color: MUTED }}
+                style={{ color: t.muted }}
               >
                 {item.label}
               </span>
@@ -416,17 +427,21 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
         {/* Performance Graph */}
         <div
           className="lg:col-span-2 rounded-xl p-5"
-          style={{ background: CARD, border: `1px solid ${BORDER}` }}
+          style={{
+            background: t.cardBg,
+            border: `1px solid ${t.border}`,
+            boxShadow: t.shadow,
+          }}
           data-ocid="dashboard.performance.panel"
         >
           <div className="flex items-center justify-between mb-5">
             <h2
               className="font-semibold"
-              style={{ color: TEXT, fontFamily: "'Sora', sans-serif" }}
+              style={{ color: t.text, fontFamily: "'Sora', sans-serif" }}
             >
               Booking Performance
             </h2>
-            <span className="text-xs" style={{ color: MUTED }}>
+            <span className="text-xs" style={{ color: t.muted }}>
               Last 6 months
             </span>
           </div>
@@ -440,7 +455,7 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
                 >
                   <span
                     className="text-xs font-semibold"
-                    style={{ color: TEXT }}
+                    style={{ color: t.text }}
                   >
                     {d.bookings}
                   </span>
@@ -448,43 +463,42 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
                     className="w-full rounded-t-md transition-all duration-300"
                     style={{
                       height: `${Math.round(pct * 0.88)}px`,
-                      background: `linear-gradient(180deg, ${PRIMARY} 0%, rgba(37,99,235,0.5) 100%)`,
+                      background: `linear-gradient(180deg, ${t.primary} 0%, ${t.primary}80 100%)`,
                       minHeight: "8px",
                     }}
                   />
-                  <span className="text-[10px]" style={{ color: MUTED }}>
+                  <span className="text-[10px]" style={{ color: t.muted }}>
                     {d.month}
                   </span>
                 </div>
               );
             })}
           </div>
-          {/* Revenue metric row */}
           <div
             className="mt-4 pt-4 flex items-center justify-between"
-            style={{ borderTop: `1px solid ${BORDER}` }}
+            style={{ borderTop: `1px solid ${t.border}` }}
           >
             <div>
-              <p className="text-xs" style={{ color: MUTED }}>
+              <p className="text-xs" style={{ color: t.muted }}>
                 Total Bookings (6M)
               </p>
-              <p className="text-lg font-bold" style={{ color: TEXT }}>
+              <p className="text-lg font-bold" style={{ color: t.text }}>
                 461
               </p>
             </div>
             <div>
-              <p className="text-xs" style={{ color: MUTED }}>
+              <p className="text-xs" style={{ color: t.muted }}>
                 Revenue (6M)
               </p>
-              <p className="text-lg font-bold" style={{ color: "#4ADE80" }}>
+              <p className="text-lg font-bold" style={{ color: t.success }}>
                 ₹28,14,500
               </p>
             </div>
             <div>
-              <p className="text-xs" style={{ color: MUTED }}>
+              <p className="text-xs" style={{ color: t.muted }}>
                 Avg per month
               </p>
-              <p className="text-lg font-bold" style={{ color: TEXT }}>
+              <p className="text-lg font-bold" style={{ color: t.text }}>
                 76.8
               </p>
             </div>
@@ -494,12 +508,16 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
         {/* Top Destinations */}
         <div
           className="rounded-xl p-5"
-          style={{ background: CARD, border: `1px solid ${BORDER}` }}
+          style={{
+            background: t.cardBg,
+            border: `1px solid ${t.border}`,
+            boxShadow: t.shadow,
+          }}
           data-ocid="dashboard.destinations.panel"
         >
           <h2
             className="font-semibold mb-4"
-            style={{ color: TEXT, fontFamily: "'Sora', sans-serif" }}
+            style={{ color: t.text, fontFamily: "'Sora', sans-serif" }}
           >
             Top Destinations
           </h2>
@@ -509,16 +527,15 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
                 key={dest.name}
                 className="rounded-lg p-3 transition-all duration-200 cursor-pointer"
                 style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: `1px solid ${BORDER}`,
+                  background: t.inputBg,
+                  border: `1px solid ${t.border}`,
                 }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLElement).style.background =
-                    "rgba(255,255,255,0.06)";
+                    t.sidebarHoverBg;
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.background =
-                    "rgba(255,255,255,0.03)";
+                  (e.currentTarget as HTMLElement).style.background = t.inputBg;
                 }}
                 data-ocid={`dashboard.destinations.item.${i + 1}`}
               >
@@ -528,11 +545,11 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
                     <div>
                       <p
                         className="text-sm font-semibold"
-                        style={{ color: TEXT }}
+                        style={{ color: t.text }}
                       >
                         {dest.name}
                       </p>
-                      <p className="text-[10px]" style={{ color: MUTED }}>
+                      <p className="text-[10px]" style={{ color: t.muted }}>
                         {dest.country}
                       </p>
                     </div>
@@ -541,13 +558,13 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
                     <span
                       className="text-[9px] font-bold px-2 py-0.5 rounded-full"
                       style={{
-                        background: "rgba(37,99,235,0.2)",
-                        color: "#93C5FD",
+                        background: t.processingBg,
+                        color: t.processingText,
                       }}
                     >
                       Popular
                     </span>
-                    <p className="text-xs mt-1" style={{ color: MUTED }}>
+                    <p className="text-xs mt-1" style={{ color: t.muted }}>
                       {dest.bookings} bookings
                     </p>
                   </div>
@@ -561,22 +578,26 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
       {/* ── Recent Bookings ── */}
       <div
         className="rounded-xl overflow-hidden"
-        style={{ background: CARD, border: `1px solid ${BORDER}` }}
+        style={{
+          background: t.cardBg,
+          border: `1px solid ${t.border}`,
+          boxShadow: t.shadow,
+        }}
       >
         <div
           className="flex items-center justify-between px-5 py-4"
-          style={{ borderBottom: `1px solid ${BORDER}` }}
+          style={{ borderBottom: `1px solid ${t.border}` }}
         >
           <h2
             className="font-semibold"
-            style={{ color: TEXT, fontFamily: "'Sora', sans-serif" }}
+            style={{ color: t.text, fontFamily: "'Sora', sans-serif" }}
           >
             Recent Bookings
           </h2>
           <button
             type="button"
             className="text-xs font-medium hover:underline"
-            style={{ color: "#60A5FA" }}
+            style={{ color: t.primary }}
             onClick={() => onNavChange("bookings")}
             data-ocid="dashboard.bookings.link"
           >
@@ -586,7 +607,7 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
         <div className="overflow-x-auto" data-ocid="dashboard.bookings.table">
           <table className="w-full text-sm">
             <thead>
-              <tr style={{ background: BG }}>
+              <tr style={{ background: t.inputBg }}>
                 {[
                   "Booking ID",
                   "Service",
@@ -600,7 +621,7 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
                   <th
                     key={h}
                     className="text-left text-xs font-semibold uppercase tracking-wider px-4 py-3"
-                    style={{ color: MUTED }}
+                    style={{ color: t.muted }}
                   >
                     {h}
                   </th>
@@ -614,10 +635,10 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
                   <tr
                     key={b.id}
                     className="transition-colors"
-                    style={{ borderTop: `1px solid ${BORDER}` }}
+                    style={{ borderTop: `1px solid ${t.border}` }}
                     onMouseEnter={(e) => {
                       (e.currentTarget as HTMLElement).style.background =
-                        "rgba(255,255,255,0.03)";
+                        t.sidebarHoverBg;
                     }}
                     onMouseLeave={(e) => {
                       (e.currentTarget as HTMLElement).style.background =
@@ -627,28 +648,28 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
                   >
                     <td
                       className="px-4 py-3 font-mono text-xs font-medium"
-                      style={{ color: "#93C5FD" }}
+                      style={{ color: t.primary }}
                     >
                       {b.id}
                     </td>
-                    <td className="px-4 py-3" style={{ color: MUTED }}>
+                    <td className="px-4 py-3" style={{ color: t.muted }}>
                       {b.service}
                     </td>
                     <td
                       className="px-4 py-3 font-medium"
-                      style={{ color: TEXT }}
+                      style={{ color: t.text }}
                     >
                       {b.route}
                     </td>
-                    <td className="px-4 py-3" style={{ color: MUTED }}>
+                    <td className="px-4 py-3" style={{ color: t.muted }}>
                       {b.pax}
                     </td>
-                    <td className="px-4 py-3" style={{ color: MUTED }}>
+                    <td className="px-4 py-3" style={{ color: t.muted }}>
                       {b.date}
                     </td>
                     <td
                       className="px-4 py-3 font-semibold"
-                      style={{ color: TEXT }}
+                      style={{ color: t.text }}
                     >
                       {b.amount}
                     </td>
@@ -666,8 +687,8 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
                           type="button"
                           className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-all duration-150"
                           style={{
-                            background: "rgba(37,99,235,0.15)",
-                            color: "#93C5FD",
+                            background: t.processingBg,
+                            color: t.processingText,
                           }}
                           data-ocid={`dashboard.bookings.view_button.${i + 1}`}
                         >
@@ -678,8 +699,8 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
                           type="button"
                           className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-all duration-150"
                           style={{
-                            background: "rgba(245,158,11,0.15)",
-                            color: "#FCD34D",
+                            background: t.pendingBg,
+                            color: t.pendingText,
                           }}
                           data-ocid={`dashboard.bookings.edit_button.${i + 1}`}
                         >
@@ -730,12 +751,12 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
             </div>
             <h3
               className="font-bold text-xl mb-1"
-              style={{ color: TEXT, fontFamily: "'Sora', sans-serif" }}
+              style={{ color: "#FFFFFF", fontFamily: "'Sora', sans-serif" }}
             >
               Dubai 5N/6D Package — ₹42,500/pax
             </h3>
             <p className="text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>
-              Includes flights, hotel & transfers · Valid till 31 Mar 2026
+              Includes flights, hotel &amp; transfers · Valid till 31 Mar 2026
             </p>
             <p
               className="text-xs mt-1 font-semibold"
@@ -749,7 +770,7 @@ export function DashboardHome({ onNavChange }: DashboardHomeProps) {
             className="px-5 py-2.5 rounded-xl text-sm font-semibold flex-shrink-0 transition-all duration-200 hover:scale-105 active:scale-95"
             style={{
               background: "linear-gradient(135deg, #F97316, #EC4899)",
-              color: TEXT,
+              color: "#FFFFFF",
               boxShadow: "0 4px 15px rgba(249,115,22,0.4)",
             }}
             onMouseEnter={(e) => {

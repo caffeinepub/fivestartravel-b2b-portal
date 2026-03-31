@@ -38,6 +38,8 @@ import {
   Wallet,
 } from "lucide-react";
 import { useState } from "react";
+import { useTheme } from "../ThemeContext";
+import { DARK, LIGHT } from "../design-tokens";
 import { SupplierBookingCreate } from "./SupplierBookingCreate";
 import { SupplierCompanyProfile } from "./SupplierCompanyProfile";
 import { SupplierInventoryHub } from "./SupplierInventoryHub";
@@ -190,12 +192,12 @@ const NAV_ITEMS: {
   { key: "settings", label: "Settings", icon: Settings },
 ];
 
-const glassBg = {
-  background: "rgba(255,255,255,0.05)",
-  border: "1px solid rgba(255,255,255,0.1)",
-};
+// glassBg is now inlined using theme tokens
 
 export function SupplierDashboard({ onNavigate }: Props) {
+  const { theme } = useTheme();
+  const t = theme === "light" ? LIGHT : DARK;
+
   const [activePage, setActivePage] = useState<SupplierPage>("overview");
   const [statusFilter, setStatusFilter] = useState("All");
   const [searchQ, setSearchQ] = useState("");
@@ -222,13 +224,13 @@ export function SupplierDashboard({ onNavigate }: Props) {
   }
 
   return (
-    <div className="min-h-screen flex" style={{ background: "#0F172A" }}>
+    <div className="min-h-screen flex" style={{ background: t.pageBg }}>
       {/* Sidebar */}
       <div
         className={`flex-shrink-0 transition-all duration-300 ${sidebarOpen ? "w-56" : "w-14"}`}
         style={{
-          background: "linear-gradient(180deg,#1E293B 0%,#0F172A 100%)",
-          borderRight: "1px solid rgba(255,255,255,0.08)",
+          background: t.sidebarBg,
+          borderRight: `1px solid ${t.border}`,
         }}
       >
         {/* Logo area */}
@@ -298,8 +300,8 @@ export function SupplierDashboard({ onNavigate }: Props) {
         <div
           className="flex items-center justify-between px-6 py-3"
           style={{
-            background: "rgba(255,255,255,0.03)",
-            borderBottom: "1px solid rgba(255,255,255,0.08)",
+            background: t.topbarBg,
+            borderBottom: `1px solid ${t.border}`,
           }}
         >
           <div className="flex items-center gap-3">
@@ -312,10 +314,10 @@ export function SupplierDashboard({ onNavigate }: Props) {
               <BarChart3 className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="text-white font-semibold">
+              <h1 className="font-semibold" style={{ color: t.text }}>
                 {NAV_ITEMS.find((n) => n.key === activePage)?.label}
               </h1>
-              <p className="text-slate-500 text-xs">
+              <p className="text-xs" style={{ color: t.muted }}>
                 Sunrise Hospitality Pvt Ltd
               </p>
             </div>
@@ -371,7 +373,10 @@ export function SupplierDashboard({ onNavigate }: Props) {
                   <div
                     key={s.label}
                     className="rounded-2xl p-5"
-                    style={glassBg}
+                    style={{
+                      background: t.cardBg,
+                      border: `1px solid ${t.border}`,
+                    }}
                     data-ocid={`supplier.stat.card.${i + 1}`}
                   >
                     <div className="flex items-center gap-3 mb-3">
@@ -392,13 +397,19 @@ export function SupplierDashboard({ onNavigate }: Props) {
                   </div>
                 ))}
               </div>
-              <div className="rounded-2xl p-5" style={glassBg}>
+              <div
+                className="rounded-2xl p-5"
+                style={{
+                  background: t.cardBg,
+                  border: `1px solid ${t.border}`,
+                }}
+              >
                 <h3 className="text-white font-semibold mb-4">
                   Recent Bookings
                 </h3>
                 <Table>
                   <TableHeader>
-                    <TableRow style={{ background: "rgba(255,255,255,0.05)" }}>
+                    <TableRow style={{ background: t.cardBg }}>
                       {[
                         "Booking ID",
                         "Service",
@@ -512,7 +523,10 @@ export function SupplierDashboard({ onNavigate }: Props) {
                   <div
                     key={s.label}
                     className="rounded-2xl p-5"
-                    style={glassBg}
+                    style={{
+                      background: t.cardBg,
+                      border: `1px solid ${t.border}`,
+                    }}
                     data-ocid={`analytics.stat.card.${i + 1}`}
                   >
                     <p className="text-slate-400 text-sm">{s.label}</p>
@@ -529,7 +543,13 @@ export function SupplierDashboard({ onNavigate }: Props) {
                 ))}
               </div>
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="rounded-2xl p-5" style={glassBg}>
+                <div
+                  className="rounded-2xl p-5"
+                  style={{
+                    background: t.cardBg,
+                    border: `1px solid ${t.border}`,
+                  }}
+                >
                   <h3 className="text-white font-semibold mb-4">
                     Monthly Booking Trend
                   </h3>
@@ -577,7 +597,13 @@ export function SupplierDashboard({ onNavigate }: Props) {
                     ))}
                   </div>
                 </div>
-                <div className="rounded-2xl p-5" style={glassBg}>
+                <div
+                  className="rounded-2xl p-5"
+                  style={{
+                    background: t.cardBg,
+                    border: `1px solid ${t.border}`,
+                  }}
+                >
                   <h3 className="text-white font-semibold mb-4">
                     Revenue by Service Type
                   </h3>
@@ -608,7 +634,7 @@ export function SupplierDashboard({ onNavigate }: Props) {
               </div>
               <div
                 className="rounded-2xl overflow-hidden"
-                style={{ border: "1px solid rgba(255,255,255,0.1)" }}
+                style={{ border: `1px solid ${t.border}` }}
               >
                 <div
                   className="p-4"
@@ -620,7 +646,7 @@ export function SupplierDashboard({ onNavigate }: Props) {
                 </div>
                 <Table>
                   <TableHeader>
-                    <TableRow style={{ background: "rgba(255,255,255,0.05)" }}>
+                    <TableRow style={{ background: t.cardBg }}>
                       {["Service", "Customer", "Date", "Value", "Status"].map(
                         (h) => (
                           <TableHead key={h} className="text-slate-400">
@@ -724,11 +750,11 @@ export function SupplierDashboard({ onNavigate }: Props) {
               </div>
               <div
                 className="rounded-2xl overflow-hidden"
-                style={{ border: "1px solid rgba(255,255,255,0.1)" }}
+                style={{ border: `1px solid ${t.border}` }}
               >
                 <Table>
                   <TableHeader>
-                    <TableRow style={{ background: "rgba(255,255,255,0.05)" }}>
+                    <TableRow style={{ background: t.cardBg }}>
                       {[
                         "Booking ID",
                         "Service",
@@ -798,7 +824,10 @@ export function SupplierDashboard({ onNavigate }: Props) {
                   <div
                     key={s.label}
                     className="rounded-2xl p-5"
-                    style={glassBg}
+                    style={{
+                      background: t.cardBg,
+                      border: `1px solid ${t.border}`,
+                    }}
                     data-ocid={`supplier.payout.card.${i + 1}`}
                   >
                     <p className="text-slate-400 text-sm mb-2">{s.label}</p>
@@ -824,11 +853,11 @@ export function SupplierDashboard({ onNavigate }: Props) {
               </div>
               <div
                 className="rounded-2xl overflow-hidden"
-                style={{ border: "1px solid rgba(255,255,255,0.1)" }}
+                style={{ border: `1px solid ${t.border}` }}
               >
                 <Table>
                   <TableHeader>
-                    <TableRow style={{ background: "rgba(255,255,255,0.05)" }}>
+                    <TableRow style={{ background: t.cardBg }}>
                       {[
                         "Month",
                         "Bookings",
@@ -883,7 +912,13 @@ export function SupplierDashboard({ onNavigate }: Props) {
           {/* ── Settings ─────────────────────────────── */}
           {activePage === "settings" && (
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="rounded-2xl p-6" style={glassBg}>
+              <div
+                className="rounded-2xl p-6"
+                style={{
+                  background: t.cardBg,
+                  border: `1px solid ${t.border}`,
+                }}
+              >
                 <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
                   <Building2 className="w-4 h-4 text-orange-400" /> Company
                   Information
@@ -932,7 +967,13 @@ export function SupplierDashboard({ onNavigate }: Props) {
                 </div>
               </div>
               <div className="space-y-4">
-                <div className="rounded-2xl p-6" style={glassBg}>
+                <div
+                  className="rounded-2xl p-6"
+                  style={{
+                    background: t.cardBg,
+                    border: `1px solid ${t.border}`,
+                  }}
+                >
                   <h3 className="text-white font-semibold mb-4">API Key</h3>
                   <div className="flex gap-2 mb-3">
                     <Input
@@ -962,7 +1003,13 @@ export function SupplierDashboard({ onNavigate }: Props) {
                     <RefreshCw className="w-4 h-4 mr-2" /> Regenerate Key
                   </Button>
                 </div>
-                <div className="rounded-2xl p-6" style={glassBg}>
+                <div
+                  className="rounded-2xl p-6"
+                  style={{
+                    background: t.cardBg,
+                    border: `1px solid ${t.border}`,
+                  }}
+                >
                   <h3 className="text-white font-semibold mb-4">
                     Notifications
                   </h3>

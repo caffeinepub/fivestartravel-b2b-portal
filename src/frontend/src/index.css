@@ -410,3 +410,28 @@
     animation: float 4s ease-in-out 1.5s infinite;
   }
 }
+
+/* ── Theme Transition System ────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
+}
+
+/* Disable transitions on elements that need instant response */
+input,
+textarea,
+select,
+button:active {
+  transition-duration: 0s;
+}
+
+/* Scrollbar theming */
+:root {
+  color-scheme: light;
+}
+.dark {
+  color-scheme: dark;
+}

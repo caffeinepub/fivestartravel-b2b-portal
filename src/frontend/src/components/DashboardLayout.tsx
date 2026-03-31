@@ -11,6 +11,7 @@ import {
   Layers,
   LogOut,
   MessageCircle,
+  Moon,
   Package,
   Plane,
   QrCode,
@@ -19,6 +20,7 @@ import {
   Ship,
   Sparkles,
   Store,
+  Sun,
   Terminal,
   Train,
   TrendingUp,
@@ -27,6 +29,8 @@ import {
   Wallet,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTheme } from "../ThemeContext";
+import { DARK, LIGHT } from "../design-tokens";
 import { getWalletBalance } from "../utils/walletUtils";
 import type { Page } from "./PublicPages";
 
@@ -181,6 +185,9 @@ export function DashboardLayout({
   title,
   subtitle,
 }: DashboardLayoutProps) {
+  const { theme, toggleTheme } = useTheme();
+  const t = theme === "light" ? LIGHT : DARK;
+
   const [walletBal, setWalletBal] = useState(() => getWalletBalance());
 
   useEffect(() => {
@@ -207,16 +214,16 @@ export function DashboardLayout({
   let navIndex = 0;
 
   return (
-    <div className="min-h-screen flex" style={{ background: "#0B1220" }}>
+    <div className="min-h-screen flex" style={{ background: t.pageBg }}>
       {/* Sidebar */}
       <aside
         className="w-64 flex-shrink-0 hidden md:flex flex-col border-r"
-        style={{ background: "#111827", borderColor: "#1E2A3A" }}
+        style={{ background: t.sidebarBg, borderColor: t.border }}
         data-ocid="dashboard.sidebar.panel"
       >
         {/* Logo */}
-        <div className="px-4 py-4 border-b" style={{ borderColor: "#1E2A3A" }}>
-          <div className="bg-white rounded-lg px-2 py-1.5 inline-flex items-center">
+        <div className="px-4 py-4 border-b" style={{ borderColor: t.border }}>
+          <div className="bg-white rounded-lg px-2 py-1.5 inline-flex items-center shadow-sm">
             <img
               src="/assets/uploads/image-3-1.png"
               alt="FiveStar Travel"
@@ -232,7 +239,7 @@ export function DashboardLayout({
               <div className="px-3 pt-3 pb-1.5">
                 <span
                   className="text-[9px] font-bold tracking-widest uppercase"
-                  style={{ color: "#4B5563" }}
+                  style={{ color: t.sectionLabel }}
                 >
                   {section}
                 </span>
@@ -247,21 +254,18 @@ export function DashboardLayout({
                     type="button"
                     className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 relative"
                     style={{
-                      background: isActive
-                        ? "rgba(37,99,235,0.1)"
-                        : "transparent",
+                      background: isActive ? t.sidebarActiveBg : "transparent",
                       borderLeft: isActive
-                        ? "2px solid #2563EB"
-                        : "2px solid transparent",
-                      color: isActive ? "#FFFFFF" : "#9CA3AF",
+                        ? t.sidebarActiveBorder
+                        : "3px solid transparent",
+                      color: isActive ? t.sidebarActiveColor : t.sidebarText,
                       fontWeight: isActive ? 600 : 400,
                     }}
                     onMouseEnter={(e) => {
                       if (!isActive) {
                         (e.currentTarget as HTMLElement).style.background =
-                          "rgba(255,255,255,0.05)";
-                        (e.currentTarget as HTMLElement).style.color =
-                          "#FFFFFF";
+                          t.sidebarHoverBg;
+                        (e.currentTarget as HTMLElement).style.color = t.text;
                       }
                     }}
                     onMouseLeave={(e) => {
@@ -269,7 +273,7 @@ export function DashboardLayout({
                         (e.currentTarget as HTMLElement).style.background =
                           "transparent";
                         (e.currentTarget as HTMLElement).style.color =
-                          "#9CA3AF";
+                          t.sidebarText;
                       }
                     }}
                     onClick={() => onNavChange(item.key)}
@@ -277,29 +281,29 @@ export function DashboardLayout({
                   >
                     <item.icon
                       className="w-4 h-4 flex-shrink-0"
-                      style={{ color: isActive ? "#60A5FA" : "#6B7280" }}
+                      style={{ color: isActive ? t.primary : t.muted }}
                     />
-                    <span className="flex-1 text-left truncate">
-                      {item.label}
-                    </span>
+                    <span className="flex-1 truncate">{item.label}</span>
                     {item.badge && (
                       <span
-                        className="text-[9px] font-bold px-1.5 py-0.5 rounded leading-none flex-shrink-0"
+                        className="text-[9px] font-bold px-1.5 py-0.5 rounded-full"
                         style={{
                           background:
                             item.badge === "LIVE"
-                              ? "rgba(22,163,74,0.2)"
+                              ? "rgba(22,163,74,0.15)"
                               : item.badge === "AI"
-                                ? "rgba(139,92,246,0.2)"
-                                : "rgba(37,99,235,0.2)",
+                                ? "rgba(124,58,237,0.15)"
+                                : item.badge === "3"
+                                  ? "rgba(220,38,38,0.15)"
+                                  : "rgba(37,99,235,0.12)",
                           color:
                             item.badge === "LIVE"
-                              ? "#4ADE80"
+                              ? t.success
                               : item.badge === "AI"
-                                ? "#A78BFA"
+                                ? "#7C3AED"
                                 : item.badge === "3"
-                                  ? "#F87171"
-                                  : "#93C5FD",
+                                  ? t.error
+                                  : t.primary,
                         }}
                       >
                         {item.badge}
@@ -315,23 +319,23 @@ export function DashboardLayout({
         {/* Bottom user area */}
         <div
           className="px-3 pb-4 border-t pt-3"
-          style={{ borderColor: "#1E2A3A" }}
+          style={{ borderColor: t.border }}
         >
           <div className="flex items-center gap-3 px-3 py-2 mb-1">
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold"
-              style={{ background: "rgba(37,99,235,0.2)", color: "#60A5FA" }}
+              style={{ background: "rgba(37,99,235,0.15)", color: t.primary }}
             >
               DA
             </div>
             <div className="min-w-0">
               <p
                 className="text-xs font-semibold truncate"
-                style={{ color: "#FFFFFF" }}
+                style={{ color: t.text }}
               >
                 Demo Agent
               </p>
-              <p className="text-[10px]" style={{ color: "#6B7280" }}>
+              <p className="text-[10px]" style={{ color: t.muted }}>
                 Travel Agent
               </p>
             </div>
@@ -339,10 +343,10 @@ export function DashboardLayout({
           <button
             type="button"
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150"
-            style={{ color: "#F87171" }}
+            style={{ color: t.error }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.background =
-                "rgba(220,38,38,0.1)";
+                "rgba(220,38,38,0.08)";
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLElement).style.background = "transparent";
@@ -361,18 +365,22 @@ export function DashboardLayout({
         {/* Top bar */}
         <header
           className="h-16 flex items-center justify-between px-5 flex-shrink-0 border-b"
-          style={{ background: "#111827", borderColor: "#1E2A3A" }}
+          style={{
+            background: t.topbarBg,
+            borderColor: t.border,
+            boxShadow: t.shadow,
+          }}
         >
           {/* Left: Title */}
           <div className="flex-shrink-0 min-w-[160px]">
             <h1
               className="font-semibold text-sm leading-tight"
-              style={{ color: "#FFFFFF", fontFamily: "'Sora', sans-serif" }}
+              style={{ color: t.text, fontFamily: "'Sora', sans-serif" }}
             >
               {title}
             </h1>
             {subtitle && (
-              <p className="text-xs mt-0.5" style={{ color: "#6B7280" }}>
+              <p className="text-xs mt-0.5" style={{ color: t.muted }}>
                 {subtitle}
               </p>
             )}
@@ -382,43 +390,62 @@ export function DashboardLayout({
           <div className="flex-1 max-w-md mx-6 hidden sm:block">
             <div
               className="flex items-center gap-2 px-3 py-2 rounded-lg"
-              style={{ background: "#0B1220", border: "1px solid #1E2A3A" }}
+              style={{ background: t.inputBg, border: `1px solid ${t.border}` }}
             >
               <Search
                 className="w-4 h-4 flex-shrink-0"
-                style={{ color: "#6B7280" }}
+                style={{ color: t.muted }}
               />
               <input
                 type="text"
                 placeholder="Search PNR, Booking ID, Client..."
                 className="flex-1 bg-transparent text-sm outline-none"
-                style={{ color: "#FFFFFF" }}
+                style={{ color: t.text }}
                 data-ocid="dashboard.search_input"
               />
             </div>
           </div>
 
           {/* Right: Actions */}
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Theme Toggle */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+              style={{ background: t.inputBg, border: `1px solid ${t.border}` }}
+              title={
+                theme === "light"
+                  ? "Switch to Dark Mode"
+                  : "Switch to Light Mode"
+              }
+              data-ocid="dashboard.theme.toggle"
+            >
+              {theme === "light" ? (
+                <Moon className="w-4 h-4" style={{ color: t.muted }} />
+              ) : (
+                <Sun className="w-4 h-4" style={{ color: t.muted }} />
+              )}
+            </button>
+
             {/* Notifications */}
             <button
               type="button"
               className="relative w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-150"
-              style={{ background: "rgba(255,255,255,0.05)" }}
+              style={{ background: t.inputBg, border: `1px solid ${t.border}` }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.background =
-                  "rgba(255,255,255,0.1)";
+                  t.sidebarHoverBg;
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background =
-                  "rgba(255,255,255,0.05)";
+                (e.currentTarget as HTMLElement).style.background = t.inputBg;
               }}
               data-ocid="dashboard.notifications.button"
             >
-              <Bell className="w-4 h-4" style={{ color: "#9CA3AF" }} />
+              <Bell className="w-4 h-4" style={{ color: t.muted }} />
               <span
                 className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full text-[9px] font-bold flex items-center justify-center"
-                style={{ background: "#DC2626", color: "#FFFFFF" }}
+                style={{ background: t.error, color: "#FFFFFF" }}
               >
                 3
               </span>
@@ -428,22 +455,28 @@ export function DashboardLayout({
             <div
               className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg"
               style={{
-                background: "rgba(22,163,74,0.1)",
-                border: "1px solid rgba(22,163,74,0.3)",
+                background:
+                  theme === "light"
+                    ? "rgba(22,163,74,0.08)"
+                    : "rgba(34,197,94,0.1)",
+                border: `1px solid ${theme === "light" ? "rgba(22,163,74,0.2)" : "rgba(34,197,94,0.2)"}`,
               }}
               data-ocid="dashboard.wallet_balance.panel"
             >
-              <Wallet className="w-3.5 h-3.5" style={{ color: "#4ADE80" }} />
+              <Wallet
+                className="w-3.5 h-3.5"
+                style={{ color: t.walletAccent }}
+              />
               <div>
                 <p
                   className="text-[10px] leading-none"
-                  style={{ color: "#6B7280" }}
+                  style={{ color: t.muted }}
                 >
                   Wallet
                 </p>
                 <p
                   className="font-bold text-sm leading-none mt-0.5"
-                  style={{ color: "#4ADE80" }}
+                  style={{ color: t.walletText }}
                 >
                   ₹{walletBal.toLocaleString("en-IN")}
                 </p>
@@ -453,7 +486,7 @@ export function DashboardLayout({
             {/* Profile Avatar */}
             <div
               className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold cursor-pointer"
-              style={{ background: "rgba(37,99,235,0.3)", color: "#93C5FD" }}
+              style={{ background: "rgba(37,99,235,0.15)", color: t.primary }}
               data-ocid="dashboard.profile.button"
             >
               DA
@@ -462,7 +495,12 @@ export function DashboardLayout({
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-5 overflow-y-auto">{children}</main>
+        <main
+          className="flex-1 p-5 overflow-y-auto"
+          style={{ background: t.pageBg }}
+        >
+          {children}
+        </main>
       </div>
     </div>
   );
@@ -478,6 +516,9 @@ function ComingSoonPageInternal({
   icon: React.ElementType;
   onNavigateFlights?: () => void;
 }) {
+  const { theme } = useTheme();
+  const t = theme === "light" ? LIGHT : DARK;
+
   return (
     <div
       className="flex flex-col items-center justify-center min-h-[400px] text-center"
@@ -485,28 +526,30 @@ function ComingSoonPageInternal({
     >
       <div
         className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5"
-        style={{ background: "rgba(37,99,235,0.15)" }}
+        style={{
+          background: theme === "light" ? "#EFF6FF" : "rgba(37,99,235,0.15)",
+        }}
       >
-        <Icon className="w-10 h-10" style={{ color: "#60A5FA" }} />
+        <Icon className="w-10 h-10" style={{ color: t.primary }} />
       </div>
       <h2
         className="text-2xl font-bold mb-2"
-        style={{ color: "#FFFFFF", fontFamily: "'Sora', sans-serif" }}
+        style={{ color: t.text, fontFamily: "'Sora', sans-serif" }}
       >
         {title}
       </h2>
       <p
         className="text-sm max-w-sm leading-relaxed mb-6"
-        style={{ color: "#9CA3AF" }}
+        style={{ color: t.muted }}
       >
         This module is coming soon in Phase 2. We're building the best-in-class{" "}
         {title.toLowerCase()} booking engine for travel agents.
       </p>
       <Badge
         style={{
-          background: "rgba(37,99,235,0.15)",
-          color: "#93C5FD",
-          border: "1px solid rgba(37,99,235,0.3)",
+          background: theme === "light" ? "#EFF6FF" : "rgba(37,99,235,0.15)",
+          color: t.primary,
+          border: `1px solid ${theme === "light" ? "#DBEAFE" : "rgba(37,99,235,0.3)"}`,
         }}
       >
         Phase 2 — Coming Soon
@@ -515,7 +558,7 @@ function ComingSoonPageInternal({
         <button
           type="button"
           className="mt-4 text-sm hover:underline"
-          style={{ color: "#60A5FA" }}
+          style={{ color: t.primary }}
           onClick={onNavigateFlights}
           data-ocid="dashboard.coming_soon.link"
         >
