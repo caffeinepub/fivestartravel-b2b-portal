@@ -343,7 +343,7 @@ export function HeroSection({
               }}
               data-ocid="hero.primary_button"
             >
-              Start Free Agent Account
+              Create Free Agent Account
             </button>
             <button
               type="button"

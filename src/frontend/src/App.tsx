@@ -400,7 +400,6 @@ export default function App() {
         <main className="flex-1">
           <HomePage onNavigate={navigate} />
         </main>
-        <Footer onNavigate={navigate} />
       </div>
     );
   }
@@ -512,7 +511,6 @@ export default function App() {
             }}
           />
         </main>
-        <Footer onNavigate={navigate} />
       </div>
     );
   }
@@ -525,7 +523,6 @@ export default function App() {
         <main className="flex-1">
           <AgentRegisterPage onNavigate={navigate} />
         </main>
-        <Footer onNavigate={navigate} />
       </div>
     );
   }
@@ -546,7 +543,6 @@ export default function App() {
             }}
           />
         </main>
-        <Footer onNavigate={navigate} />
       </div>
     );
   }
@@ -567,7 +563,6 @@ export default function App() {
             }}
           />
         </main>
-        <Footer onNavigate={navigate} />
       </div>
     );
   }

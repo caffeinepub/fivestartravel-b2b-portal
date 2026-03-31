@@ -305,7 +305,7 @@ export function Header({ onNavigate }: { onNavigate: (page: Page) => void }) {
             className="btn-premium rounded-xl px-5 font-semibold"
             data-ocid="nav.register_button"
           >
-            Join Free
+            Get Started Free
           </Button>
         </div>
 
@@ -378,7 +378,7 @@ export function Header({ onNavigate }: { onNavigate: (page: Page) => void }) {
                 className="flex-1 btn-premium"
                 data-ocid="nav.register_button"
               >
-                Join Free
+                Get Started Free
               </Button>
             </div>
           </div>
@@ -1023,7 +1023,7 @@ export function AgentDeals({
                       onNavigate("packages");
                     }}
                   >
-                    Book Now
+                    Start Booking
                   </button>
                 </div>
               </div>
