@@ -37,6 +37,7 @@ import { HotelSearch } from "./components/HotelSearch";
 import { MyBookings } from "./components/MyBookings";
 import { NotificationsModule } from "./components/NotificationsModule";
 import { PackageBuilder } from "./components/PackageBuilder";
+import { PricingPage } from "./components/PricingPage";
 import {
   AboutPage,
   ContactPage,
@@ -440,6 +441,12 @@ function AppInner() {
     return (
       <PublicPage nav={navigate}>
         <BlogPage onNavigate={navigate} />
+      </PublicPage>
+    );
+  if (page === "pricing")
+    return (
+      <PublicPage nav={navigate}>
+        <PricingPage onNavigate={navigate} />
       </PublicPage>
     );
 

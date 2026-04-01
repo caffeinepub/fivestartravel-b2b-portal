@@ -83,7 +83,8 @@ export type Page =
   | "suppliers-page"
   | "api-xml"
   | "testimonials-page"
-  | "corporate-dashboard";
+  | "corporate-dashboard"
+  | "pricing";
 
 // ── Scroll Animation Hook ─────────────────────────────────────────────────────
 function useScrollReveal() {
@@ -274,6 +275,14 @@ export function Header({ onNavigate }: { onNavigate: (page: Page) => void }) {
           >
             Contact
           </button>
+          <button
+            type="button"
+            onClick={() => onNavigate("pricing")}
+            className="text-white/70 hover:text-white text-sm font-medium transition-colors"
+            data-ocid="nav.pricing_link"
+          >
+            Pricing
+          </button>
         </nav>
 
         <div className="hidden md:flex items-center gap-3">
@@ -356,6 +365,17 @@ export function Header({ onNavigate }: { onNavigate: (page: Page) => void }) {
                 <s.icon className="w-4 h-4 text-[#2563eb]" /> {s.label}
               </button>
             ))}
+            <button
+              type="button"
+              onClick={() => {
+                onNavigate("pricing");
+                setMobileOpen(false);
+              }}
+              className="w-full flex items-center gap-3 p-3 rounded-xl text-white/80 hover:bg-white/5 transition-colors text-sm"
+              data-ocid="nav.mobile_pricing_link"
+            >
+              Pricing
+            </button>
             <div className="pt-3 flex gap-2">
               <Button
                 variant="ghost"
