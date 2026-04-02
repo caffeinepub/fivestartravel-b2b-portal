@@ -1,14 +1,6 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -17,1311 +9,969 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  AlertCircle,
   Bell,
-  Briefcase,
   CheckCircle,
-  ChevronDown,
+  Circle,
   ClipboardList,
   Clock,
-  DollarSign,
-  Download,
+  CreditCard,
   FileText,
-  Hotel,
+  InboxIcon,
   LogOut,
-  Mail,
-  MessageSquare,
-  Plane,
+  Moon,
+  Phone,
   Plus,
-  Send,
-  Star,
+  Search,
+  Sun,
+  Ticket,
   TrendingUp,
-  Upload,
-  Users,
+  Wrench,
 } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "../ThemeContext";
 import { DARK, LIGHT } from "../design-tokens";
 
-// CARD styles now use theme tokens
+type StaffPage =
+  | "overview"
+  | "manual-booking"
+  | "offline-queue"
+  | "task-board"
+  | "supplier-tracker"
+  | "payments"
+  | "quotation"
+  | "tickets";
 
-const SERVICE_TYPES = ["Flight", "Hotel", "Tour", "Transfer", "Visa"];
-
-const QUEUE_ROWS = [
+const STAFF_NAV: {
+  icon: React.ElementType;
+  label: string;
+  key: StaffPage;
+  section: string;
+  badge?: string;
+}[] = [
+  { section: "Overview", icon: TrendingUp, label: "Overview", key: "overview" },
   {
-    id: "OFR-001",
-    agent: "Rajiv Mehta",
+    section: "Operations",
+    icon: Wrench,
+    label: "Manual Booking",
+    key: "manual-booking",
+  },
+  {
+    section: "Operations",
+    icon: InboxIcon,
+    label: "Offline Queue",
+    key: "offline-queue",
+    badge: "4",
+  },
+  {
+    section: "Operations",
+    icon: ClipboardList,
+    label: "Task Board",
+    key: "task-board",
+  },
+  {
+    section: "Operations",
+    icon: Phone,
+    label: "Supplier Tracker",
+    key: "supplier-tracker",
+  },
+  {
+    section: "Finance",
+    icon: CreditCard,
+    label: "Payment Recording",
+    key: "payments",
+  },
+  {
+    section: "Documents",
+    icon: FileText,
+    label: "Quotation Builder",
+    key: "quotation",
+  },
+  {
+    section: "Support",
+    icon: Ticket,
+    label: "Support Tickets",
+    key: "tickets",
+    badge: "2",
+  },
+];
+
+const QUEUE_DATA = [
+  {
+    id: "REQ-001",
+    agent: "Rahul Sharma",
     service: "Hotel",
-    dest: "Bangkok",
-    date: "22 Mar",
-    priority: "High",
+    destination: "Dubai",
+    checkIn: "2024-04-01",
+    pax: 4,
+    notes: "Family suite preferred",
+    submitted: "2024-03-15 09:30",
     status: "Pending",
-    assigned: "Amit S.",
   },
   {
-    id: "OFR-002",
-    agent: "Priya Kapoor",
-    service: "Flight",
-    dest: "Dubai",
-    date: "23 Mar",
-    priority: "Medium",
-    status: "In Progress",
-    assigned: "Priya V.",
+    id: "REQ-002",
+    agent: "Priya Patel",
+    service: "Tour",
+    destination: "Bali",
+    checkIn: "2024-03-25",
+    pax: 2,
+    notes: "Private tour, no groups",
+    submitted: "2024-03-15 10:15",
+    status: "Pending",
   },
   {
-    id: "OFR-003",
-    agent: "Suresh Nair",
+    id: "REQ-003",
+    agent: "Amit Kumar",
     service: "Transfer",
-    dest: "Singapore",
-    date: "24 Mar",
-    priority: "Low",
-    status: "Confirmed",
-    assigned: "Rajesh K.",
+    destination: "Bangkok",
+    checkIn: "2024-03-20",
+    pax: 2,
+    notes: "Airport to hotel",
+    submitted: "2024-03-15 11:00",
+    status: "Contacted",
   },
   {
-    id: "OFR-004",
-    agent: "Anita Sharma",
+    id: "REQ-004",
+    agent: "Sunita Verma",
     service: "Visa",
-    dest: "UK",
-    date: "25 Mar",
-    priority: "High",
+    destination: "USA",
+    checkIn: "",
+    pax: 1,
+    notes: "Tourist visa, 10-year",
+    submitted: "2024-03-14 16:20",
     status: "Pending",
-    assigned: "Sneha P.",
+  },
+];
+
+const SUPPLIER_TRACKER_DATA = [
+  {
+    supplier: "Dubai Oasis DMC",
+    booking: "FST-2024-001",
+    service: "Desert Safari - 2024-03-20",
+    contact: "+971 4 123 4567",
+    status: "Awaiting Confirmation",
+    dueIn: "5 days",
   },
   {
-    id: "OFR-005",
-    agent: "Mohit Jain",
-    service: "Tour",
-    dest: "Bali",
-    date: "26 Mar",
+    supplier: "Ubud Retreat Hotel",
+    booking: "FST-2024-003",
+    service: "Hotel Stay - 2024-04-01",
+    contact: "+62 361 123456",
+    status: "Confirmed",
+    dueIn: "—",
+  },
+  {
+    supplier: "Bangkok City Tours",
+    booking: "FST-2024-011",
+    service: "City Tour - 2024-03-28",
+    contact: "+66 2 123 4567",
+    status: "Not Responded",
+    dueIn: "Overdue",
+  },
+];
+
+const TASKS_TODO = [
+  {
+    id: 1,
+    title: "Confirm Desert Safari booking with Dubai Oasis",
+    priority: "High",
+    due: "Today",
+  },
+  {
+    id: 2,
+    title: "Process Visa application for Sunita Verma",
+    priority: "High",
+    due: "Today",
+  },
+  {
+    id: 3,
+    title: "Send hotel voucher to Rahul Sharma",
     priority: "Medium",
-    status: "In Progress",
-    assigned: "Amit S.",
+    due: "Tomorrow",
   },
+];
+const TASKS_IN_PROGRESS = [
   {
-    id: "OFR-006",
-    agent: "Deepika Rao",
-    service: "Hotel",
-    dest: "Paris",
-    date: "27 Mar",
+    id: 4,
+    title: "Follow up with Bangkok City Tours on payment",
     priority: "High",
-    status: "Pending",
-    assigned: "Priya V.",
+    due: "Today",
   },
   {
-    id: "OFR-007",
-    agent: "Kiran Patel",
-    service: "Flight",
-    dest: "London",
-    date: "28 Mar",
+    id: 5,
+    title: "Prepare group quotation for LuxeTrip",
+    priority: "Medium",
+    due: "2024-03-17",
+  },
+];
+const TASKS_DONE = [
+  {
+    id: 6,
+    title: "Issued flight voucher FST-2024-007",
     priority: "Low",
-    status: "Confirmed",
-    assigned: "Rajesh K.",
+    due: "2024-03-14",
   },
   {
-    id: "OFR-008",
-    agent: "Vivek Singh",
-    service: "Cruise",
-    dest: "Mediterranean",
-    date: "29 Mar",
-    priority: "Medium",
-    status: "Pending",
-    assigned: "Sneha P.",
-  },
-  {
-    id: "OFR-009",
-    agent: "Meena Verma",
-    service: "Transfer",
-    dest: "Maldives",
-    date: "30 Mar",
-    priority: "High",
-    status: "In Progress",
-    assigned: "Amit S.",
-  },
-  {
-    id: "OFR-010",
-    agent: "Ashish Gupta",
-    service: "Hotel",
-    dest: "Tokyo",
-    date: "31 Mar",
-    priority: "Medium",
-    status: "Rejected",
-    assigned: "Priya V.",
-  },
-  {
-    id: "OFR-011",
-    agent: "Sakshi Arora",
-    service: "Visa",
-    dest: "USA",
-    date: "01 Apr",
-    priority: "High",
-    status: "Pending",
-    assigned: "Rajesh K.",
-  },
-  {
-    id: "OFR-012",
-    agent: "Ramesh Tiwari",
-    service: "Tour",
-    dest: "Switzerland",
-    date: "02 Apr",
+    id: 7,
+    title: "Updated commission rates for Dubai packages",
     priority: "Low",
-    status: "In Progress",
-    assigned: "Sneha P.",
+    due: "2024-03-13",
   },
 ];
 
-const SUPPLIER_ROWS = [
+const PAYMENTS_DATA = [
   {
-    id: "FST-4001",
-    service: "Hotel",
-    supplier: "Provider Alpha",
-    sent: "10:20 AM",
-    status: "Confirmed",
-    response: "18 min",
+    ref: "PAY-001",
+    agent: "Rahul Sharma",
+    amount: "₹42,500",
+    type: "Bank Transfer",
+    booking: "FST-2024-001",
+    date: "2024-03-15",
+    status: "Recorded",
   },
   {
-    id: "FST-4002",
-    service: "Transfer",
-    supplier: "Provider Beta",
-    sent: "09:45 AM",
-    status: "Waiting",
-    response: "—",
+    ref: "PAY-002",
+    agent: "Priya Patel",
+    amount: "₹18,200",
+    type: "NEFT",
+    booking: "FST-2024-002",
+    date: "2024-03-14",
+    status: "Recorded",
   },
   {
-    id: "FST-4003",
-    service: "Tour",
-    supplier: "Provider Gamma",
-    sent: "08:30 AM",
-    status: "Overdue",
-    response: "4 h",
-  },
-  {
-    id: "FST-4004",
-    service: "Visa",
-    supplier: "Provider Delta",
-    sent: "11:00 AM",
-    status: "Confirmed",
-    response: "22 min",
-  },
-  {
-    id: "FST-4005",
-    service: "Hotel",
-    supplier: "Provider Epsilon",
-    sent: "07:15 AM",
-    status: "Overdue",
-    response: "5 h",
-  },
-  {
-    id: "FST-4006",
-    service: "Flight",
-    supplier: "Provider Zeta",
-    sent: "12:05 PM",
-    status: "Requested",
-    response: "—",
-  },
-  {
-    id: "FST-4007",
-    service: "Cruise",
-    supplier: "Provider Eta",
-    sent: "01:30 PM",
-    status: "Waiting",
-    response: "—",
-  },
-  {
-    id: "FST-4008",
-    service: "Transfer",
-    supplier: "Provider Theta",
-    sent: "02:00 PM",
-    status: "Confirmed",
-    response: "10 min",
-  },
-  {
-    id: "FST-4009",
-    service: "Tour",
-    supplier: "Provider Iota",
-    sent: "03:15 PM",
-    status: "Rejected",
-    response: "45 min",
-  },
-  {
-    id: "FST-4010",
-    service: "Hotel",
-    supplier: "Provider Kappa",
-    sent: "04:00 PM",
-    status: "Confirmed",
-    response: "30 min",
+    ref: "PAY-003",
+    agent: "Sunita Verma",
+    amount: "₹95,000",
+    type: "Cash",
+    booking: "FST-2024-003",
+    date: "2024-03-13",
+    status: "Pending Verification",
   },
 ];
 
-const PAYMENT_HISTORY = [
+const TICKET_DATA = [
   {
-    id: "PAY-101",
-    agent: "Rajiv Mehta",
-    booking: "FST-4001",
-    amount: "₹45,000",
-    method: "Bank Transfer",
-    ref: "NEFT2024001",
-    date: "16 Mar",
-    status: "Verified",
+    id: "TKT-A001",
+    from: "Rahul Sharma",
+    subject: "Booking confirmation delayed",
+    priority: "High",
+    status: "Assigned to Me",
+    date: "2024-03-15",
   },
   {
-    id: "PAY-102",
-    agent: "Priya Kapoor",
-    booking: "FST-4002",
-    amount: "₹18,500",
-    method: "UPI",
-    ref: "UPI9876543210",
-    date: "15 Mar",
-    status: "Pending",
-  },
-  {
-    id: "PAY-103",
-    agent: "Suresh Nair",
-    booking: "FST-4003",
-    amount: "₹72,000",
-    method: "Cheque",
-    ref: "CHQ00445",
-    date: "14 Mar",
-    status: "Verified",
-  },
-  {
-    id: "PAY-104",
-    agent: "Anita Sharma",
-    booking: "FST-4004",
-    amount: "₹9,200",
-    method: "Cash",
-    ref: "CASH-016",
-    date: "13 Mar",
-    status: "Rejected",
-  },
-  {
-    id: "PAY-105",
-    agent: "Mohit Jain",
-    booking: "FST-4005",
-    amount: "₹33,000",
-    method: "UPI",
-    ref: "UPI1122334455",
-    date: "12 Mar",
-    status: "Verified",
+    id: "TKT-A002",
+    from: "Priya Patel",
+    subject: "Hotel voucher not received",
+    priority: "Medium",
+    status: "Open",
+    date: "2024-03-14",
   },
 ];
 
-const STAFF_MEMBERS = [
-  {
-    name: "Amit Sharma",
-    role: "Senior Operations",
-    tasks: [
-      { service: "Hotel", client: "Rajiv Mehta", status: "In Progress" },
-      { service: "Flight", client: "Priya Kapoor", status: "New" },
-      { service: "Transfer", client: "Meena Verma", status: "Done" },
-    ],
-  },
-  {
-    name: "Priya Verma",
-    role: "Booking Executive",
-    tasks: [
-      { service: "Visa", client: "Suresh Nair", status: "In Progress" },
-      { service: "Hotel", client: "Deepika Rao", status: "New" },
-    ],
-  },
-  {
-    name: "Rajesh Kumar",
-    role: "Ticketing Staff",
-    tasks: [
-      { service: "Flight", client: "Kiran Patel", status: "Done" },
-      { service: "Cruise", client: "Vivek Singh", status: "New" },
-      { service: "Tour", client: "Ramesh Tiwari", status: "In Progress" },
-    ],
-  },
-  {
-    name: "Sneha Patel",
-    role: "Visa Specialist",
-    tasks: [
-      { service: "Visa", client: "Sakshi Arora", status: "New" },
-      { service: "Transfer", client: "Ashish Gupta", status: "Done" },
-    ],
-  },
-];
-
-const SAVED_QUOTES = [
-  {
-    id: "QT-001",
-    client: "Global Corp",
-    dest: "Bangkok",
-    total: "₹1,20,000",
-    date: "10 Mar",
-    status: "Sent",
-  },
-  {
-    id: "QT-002",
-    client: "Rohan Travels",
-    dest: "Dubai",
-    total: "₹85,000",
-    date: "12 Mar",
-    status: "Draft",
-  },
-  {
-    id: "QT-003",
-    client: "Starlight Tours",
-    dest: "Bali",
-    total: "₹2,40,000",
-    date: "14 Mar",
-    status: "Converted",
-  },
-  {
-    id: "QT-004",
-    client: "Horizon Holidays",
-    dest: "Switzerland",
-    total: "₹3,60,000",
-    date: "15 Mar",
-    status: "Sent",
-  },
-];
-
-function statusBadge(s: string) {
-  const map: Record<string, string> = {
-    Pending: "bg-yellow-500/20 text-yellow-400",
-    "In Progress": "bg-blue-500/20 text-blue-400",
-    Confirmed: "bg-green-500/20 text-green-400",
-    Rejected: "bg-red-500/20 text-red-400",
-    Overdue: "bg-red-600/30 text-red-300",
-    Waiting: "bg-orange-500/20 text-orange-400",
-    Requested: "bg-slate-500/20 text-slate-400",
-    Verified: "bg-green-500/20 text-green-400",
-    New: "bg-purple-500/20 text-purple-400",
-    Done: "bg-green-500/20 text-green-400",
-    Sent: "bg-blue-500/20 text-blue-400",
-    Draft: "bg-slate-500/20 text-slate-400",
-    Converted: "bg-green-500/20 text-green-400",
-    High: "bg-red-500/20 text-red-400",
-    Medium: "bg-yellow-500/20 text-yellow-400",
-    Low: "bg-slate-500/20 text-slate-400",
+function StatusBadge({ status }: { status: string }) {
+  const map: Record<string, { bg: string; color: string }> = {
+    Confirmed: { bg: "#16A34A", color: "#fff" },
+    Recorded: { bg: "#16A34A", color: "#fff" },
+    Resolved: { bg: "#16A34A", color: "#fff" },
+    Pending: { bg: "#F59E0B", color: "#fff" },
+    "Pending Verification": { bg: "#F59E0B", color: "#fff" },
+    Contacted: { bg: "#2563EB", color: "#fff" },
+    "Awaiting Confirmation": { bg: "#2563EB", color: "#fff" },
+    "Assigned to Me": { bg: "#0891B2", color: "#fff" },
+    Open: { bg: "#F97316", color: "#fff" },
+    "Not Responded": { bg: "#DC2626", color: "#fff" },
+    Overdue: { bg: "#DC2626", color: "#fff" },
+    High: { bg: "#DC2626", color: "#fff" },
+    Medium: { bg: "#F59E0B", color: "#fff" },
+    Low: { bg: "#6B7280", color: "#fff" },
   };
+  const s = map[status] || { bg: "#6B7280", color: "#fff" };
   return (
     <span
-      className={`text-xs px-2 py-0.5 rounded-full font-medium ${map[s] ?? "bg-slate-500/20 text-slate-400"}`}
+      className="px-2 py-0.5 rounded text-xs font-semibold"
+      style={{ background: s.bg, color: s.color }}
     >
-      {s}
+      {status}
     </span>
   );
-}
-
-function serviceIcon(s: string) {
-  if (s === "Flight") return <Plane className="w-3.5 h-3.5" />;
-  if (s === "Hotel") return <Hotel className="w-3.5 h-3.5" />;
-  return <Star className="w-3.5 h-3.5" />;
 }
 
 export function StaffDashboard({
   onNavigate,
 }: { onNavigate: (page: string) => void }) {
-  const { theme } = useTheme();
+  const [activePage, setActivePage] = useState<StaffPage>("overview");
+  const { theme, toggleTheme } = useTheme();
   const t = theme === "light" ? LIGHT : DARK;
+  const TEAL = "#0891B2";
 
-  const [queueFilter, setQueueFilter] = useState("All");
-  const [bookingService, setBookingService] = useState("Flight");
-  const [bookingForm, setBookingForm] = useState<Record<string, string>>({});
-  const [generatedBooking, setGeneratedBooking] = useState("");
-  const [assignForms, setAssignForms] = useState<Record<number, boolean>>({});
-  const [quoteServices, setQuoteServices] = useState([
+  // Manual booking form state
+  const [mbService, setMbService] = useState("Flight");
+  const [mbAgent, setMbAgent] = useState("");
+  const [mbDest, setMbDest] = useState("");
+  const [mbDate, setMbDate] = useState("");
+  const [mbPax, setMbPax] = useState("");
+  const [mbNotes, setMbNotes] = useState("");
+  const [mbBookingId, setMbBookingId] = useState("");
+
+  // Quotation line items
+  const [quotItems, setQuotItems] = useState([
     {
-      type: "Hotel",
-      desc: "3 nights Bangkok",
-      cost: 15000,
-      markup: 15,
-      sell: 17250,
+      desc: "Return Flights (2 pax) — Mumbai to Dubai",
+      cost: 28000,
+      markup: 10,
     },
-    {
-      type: "Transfer",
-      desc: "Airport transfers",
-      cost: 2000,
-      markup: 20,
-      sell: 2400,
-    },
+    { desc: "Hotel (3 nights) — Radisson Blu Dubai", cost: 18000, markup: 15 },
+    { desc: "Desert Safari (2 pax)", cost: 9000, markup: 20 },
   ]);
-  const [quoteClient, setQuoteClient] = useState("");
-  const [quoteDest, setQuoteDest] = useState("");
-  const [quoteDates, setQuoteDates] = useState("");
-  const [quotePax, setQuotePax] = useState("");
-  const [quoteGenerated, setQuoteGenerated] = useState(false);
-  const [payForm, setPayForm] = useState<Record<string, string>>({});
-  const [taskStatuses, setTaskStatuses] = useState<Record<string, string>>({});
+  const [quotClient, setQuotClient] = useState("Mr. Rahul Sharma");
+  const [quotRef] = useState(`QT-${Date.now().toString().slice(-6)}`);
 
-  function upd(k: string, v: string) {
-    setBookingForm((p) => ({ ...p, [k]: v }));
+  // Payment form
+  const [payAgent, setPayAgent] = useState("");
+  const [payAmount, setPayAmount] = useState("");
+  const [payType, setPayType] = useState("Bank Transfer");
+  const [payRef, setPayRef] = useState("");
+  const [paySuccess, setPaySuccess] = useState(false);
+
+  const sections: string[] = [];
+  const sectionMap: Record<string, typeof STAFF_NAV> = {};
+  for (const item of STAFF_NAV) {
+    if (!sections.includes(item.section)) {
+      sections.push(item.section);
+      sectionMap[item.section] = [];
+    }
+    sectionMap[item.section].push(item);
   }
 
-  function createBooking() {
-    const id = `FST-${Math.floor(10000 + Math.random() * 90000)}`;
-    setGeneratedBooking(id);
-  }
+  const quotTotal = quotItems.reduce(
+    (sum, item) => sum + item.cost + (item.cost * item.markup) / 100,
+    0,
+  );
 
-  const filteredQueue =
-    queueFilter === "All"
-      ? QUEUE_ROWS
-      : QUEUE_ROWS.filter(
-          (r) => r.service === queueFilter.replace(" Queue", ""),
-        );
-
-  const grandTotal = quoteServices.reduce((a, s) => a + s.sell, 0);
-  const totalCost = quoteServices.reduce((a, s) => a + s.cost, 0);
-
-  return (
-    <div
-      className="min-h-screen"
-      style={{
-        background: "#0F172A",
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
-      }}
-    >
-      {/* Header */}
-      <header
-        className="flex items-center justify-between px-6 py-4"
-        style={{
-          background: "linear-gradient(135deg, #064E3B, #059669)",
-          borderBottom: "1px solid rgba(255,255,255,0.1)",
-        }}
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
-            <Briefcase className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-white font-bold text-lg leading-none">
-              FiveStar Travel
-            </h1>
-            <p className="text-emerald-200 text-xs">Staff Operations Portal</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center cursor-pointer hover:bg-white/20 transition-colors">
-            <Bell className="w-4 h-4 text-white" />
-          </div>
-          <Button
-            size="sm"
-            onClick={() => onNavigate("home")}
-            className="bg-white/20 text-white hover:bg-white/30 border-0"
-            data-ocid="staff.logout_button"
-          >
-            <LogOut className="w-4 h-4 mr-2" /> Logout
-          </Button>
-        </div>
-      </header>
-
-      <div className="p-6">
-        <Tabs defaultValue="offline">
-          <TabsList className="bg-white/5 border border-white/10 mb-6 flex flex-wrap h-auto gap-1 p-1">
-            <TabsTrigger
-              value="offline"
-              className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-slate-400"
-              data-ocid="staff.offline_ops.tab"
-            >
-              <ClipboardList className="w-4 h-4 mr-1" /> Offline Ops
-            </TabsTrigger>
-            <TabsTrigger
-              value="manual"
-              className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-slate-400"
-              data-ocid="staff.manual_booking.tab"
-            >
-              <Plus className="w-4 h-4 mr-1" /> Manual Booking
-            </TabsTrigger>
-            <TabsTrigger
-              value="tasks"
-              className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-slate-400"
-              data-ocid="staff.task_board.tab"
-            >
-              <Users className="w-4 h-4 mr-1" /> Task Board
-            </TabsTrigger>
-            <TabsTrigger
-              value="supplier"
-              className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-slate-400"
-              data-ocid="staff.supplier_tracker.tab"
-            >
-              <Briefcase className="w-4 h-4 mr-1" /> Supplier Tracker
-            </TabsTrigger>
-            <TabsTrigger
-              value="payments"
-              className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-slate-400"
-              data-ocid="staff.payments.tab"
-            >
-              <DollarSign className="w-4 h-4 mr-1" /> Payments
-            </TabsTrigger>
-            <TabsTrigger
-              value="quotations"
-              className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-slate-400"
-              data-ocid="staff.quotations.tab"
-            >
-              <FileText className="w-4 h-4 mr-1" /> Quotations
-            </TabsTrigger>
-          </TabsList>
-
-          {/* ── Offline Operations ── */}
-          <TabsContent value="offline">
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+  const renderContent = () => {
+    switch (activePage) {
+      case "overview":
+        return (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { label: "Offline Requests", value: 42, color: "#059669" },
-                { label: "Supplier Pending", value: 16, color: "#F97316" },
-                { label: "Payments Pending", value: 11, color: "#EAB308" },
-                { label: "Ticketing Queue", value: 8, color: "#3B82F6" },
-                { label: "Completed Today", value: 74, color: "#10B981" },
-              ].map((k, i) => (
+                {
+                  label: "Tasks Due Today",
+                  value: "5",
+                  color: TEAL,
+                  icon: ClipboardList,
+                },
+                {
+                  label: "Pending Manual Bookings",
+                  value: "4",
+                  color: t.warning,
+                  icon: InboxIcon,
+                },
+                {
+                  label: "Supplier Confirmations Due",
+                  value: "3",
+                  color: t.error,
+                  icon: Phone,
+                },
+                {
+                  label: "Payments to Record",
+                  value: "2",
+                  color: t.primary,
+                  icon: CreditCard,
+                },
+              ].map((card) => (
                 <div
-                  key={k.label}
-                  className="rounded-2xl p-4"
+                  key={card.label}
+                  className="rounded-xl p-5 border"
                   style={{
                     background: t.cardBg,
-                    border: `1px solid ${t.border}`,
+                    borderColor: t.border,
+                    boxShadow: t.shadow,
                   }}
-                  data-ocid={`staff.ops.card.${i + 1}`}
                 >
-                  <p className="text-slate-400 text-xs mb-1">{k.label}</p>
-                  <p className="text-3xl font-bold" style={{ color: k.color }}>
-                    {k.value}
+                  <div className="flex items-center justify-between mb-3">
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center"
+                      style={{ background: `${card.color}18` }}
+                    >
+                      <card.icon
+                        className="w-5 h-5"
+                        style={{ color: card.color }}
+                      />
+                    </div>
+                  </div>
+                  <p className="text-2xl font-bold" style={{ color: t.text }}>
+                    {card.value}
+                  </p>
+                  <p className="text-xs mt-1" style={{ color: t.muted }}>
+                    {card.label}
                   </p>
                 </div>
               ))}
             </div>
-
-            <div className="flex flex-wrap gap-2 mb-4">
-              {[
-                "All",
-                "Hotel Queue",
-                "Flight Queue",
-                "Transfer Queue",
-                "Visa Queue",
-              ].map((f) => (
-                <button
-                  key={f}
-                  type="button"
-                  onClick={() => setQueueFilter(f)}
-                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                    queueFilter === f
-                      ? "bg-emerald-600 text-white"
-                      : "bg-white/5 text-slate-400 hover:bg-white/10"
-                  }`}
-                  data-ocid={`staff.queue.filter.${f.toLowerCase().replace(/\s/g, "_")}.toggle`}
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
-
-            <div
-              className="rounded-2xl overflow-hidden"
-              style={{ background: t.cardBg, border: `1px solid ${t.border}` }}
-            >
-              <Table>
-                <TableHeader>
-                  <TableRow style={{ background: t.cardBg }}>
-                    {[
-                      "Request ID",
-                      "Agent/Client",
-                      "Service",
-                      "Destination",
-                      "Date",
-                      "Priority",
-                      "Status",
-                      "Assigned",
-                      "Action",
-                    ].map((h) => (
-                      <TableHead key={h} className="text-slate-400 text-xs">
-                        {h}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredQueue.map((row, i) => (
-                    <TableRow
-                      key={row.id}
-                      className="border-white/10"
-                      data-ocid={`staff.queue.row.${i + 1}`}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div
+                className="rounded-xl p-5 border"
+                style={{
+                  background: t.cardBg,
+                  borderColor: t.border,
+                  boxShadow: t.shadow,
+                }}
+              >
+                <h3 className="font-semibold mb-3" style={{ color: t.text }}>
+                  Today’s Priority Tasks
+                </h3>
+                <div className="space-y-2">
+                  {[
+                    ...TASKS_TODO.filter((t) => t.due === "Today"),
+                    ...TASKS_IN_PROGRESS.filter((t) => t.due === "Today"),
+                  ].map((task) => (
+                    <div
+                      key={task.id}
+                      className="flex items-center gap-3 p-3 rounded-lg"
+                      style={{ background: t.inputBg }}
                     >
-                      <TableCell className="text-emerald-400 text-xs font-mono">
-                        {row.id}
-                      </TableCell>
-                      <TableCell className="text-white text-sm">
-                        {row.agent}
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400">
-                          {row.service}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-slate-300 text-sm">
-                        {row.dest}
-                      </TableCell>
-                      <TableCell className="text-slate-400 text-xs">
-                        {row.date}
-                      </TableCell>
-                      <TableCell>{statusBadge(row.priority)}</TableCell>
-                      <TableCell>{statusBadge(row.status)}</TableCell>
-                      <TableCell className="text-slate-400 text-xs">
-                        {row.assigned}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          size="sm"
-                          className="bg-emerald-600/30 text-emerald-400 hover:bg-emerald-600/50 h-7 text-xs border-0"
-                          data-ocid={`staff.queue.handle_button.${i + 1}`}
-                        >
-                          Handle
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </TabsContent>
-
-          {/* ── Manual Booking ── */}
-          <TabsContent value="manual">
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="md:col-span-2">
-                <Tabs value={bookingService} onValueChange={setBookingService}>
-                  <TabsList className="bg-white/5 border border-white/10 mb-4">
-                    {SERVICE_TYPES.map((s) => (
-                      <TabsTrigger
-                        key={s}
-                        value={s}
-                        className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-slate-400"
-                        data-ocid="staff.booking.service_tab"
-                      >
-                        {s}
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
-
-                  {/* Common Fields */}
-                  <div
-                    className="rounded-2xl p-5 mb-4"
-                    style={{
-                      background: t.cardBg,
-                      border: `1px solid ${t.border}`,
-                    }}
-                  >
-                    <h3 className="text-white font-semibold mb-4">
-                      Client Information
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      {["Client Name", "Email", "Phone", "Passengers"].map(
-                        (f) => (
-                          <div key={f}>
-                            <Label className="text-slate-400 text-xs mb-1 block">
-                              {f}
-                            </Label>
-                            <Input
-                              className="bg-white/5 border-white/10 text-white"
-                              value={bookingForm[f] ?? ""}
-                              onChange={(e) => upd(f, e.target.value)}
-                            />
-                          </div>
-                        ),
-                      )}
-                      <div>
-                        <Label className="text-slate-400 text-xs mb-1 block">
-                          Travel Date
-                        </Label>
-                        <Input
-                          type="date"
-                          className="bg-white/5 border-white/10 text-white"
-                          style={{ colorScheme: "dark" }}
-                          value={bookingForm["Travel Date"] ?? ""}
-                          onChange={(e) => upd("Travel Date", e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-slate-400 text-xs mb-1 block">
-                          Payment Status
-                        </Label>
-                        <Select
-                          value={bookingForm["Payment Status"] ?? ""}
-                          onValueChange={(v) => upd("Payment Status", v)}
-                        >
-                          <SelectTrigger className="bg-white/5 border-white/10 text-white">
-                            <SelectValue placeholder="Select..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Paid">Paid</SelectItem>
-                            <SelectItem value="Pending">Pending</SelectItem>
-                            <SelectItem value="Credit">Credit</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <div className="mt-3">
-                      <Label className="text-slate-400 text-xs mb-1 block">
-                        Notes
-                      </Label>
-                      <Textarea
-                        className="bg-white/5 border-white/10 text-white resize-none"
-                        rows={2}
-                        value={bookingForm.Notes ?? ""}
-                        onChange={(e) => upd("Notes", e.target.value)}
+                      <Circle
+                        className="w-4 h-4 flex-shrink-0"
+                        style={{ color: t.muted }}
                       />
+                      <span
+                        className="text-sm flex-1"
+                        style={{ color: t.text }}
+                      >
+                        {task.title}
+                      </span>
+                      <StatusBadge status={task.priority} />
                     </div>
-                  </div>
-
-                  {/* Service-specific fields */}
-                  {bookingService === "Flight" && (
-                    <div
-                      className="rounded-2xl p-5 mb-4"
-                      style={{
-                        background: t.cardBg,
-                        border: `1px solid ${t.border}`,
-                      }}
-                    >
-                      <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-                        <Plane className="w-4 h-4 text-blue-400" /> Flight
-                        Details
-                      </h3>
-                      <div className="grid grid-cols-2 gap-4">
-                        {[
-                          "From City",
-                          "To City",
-                          "Airline",
-                          "PNR",
-                          "Fare (₹)",
-                          "Baggage",
-                        ].map((f) => (
-                          <div key={f}>
-                            <Label className="text-slate-400 text-xs mb-1 block">
-                              {f}
-                            </Label>
-                            <Input
-                              className="bg-white/5 border-white/10 text-white"
-                              value={bookingForm[f] ?? ""}
-                              onChange={(e) => upd(f, e.target.value)}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {bookingService === "Hotel" && (
-                    <div
-                      className="rounded-2xl p-5 mb-4"
-                      style={{
-                        background: t.cardBg,
-                        border: `1px solid ${t.border}`,
-                      }}
-                    >
-                      <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-                        <Hotel className="w-4 h-4 text-orange-400" /> Hotel
-                        Details
-                      </h3>
-                      <div className="grid grid-cols-2 gap-4">
-                        {["Hotel Name", "City", "Room Type", "Rate (₹)"].map(
-                          (f) => (
-                            <div key={f}>
-                              <Label className="text-slate-400 text-xs mb-1 block">
-                                {f}
-                              </Label>
-                              <Input
-                                className="bg-white/5 border-white/10 text-white"
-                                value={bookingForm[f] ?? ""}
-                                onChange={(e) => upd(f, e.target.value)}
-                              />
-                            </div>
-                          ),
-                        )}
-                        <div>
-                          <Label className="text-slate-400 text-xs mb-1 block">
-                            Check-in
-                          </Label>
-                          <Input
-                            type="date"
-                            className="bg-white/5 border-white/10 text-white"
-                            style={{ colorScheme: "dark" }}
-                            value={bookingForm["Check-in"] ?? ""}
-                            onChange={(e) => upd("Check-in", e.target.value)}
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-slate-400 text-xs mb-1 block">
-                            Check-out
-                          </Label>
-                          <Input
-                            type="date"
-                            className="bg-white/5 border-white/10 text-white"
-                            style={{ colorScheme: "dark" }}
-                            value={bookingForm["Check-out"] ?? ""}
-                            onChange={(e) => upd("Check-out", e.target.value)}
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-slate-400 text-xs mb-1 block">
-                            Meal Plan
-                          </Label>
-                          <Select
-                            value={bookingForm["Meal Plan"] ?? ""}
-                            onValueChange={(v) => upd("Meal Plan", v)}
-                          >
-                            <SelectTrigger className="bg-white/5 border-white/10 text-white">
-                              <SelectValue placeholder="Select..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {[
-                                "Room Only",
-                                "B&B",
-                                "Half Board",
-                                "Full Board",
-                                "All Inclusive",
-                              ].map((v) => (
-                                <SelectItem key={v} value={v}>
-                                  {v}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {bookingService === "Tour" && (
-                    <div
-                      className="rounded-2xl p-5 mb-4"
-                      style={{
-                        background: t.cardBg,
-                        border: `1px solid ${t.border}`,
-                      }}
-                    >
-                      <h3 className="text-white font-semibold mb-4">
-                        Tour Details
-                      </h3>
-                      <div className="grid grid-cols-2 gap-4">
-                        {[
-                          "Tour Name",
-                          "Destination",
-                          "Adults",
-                          "Children",
-                          "Adult Price (₹)",
-                          "Child Price (₹)",
-                        ].map((f) => (
-                          <div key={f}>
-                            <Label className="text-slate-400 text-xs mb-1 block">
-                              {f}
-                            </Label>
-                            <Input
-                              className="bg-white/5 border-white/10 text-white"
-                              value={bookingForm[f] ?? ""}
-                              onChange={(e) => upd(f, e.target.value)}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {bookingService === "Transfer" && (
-                    <div
-                      className="rounded-2xl p-5 mb-4"
-                      style={{
-                        background: t.cardBg,
-                        border: `1px solid ${t.border}`,
-                      }}
-                    >
-                      <h3 className="text-white font-semibold mb-4">
-                        Transfer Details
-                      </h3>
-                      <div className="grid grid-cols-2 gap-4">
-                        {[
-                          "Pickup Location",
-                          "Drop Location",
-                          "Driver Name",
-                          "Price (₹)",
-                        ].map((f) => (
-                          <div key={f}>
-                            <Label className="text-slate-400 text-xs mb-1 block">
-                              {f}
-                            </Label>
-                            <Input
-                              className="bg-white/5 border-white/10 text-white"
-                              value={bookingForm[f] ?? ""}
-                              onChange={(e) => upd(f, e.target.value)}
-                            />
-                          </div>
-                        ))}
-                        <div>
-                          <Label className="text-slate-400 text-xs mb-1 block">
-                            Vehicle Type
-                          </Label>
-                          <Select
-                            value={bookingForm["Vehicle Type"] ?? ""}
-                            onValueChange={(v) => upd("Vehicle Type", v)}
-                          >
-                            <SelectTrigger className="bg-white/5 border-white/10 text-white">
-                              <SelectValue placeholder="Select..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {["Sedan", "SUV", "Van", "Bus"].map((v) => (
-                                <SelectItem key={v} value={v}>
-                                  {v}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <Label className="text-slate-400 text-xs mb-1 block">
-                            Pickup Time
-                          </Label>
-                          <Input
-                            type="time"
-                            className="bg-white/5 border-white/10 text-white"
-                            style={{ colorScheme: "dark" }}
-                            value={bookingForm["Pickup Time"] ?? ""}
-                            onChange={(e) => upd("Pickup Time", e.target.value)}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {bookingService === "Visa" && (
-                    <div
-                      className="rounded-2xl p-5 mb-4"
-                      style={{
-                        background: t.cardBg,
-                        border: `1px solid ${t.border}`,
-                      }}
-                    >
-                      <h3 className="text-white font-semibold mb-4">
-                        Visa Details
-                      </h3>
-                      <div className="grid grid-cols-2 gap-4">
-                        {[
-                          "Country",
-                          "Visa Type",
-                          "Processing Days",
-                          "Fee (₹)",
-                        ].map((f) => (
-                          <div key={f}>
-                            <Label className="text-slate-400 text-xs mb-1 block">
-                              {f}
-                            </Label>
-                            <Input
-                              className="bg-white/5 border-white/10 text-white"
-                              value={bookingForm[f] ?? ""}
-                              onChange={(e) => upd(f, e.target.value)}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </Tabs>
-
-                <Button
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
-                  onClick={createBooking}
-                  data-ocid="staff.booking.create_button"
-                >
-                  <Plus className="w-4 h-4 mr-2" /> Create Booking
-                </Button>
+                  ))}
+                </div>
               </div>
-
-              <div>
-                {generatedBooking ? (
-                  <div
-                    className="rounded-2xl p-6"
-                    style={{
-                      background: t.cardBg,
-                      border: "1px solid rgba(16,185,129,0.4)",
-                    }}
-                    data-ocid="staff.booking.success_panel"
-                  >
-                    <div className="flex items-center gap-2 mb-4">
-                      <CheckCircle className="w-5 h-5 text-emerald-400" />
-                      <h3 className="text-emerald-400 font-bold">
-                        Booking Created!
-                      </h3>
-                    </div>
-                    <div className="mb-4">
-                      <p className="text-slate-400 text-xs mb-1">Booking ID</p>
-                      <p className="text-white font-mono font-bold text-xl">
-                        {generatedBooking}
-                      </p>
-                    </div>
-                    <div className="mb-4">
-                      <p className="text-slate-400 text-xs mb-1">Service</p>
-                      <p className="text-white text-sm">{bookingService}</p>
-                    </div>
-                    <div className="space-y-2 mt-4">
-                      <Button
-                        size="sm"
-                        className="w-full bg-blue-600/30 text-blue-400 hover:bg-blue-600/50 border-0"
-                        data-ocid="staff.booking.invoice_button"
+              <div
+                className="rounded-xl p-5 border"
+                style={{
+                  background: t.cardBg,
+                  borderColor: t.border,
+                  boxShadow: t.shadow,
+                }}
+              >
+                <h3 className="font-semibold mb-3" style={{ color: t.text }}>
+                  Pending Offline Queue
+                </h3>
+                <div className="space-y-2">
+                  {QUEUE_DATA.filter((q) => q.status === "Pending")
+                    .slice(0, 3)
+                    .map((q) => (
+                      <div
+                        key={q.id}
+                        className="flex items-center justify-between p-3 rounded-lg"
+                        style={{ background: t.inputBg }}
                       >
-                        <FileText className="w-4 h-4 mr-2" /> Download Invoice
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="w-full bg-purple-600/30 text-purple-400 hover:bg-purple-600/50 border-0"
-                        data-ocid="staff.booking.voucher_button"
-                      >
-                        <Download className="w-4 h-4 mr-2" /> Download Voucher
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="w-full bg-green-600/30 text-green-400 hover:bg-green-600/50 border-0"
-                        data-ocid="staff.booking.whatsapp_button"
-                      >
-                        <MessageSquare className="w-4 h-4 mr-2" /> Send WhatsApp
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    className="rounded-2xl p-6 text-center"
-                    style={{
-                      background: t.cardBg,
-                      border: `1px solid ${t.border}`,
-                    }}
-                  >
-                    <Briefcase className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                    <p className="text-slate-500 text-sm">
-                      Fill the form and click &ldquo;Create Booking&rdquo; to
-                      generate a booking reference, invoice, and voucher.
-                    </p>
-                  </div>
-                )}
+                        <div>
+                          <p
+                            className="text-sm font-medium"
+                            style={{ color: t.text }}
+                          >
+                            {q.service} — {q.destination}
+                          </p>
+                          <p className="text-xs" style={{ color: t.muted }}>
+                            {q.agent} · {q.pax} pax
+                          </p>
+                        </div>
+                        <StatusBadge status={q.status} />
+                      </div>
+                    ))}
+                </div>
               </div>
             </div>
-          </TabsContent>
+          </div>
+        );
 
-          {/* ── Task Board ── */}
-          <TabsContent value="tasks">
-            <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-5">
-              {STAFF_MEMBERS.map((staff, si) => (
+      case "manual-booking":
+        return (
+          <div className="space-y-4">
+            <div
+              className="rounded-xl border p-6"
+              style={{
+                background: t.cardBg,
+                borderColor: t.border,
+                boxShadow: t.shadow,
+              }}
+            >
+              <h3 className="font-semibold mb-5" style={{ color: t.text }}>
+                Create Manual Booking
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label style={{ color: t.text }}>Service Type</Label>
+                  <select
+                    className="w-full mt-1 px-3 py-2 rounded-lg text-sm"
+                    style={{
+                      background: t.inputBg,
+                      border: `1px solid ${t.border}`,
+                      color: t.text,
+                    }}
+                    value={mbService}
+                    onChange={(e) => setMbService(e.target.value)}
+                  >
+                    {[
+                      "Flight",
+                      "Hotel",
+                      "Tour",
+                      "Transfer",
+                      "Visa",
+                      "Package",
+                      "Cruise",
+                      "Railway",
+                    ].map((s) => (
+                      <option key={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <Label style={{ color: t.text }}>Assign to Agent</Label>
+                  <select
+                    className="w-full mt-1 px-3 py-2 rounded-lg text-sm"
+                    style={{
+                      background: t.inputBg,
+                      border: `1px solid ${t.border}`,
+                      color: t.text,
+                    }}
+                    value={mbAgent}
+                    onChange={(e) => setMbAgent(e.target.value)}
+                  >
+                    <option value="">Select Agent</option>
+                    <option>Rahul Sharma — TravelPlus</option>
+                    <option>Priya Patel — GoTravel</option>
+                    <option>Sunita Verma — LuxeTrip</option>
+                    <option>Amit Kumar — DreamVoyage</option>
+                  </select>
+                </div>
+                <div>
+                  <Label style={{ color: t.text }}>Destination / Route</Label>
+                  <Input
+                    className="mt-1"
+                    placeholder="e.g. Mumbai to Dubai"
+                    value={mbDest}
+                    onChange={(e) => setMbDest(e.target.value)}
+                    style={{
+                      background: t.inputBg,
+                      borderColor: t.border,
+                      color: t.text,
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label style={{ color: t.text }}>Travel Date</Label>
+                  <Input
+                    type="date"
+                    className="mt-1"
+                    value={mbDate}
+                    onChange={(e) => setMbDate(e.target.value)}
+                    style={{
+                      background: t.inputBg,
+                      borderColor: t.border,
+                      color: t.text,
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label style={{ color: t.text }}>Number of Pax</Label>
+                  <Input
+                    className="mt-1"
+                    type="number"
+                    placeholder="2"
+                    value={mbPax}
+                    onChange={(e) => setMbPax(e.target.value)}
+                    style={{
+                      background: t.inputBg,
+                      borderColor: t.border,
+                      color: t.text,
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label style={{ color: t.text }}>Total Amount (₹)</Label>
+                  <Input
+                    className="mt-1"
+                    placeholder="e.g. 45000"
+                    style={{
+                      background: t.inputBg,
+                      borderColor: t.border,
+                      color: t.text,
+                    }}
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Label style={{ color: t.text }}>
+                    Special Instructions / Notes
+                  </Label>
+                  <Textarea
+                    className="mt-1"
+                    rows={3}
+                    value={mbNotes}
+                    onChange={(e) => setMbNotes(e.target.value)}
+                    placeholder="Any special requirements..."
+                    style={{
+                      background: t.inputBg,
+                      borderColor: t.border,
+                      color: t.text,
+                    }}
+                  />
+                </div>
+              </div>
+              {mbBookingId && (
                 <div
-                  key={staff.name}
-                  className="rounded-2xl p-5"
+                  className="mt-4 p-4 rounded-lg"
                   style={{
-                    background: t.cardBg,
-                    border: `1px solid ${t.border}`,
+                    background: "#DCFCE7",
+                    border: "1px solid #16A34A40",
                   }}
                 >
-                  <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle
+                      className="w-5 h-5"
+                      style={{ color: "#16A34A" }}
+                    />
                     <div>
-                      <p className="text-white font-semibold text-sm">
-                        {staff.name}
+                      <p className="font-semibold" style={{ color: "#16A34A" }}>
+                        Manual Booking Created!
                       </p>
-                      <p className="text-slate-400 text-xs">{staff.role}</p>
+                      <p className="text-sm" style={{ color: "#16A34A" }}>
+                        Booking ID: <strong>{mbBookingId}</strong>
+                      </p>
                     </div>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">
-                      {staff.tasks.length} tasks
-                    </span>
                   </div>
+                </div>
+              )}
+              <div className="flex gap-3 mt-5">
+                <Button
+                  style={{ background: TEAL, color: "#fff" }}
+                  onClick={() => {
+                    const id = `FST-MAN-${Date.now().toString().slice(-6)}`;
+                    setMbBookingId(id);
+                  }}
+                >
+                  Generate Booking ID
+                </Button>
+                <Button variant="outline">Save as Draft</Button>
+              </div>
+            </div>
+          </div>
+        );
 
-                  <div className="space-y-2 mb-4">
-                    {staff.tasks.map((task, ti) => (
-                      <div
-                        key={`${task.client}-${ti}`}
-                        className="rounded-xl p-3"
-                        style={{
-                          background: t.cardBg,
-                          border: "1px solid rgba(255,255,255,0.06)",
-                        }}
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <div className="flex items-center gap-1.5 text-xs text-blue-400">
-                            {serviceIcon(task.service)}
-                            {task.service}
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setTaskStatuses((p) => ({
-                                ...p,
-                                [`${si}-${ti}`]:
-                                  p[`${si}-${ti}`] === "Done"
-                                    ? "New"
-                                    : p[`${si}-${ti}`] === "In Progress"
-                                      ? "Done"
-                                      : "In Progress",
-                              }))
-                            }
-                            className="text-xs px-1.5 py-0.5 rounded-full bg-white/5 text-slate-400 hover:bg-white/10"
-                          >
-                            <ChevronDown className="w-3 h-3" />
-                          </button>
-                        </div>
-                        <p className="text-slate-300 text-xs">{task.client}</p>
-                        {statusBadge(
-                          taskStatuses[`${si}-${ti}`] ?? task.status,
-                        )}
-                      </div>
-                    ))}
-                  </div>
-
-                  {!assignForms[si] ? (
-                    <Button
-                      size="sm"
-                      className="w-full bg-emerald-600/30 text-emerald-400 hover:bg-emerald-600/50 border-0 h-8 text-xs"
-                      onClick={() =>
-                        setAssignForms((p) => ({ ...p, [si]: true }))
-                      }
-                      data-ocid={`staff.task.assign_button.${si + 1}`}
+      case "offline-queue":
+        return (
+          <div
+            className="rounded-xl border overflow-hidden"
+            style={{
+              background: t.cardBg,
+              borderColor: t.border,
+              boxShadow: t.shadow,
+            }}
+          >
+            <div
+              className="p-4 border-b flex items-center justify-between"
+              style={{ borderColor: t.border }}
+            >
+              <div>
+                <h3 className="font-semibold" style={{ color: t.text }}>
+                  Offline Booking Requests
+                </h3>
+                <p className="text-xs mt-0.5" style={{ color: t.muted }}>
+                  Requests from agents awaiting manual confirmation
+                </p>
+              </div>
+              <span
+                className="px-2 py-1 rounded text-xs font-bold"
+                style={{ background: t.warning, color: "#fff" }}
+              >
+                4 Pending
+              </span>
+            </div>
+            <Table>
+              <TableHeader>
+                <TableRow style={{ borderColor: t.border }}>
+                  <TableHead style={{ color: t.muted }}>Request ID</TableHead>
+                  <TableHead style={{ color: t.muted }}>Agent</TableHead>
+                  <TableHead style={{ color: t.muted }}>Service</TableHead>
+                  <TableHead style={{ color: t.muted }}>Destination</TableHead>
+                  <TableHead style={{ color: t.muted }}>Pax</TableHead>
+                  <TableHead style={{ color: t.muted }}>Notes</TableHead>
+                  <TableHead style={{ color: t.muted }}>Submitted</TableHead>
+                  <TableHead style={{ color: t.muted }}>Status</TableHead>
+                  <TableHead style={{ color: t.muted }}>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {QUEUE_DATA.map((q) => (
+                  <TableRow
+                    key={q.id}
+                    style={{ borderColor: t.border }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = t.sidebarHoverBg;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "";
+                    }}
+                  >
+                    <TableCell
+                      className="font-mono text-xs font-semibold"
+                      style={{ color: TEAL }}
                     >
-                      <Plus className="w-3 h-3 mr-1" /> Assign Task
-                    </Button>
-                  ) : (
-                    <div className="space-y-2">
-                      <Select>
-                        <SelectTrigger className="bg-white/5 border-white/10 text-white h-8 text-xs">
-                          <SelectValue placeholder="Service type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {SERVICE_TYPES.map((s) => (
-                            <SelectItem key={s} value={s}>
-                              {s}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        className="bg-white/5 border-white/10 text-white h-8 text-xs"
-                        placeholder="Client name"
-                      />
-                      <Select>
-                        <SelectTrigger className="bg-white/5 border-white/10 text-white h-8 text-xs">
-                          <SelectValue placeholder="Priority" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {["High", "Medium", "Low"].map((s) => (
-                            <SelectItem key={s} value={s}>
-                              {s}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      {q.id}
+                    </TableCell>
+                    <TableCell className="text-sm" style={{ color: t.text }}>
+                      {q.agent}
+                    </TableCell>
+                    <TableCell className="text-sm" style={{ color: t.text }}>
+                      {q.service}
+                    </TableCell>
+                    <TableCell className="text-sm" style={{ color: t.text }}>
+                      {q.destination}
+                    </TableCell>
+                    <TableCell className="text-sm" style={{ color: t.text }}>
+                      {q.pax}
+                    </TableCell>
+                    <TableCell
+                      className="text-xs max-w-[160px] truncate"
+                      style={{ color: t.muted }}
+                    >
+                      {q.notes}
+                    </TableCell>
+                    <TableCell className="text-xs" style={{ color: t.muted }}>
+                      {q.submitted}
+                    </TableCell>
+                    <TableCell>
+                      <StatusBadge status={q.status} />
+                    </TableCell>
+                    <TableCell>
                       <div className="flex gap-1">
                         <Button
                           size="sm"
-                          className="flex-1 bg-emerald-600 text-white hover:bg-emerald-700 h-7 text-xs"
-                          onClick={() =>
-                            setAssignForms((p) => ({ ...p, [si]: false }))
-                          }
-                          data-ocid={`staff.task.save_button.${si + 1}`}
+                          className="text-xs h-7 px-2"
+                          style={{ background: TEAL, color: "#fff" }}
                         >
-                          Assign
+                          Confirm
                         </Button>
                         <Button
+                          variant="outline"
                           size="sm"
-                          variant="ghost"
-                          className="h-7 text-xs text-slate-400"
-                          onClick={() =>
-                            setAssignForms((p) => ({ ...p, [si]: false }))
-                          }
+                          className="text-xs h-7 px-2"
+                          style={{ color: t.error, borderColor: t.error }}
                         >
-                          Cancel
+                          Reject
                         </Button>
                       </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </TabsContent>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        );
 
-          {/* ── Supplier Tracker ── */}
-          <TabsContent value="supplier">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
-              {[
-                { label: "Total Requests", value: 24, color: "#3B82F6" },
-                { label: "Confirmed", value: 14, color: "#10B981" },
-                { label: "Pending", value: 8, color: "#EAB308" },
-                { label: "Overdue", value: 2, color: "#EF4444" },
-              ].map((k, i) => (
+      case "task-board":
+        return (
+          <div className="grid grid-cols-3 gap-4">
+            {[
+              {
+                title: "To Do",
+                tasks: TASKS_TODO,
+                color: t.muted,
+                bg: t.inputBg,
+              },
+              {
+                title: "In Progress",
+                tasks: TASKS_IN_PROGRESS,
+                color: t.primary,
+                bg: "#EFF6FF",
+              },
+              {
+                title: "Done",
+                tasks: TASKS_DONE,
+                color: "#16A34A",
+                bg: "#DCFCE7",
+              },
+            ].map((col) => (
+              <div
+                key={col.title}
+                className="rounded-xl border"
+                style={{
+                  background: t.cardBg,
+                  borderColor: t.border,
+                  boxShadow: t.shadow,
+                }}
+              >
                 <div
-                  key={k.label}
-                  className="rounded-2xl p-4"
-                  style={{
-                    background: t.cardBg,
-                    border: `1px solid ${t.border}`,
-                  }}
-                  data-ocid={`staff.supplier.stat.${i + 1}`}
+                  className="p-4 border-b flex items-center justify-between"
+                  style={{ borderColor: t.border }}
                 >
-                  <p className="text-slate-400 text-xs mb-1">{k.label}</p>
-                  <p className="text-2xl font-bold" style={{ color: k.color }}>
-                    {k.value}
-                  </p>
+                  <h3
+                    className="font-semibold text-sm"
+                    style={{ color: t.text }}
+                  >
+                    {col.title}
+                  </h3>
+                  <span
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                    style={{ background: `${col.color}20`, color: col.color }}
+                  >
+                    {col.tasks.length}
+                  </span>
                 </div>
-              ))}
-            </div>
+                <div className="p-3 space-y-2">
+                  {col.tasks.map((task) => (
+                    <div
+                      key={task.id}
+                      className="p-3 rounded-lg border"
+                      style={{
+                        background:
+                          col.bg === t.inputBg
+                            ? t.inputBg
+                            : theme === "dark"
+                              ? t.inputBg
+                              : col.bg,
+                        borderColor: t.border,
+                      }}
+                    >
+                      <div className="flex items-start gap-2">
+                        {col.title === "Done" ? (
+                          <CheckCircle
+                            className="w-4 h-4 flex-shrink-0 mt-0.5"
+                            style={{ color: "#16A34A" }}
+                          />
+                        ) : (
+                          <Circle
+                            className="w-4 h-4 flex-shrink-0 mt-0.5"
+                            style={{ color: t.muted }}
+                          />
+                        )}
+                        <p className="text-xs flex-1" style={{ color: t.text }}>
+                          {task.title}
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between mt-2">
+                        <StatusBadge status={task.priority} />
+                        <span
+                          className="text-[10px]"
+                          style={{ color: t.muted }}
+                        >
+                          {task.due}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    className="w-full flex items-center gap-2 py-2 text-xs rounded-lg"
+                    style={{ color: t.muted }}
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Add Task
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
 
+      case "supplier-tracker":
+        return (
+          <div className="space-y-4">
             <div
-              className="rounded-2xl overflow-hidden"
-              style={{ background: t.cardBg, border: `1px solid ${t.border}` }}
+              className="rounded-xl border overflow-hidden"
+              style={{
+                background: t.cardBg,
+                borderColor: t.border,
+                boxShadow: t.shadow,
+              }}
             >
+              <div className="p-4 border-b" style={{ borderColor: t.border }}>
+                <h3 className="font-semibold" style={{ color: t.text }}>
+                  Supplier Confirmations Due
+                </h3>
+                <p className="text-xs mt-0.5" style={{ color: t.muted }}>
+                  Track and follow up on pending supplier confirmations
+                </p>
+              </div>
               <Table>
                 <TableHeader>
-                  <TableRow style={{ background: t.cardBg }}>
-                    {[
-                      "Booking ID",
-                      "Service",
-                      "Supplier",
-                      "Request Sent",
-                      "Status",
-                      "Response",
-                      "Action",
-                    ].map((h) => (
-                      <TableHead key={h} className="text-slate-400 text-xs">
-                        {h}
-                      </TableHead>
-                    ))}
+                  <TableRow style={{ borderColor: t.border }}>
+                    <TableHead style={{ color: t.muted }}>Supplier</TableHead>
+                    <TableHead style={{ color: t.muted }}>Booking</TableHead>
+                    <TableHead style={{ color: t.muted }}>Service</TableHead>
+                    <TableHead style={{ color: t.muted }}>Contact</TableHead>
+                    <TableHead style={{ color: t.muted }}>Due In</TableHead>
+                    <TableHead style={{ color: t.muted }}>Status</TableHead>
+                    <TableHead style={{ color: t.muted }}>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {SUPPLIER_ROWS.map((row, i) => (
+                  {SUPPLIER_TRACKER_DATA.map((s) => (
                     <TableRow
-                      key={row.id}
-                      className={`border-white/10 ${row.status === "Overdue" ? "bg-red-900/10" : ""}`}
-                      data-ocid={`staff.supplier.row.${i + 1}`}
+                      key={s.booking}
+                      style={{ borderColor: t.border }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = t.sidebarHoverBg;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "";
+                      }}
                     >
-                      <TableCell className="text-emerald-400 text-xs font-mono">
-                        {row.id}
+                      <TableCell
+                        className="font-medium text-sm"
+                        style={{ color: t.text }}
+                      >
+                        {s.supplier}
+                      </TableCell>
+                      <TableCell
+                        className="font-mono text-xs"
+                        style={{ color: TEAL }}
+                      >
+                        {s.booking}
+                      </TableCell>
+                      <TableCell className="text-xs" style={{ color: t.muted }}>
+                        {s.service}
+                      </TableCell>
+                      <TableCell className="text-xs" style={{ color: t.text }}>
+                        {s.contact}
                       </TableCell>
                       <TableCell>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400">
-                          {row.service}
+                        <span
+                          className="text-xs font-semibold"
+                          style={{
+                            color: s.dueIn === "Overdue" ? t.error : t.text,
+                          }}
+                        >
+                          {s.dueIn}
                         </span>
                       </TableCell>
-                      <TableCell className="text-white text-sm">
-                        {row.supplier}
-                      </TableCell>
-                      <TableCell className="text-slate-400 text-xs">
-                        {row.sent}
-                      </TableCell>
-                      <TableCell>{statusBadge(row.status)}</TableCell>
-                      <TableCell className="text-slate-400 text-xs">
-                        {row.response}
+                      <TableCell>
+                        <StatusBadge status={s.status} />
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-1">
                           <Button
+                            variant="outline"
                             size="sm"
-                            className="bg-orange-500/20 text-orange-400 hover:bg-orange-500/30 border-0 h-6 text-xs"
-                            data-ocid={`staff.supplier.reminder_button.${i + 1}`}
+                            className="text-xs h-7 px-2"
                           >
-                            <Bell className="w-3 h-3 mr-1" /> Remind
+                            Call
                           </Button>
-                          {row.status !== "Confirmed" && (
-                            <Button
-                              size="sm"
-                              className="bg-green-500/20 text-green-400 hover:bg-green-500/30 border-0 h-6 text-xs"
-                              data-ocid={`staff.supplier.confirm_button.${i + 1}`}
-                            >
-                              <CheckCircle className="w-3 h-3 mr-1" /> Confirm
-                            </Button>
-                          )}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-xs h-7 px-2"
+                          >
+                            Email
+                          </Button>
+                          <Button
+                            size="sm"
+                            className="text-xs h-7 px-2"
+                            style={{ background: "#25D366", color: "#fff" }}
+                          >
+                            WhatsApp
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -1329,456 +979,690 @@ export function StaffDashboard({
                 </TableBody>
               </Table>
             </div>
-          </TabsContent>
+          </div>
+        );
 
-          {/* ── Payments ── */}
-          <TabsContent value="payments">
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Record Payment Form */}
-              <div
-                className="rounded-2xl p-6"
-                style={{
-                  background: t.cardBg,
-                  border: `1px solid ${t.border}`,
+      case "payments":
+        return (
+          <div className="space-y-4">
+            <div
+              className="rounded-xl border p-5"
+              style={{
+                background: t.cardBg,
+                borderColor: t.border,
+                boxShadow: t.shadow,
+              }}
+            >
+              <h3 className="font-semibold mb-4" style={{ color: t.text }}>
+                Record Offline Payment
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label style={{ color: t.text }}>Agent</Label>
+                  <select
+                    className="w-full mt-1 px-3 py-2 rounded-lg text-sm"
+                    style={{
+                      background: t.inputBg,
+                      border: `1px solid ${t.border}`,
+                      color: t.text,
+                    }}
+                    value={payAgent}
+                    onChange={(e) => setPayAgent(e.target.value)}
+                  >
+                    <option value="">Select Agent</option>
+                    <option>Rahul Sharma</option>
+                    <option>Priya Patel</option>
+                    <option>Sunita Verma</option>
+                    <option>Amit Kumar</option>
+                  </select>
+                </div>
+                <div>
+                  <Label style={{ color: t.text }}>Amount (₹)</Label>
+                  <Input
+                    className="mt-1"
+                    placeholder="e.g. 45000"
+                    value={payAmount}
+                    onChange={(e) => setPayAmount(e.target.value)}
+                    style={{
+                      background: t.inputBg,
+                      borderColor: t.border,
+                      color: t.text,
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label style={{ color: t.text }}>Payment Type</Label>
+                  <select
+                    className="w-full mt-1 px-3 py-2 rounded-lg text-sm"
+                    style={{
+                      background: t.inputBg,
+                      border: `1px solid ${t.border}`,
+                      color: t.text,
+                    }}
+                    value={payType}
+                    onChange={(e) => setPayType(e.target.value)}
+                  >
+                    <option>Bank Transfer</option>
+                    <option>NEFT</option>
+                    <option>RTGS</option>
+                    <option>Cash</option>
+                    <option>Cheque</option>
+                    <option>UPI</option>
+                  </select>
+                </div>
+                <div>
+                  <Label style={{ color: t.text }}>
+                    Reference / UTR Number
+                  </Label>
+                  <Input
+                    className="mt-1"
+                    placeholder="e.g. UTR123456789"
+                    value={payRef}
+                    onChange={(e) => setPayRef(e.target.value)}
+                    style={{
+                      background: t.inputBg,
+                      borderColor: t.border,
+                      color: t.text,
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label style={{ color: t.text }}>Booking Reference</Label>
+                  <Input
+                    className="mt-1"
+                    placeholder="e.g. FST-2024-001"
+                    style={{
+                      background: t.inputBg,
+                      borderColor: t.border,
+                      color: t.text,
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label style={{ color: t.text }}>Payment Date</Label>
+                  <Input
+                    type="date"
+                    className="mt-1"
+                    style={{
+                      background: t.inputBg,
+                      borderColor: t.border,
+                      color: t.text,
+                    }}
+                  />
+                </div>
+              </div>
+              {paySuccess && (
+                <div
+                  className="mt-3 px-3 py-2 rounded text-sm"
+                  style={{ background: "#DCFCE7", color: "#16A34A" }}
+                >
+                  ✓ Payment recorded successfully!
+                </div>
+              )}
+              <Button
+                className="mt-4"
+                style={{ background: TEAL, color: "#fff" }}
+                onClick={() => {
+                  setPaySuccess(true);
+                  setTimeout(() => setPaySuccess(false), 3000);
                 }}
               >
-                <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-emerald-400" /> Record
-                  Offline Payment
+                Record Payment
+              </Button>
+            </div>
+            <div
+              className="rounded-xl border overflow-hidden"
+              style={{
+                background: t.cardBg,
+                borderColor: t.border,
+                boxShadow: t.shadow,
+              }}
+            >
+              <div className="p-4 border-b" style={{ borderColor: t.border }}>
+                <h3 className="font-semibold" style={{ color: t.text }}>
+                  Recent Offline Payments
                 </h3>
-                <div className="space-y-3">
-                  {[
-                    "Agent / Client Name",
-                    "Booking ID",
-                    "Amount (₹)",
-                    "Reference Number",
-                  ].map((f) => (
-                    <div key={f}>
-                      <Label className="text-slate-400 text-xs mb-1 block">
-                        {f}
-                      </Label>
-                      <Input
-                        className="bg-white/5 border-white/10 text-white"
-                        value={payForm[f] ?? ""}
-                        onChange={(e) =>
-                          setPayForm((p) => ({ ...p, [f]: e.target.value }))
-                        }
-                      />
-                    </div>
+              </div>
+              <Table>
+                <TableHeader>
+                  <TableRow style={{ borderColor: t.border }}>
+                    <TableHead style={{ color: t.muted }}>Reference</TableHead>
+                    <TableHead style={{ color: t.muted }}>Agent</TableHead>
+                    <TableHead style={{ color: t.muted }}>Amount</TableHead>
+                    <TableHead style={{ color: t.muted }}>Type</TableHead>
+                    <TableHead style={{ color: t.muted }}>Booking</TableHead>
+                    <TableHead style={{ color: t.muted }}>Date</TableHead>
+                    <TableHead style={{ color: t.muted }}>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {PAYMENTS_DATA.map((p) => (
+                    <TableRow key={p.ref} style={{ borderColor: t.border }}>
+                      <TableCell
+                        className="font-mono text-xs"
+                        style={{ color: TEAL }}
+                      >
+                        {p.ref}
+                      </TableCell>
+                      <TableCell className="text-sm" style={{ color: t.text }}>
+                        {p.agent}
+                      </TableCell>
+                      <TableCell
+                        className="text-sm font-semibold"
+                        style={{ color: "#16A34A" }}
+                      >
+                        {p.amount}
+                      </TableCell>
+                      <TableCell className="text-sm" style={{ color: t.text }}>
+                        {p.type}
+                      </TableCell>
+                      <TableCell
+                        className="font-mono text-xs"
+                        style={{ color: t.muted }}
+                      >
+                        {p.booking}
+                      </TableCell>
+                      <TableCell className="text-xs" style={{ color: t.muted }}>
+                        {p.date}
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge status={p.status} />
+                      </TableCell>
+                    </TableRow>
                   ))}
-                  <div>
-                    <Label className="text-slate-400 text-xs mb-1 block">
-                      Payment Method
-                    </Label>
-                    <Select
-                      value={payForm.Method ?? ""}
-                      onValueChange={(v) =>
-                        setPayForm((p) => ({ ...p, Method: v }))
-                      }
-                    >
-                      <SelectTrigger
-                        className="bg-white/5 border-white/10 text-white"
-                        data-ocid="staff.payment.method_select"
-                      >
-                        <SelectValue placeholder="Select method" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {["Bank Transfer", "UPI", "Cash", "Cheque"].map((v) => (
-                          <SelectItem key={v} value={v}>
-                            {v}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label className="text-slate-400 text-xs mb-1 block">
-                      Payment Date
-                    </Label>
-                    <Input
-                      type="date"
-                      className="bg-white/5 border-white/10 text-white"
-                      style={{ colorScheme: "dark" }}
-                      value={payForm.Date ?? ""}
-                      onChange={(e) =>
-                        setPayForm((p) => ({ ...p, Date: e.target.value }))
-                      }
-                    />
-                  </div>
-                  <Button
-                    variant="outline"
-                    className="w-full border-dashed border-white/20 text-slate-400 hover:bg-white/5 hover:text-white"
-                    data-ocid="staff.payment.upload_button"
-                  >
-                    <Upload className="w-4 h-4 mr-2" /> Upload Payment
-                    Screenshot
-                  </Button>
-                  <Button
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
-                    data-ocid="staff.payment.submit_button"
-                  >
-                    <CheckCircle className="w-4 h-4 mr-2" /> Record Payment
-                  </Button>
-                </div>
-              </div>
-
-              {/* Payment History */}
-              <div>
-                <div
-                  className="rounded-2xl p-4 mb-4"
-                  style={{
-                    background: t.cardBg,
-                    border: "1px solid rgba(16,185,129,0.3)",
-                  }}
-                >
-                  <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-emerald-400" /> Profit
-                    Monitor
-                  </h4>
-                  <div className="grid grid-cols-3 gap-3">
-                    {[
-                      {
-                        label: "Supplier Cost",
-                        value: "₹38,000",
-                        color: "#EF4444",
-                      },
-                      {
-                        label: "Agent Price",
-                        value: "₹45,000",
-                        color: "#3B82F6",
-                      },
-                      { label: "Profit", value: "₹7,000", color: "#10B981" },
-                    ].map((p) => (
-                      <div key={p.label} className="text-center">
-                        <p className="text-slate-400 text-xs mb-1">{p.label}</p>
-                        <p
-                          className="font-bold text-base"
-                          style={{ color: p.color }}
-                        >
-                          {p.value}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div
-                  className="rounded-2xl overflow-hidden"
-                  style={{
-                    background: t.cardBg,
-                    border: `1px solid ${t.border}`,
-                  }}
-                >
-                  <div className="px-4 py-3 border-b border-white/10">
-                    <h4 className="text-white font-semibold text-sm">
-                      Payment History
-                    </h4>
-                  </div>
-                  <Table>
-                    <TableHeader>
-                      <TableRow style={{ background: t.cardBg }}>
-                        {[
-                          "Agent",
-                          "Booking",
-                          "Amount",
-                          "Method",
-                          "Date",
-                          "Status",
-                        ].map((h) => (
-                          <TableHead key={h} className="text-slate-400 text-xs">
-                            {h}
-                          </TableHead>
-                        ))}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {PAYMENT_HISTORY.map((p, i) => (
-                        <TableRow
-                          key={p.id}
-                          className="border-white/10"
-                          data-ocid={`staff.payment.row.${i + 1}`}
-                        >
-                          <TableCell className="text-white text-xs">
-                            {p.agent}
-                          </TableCell>
-                          <TableCell className="text-emerald-400 text-xs font-mono">
-                            {p.booking}
-                          </TableCell>
-                          <TableCell className="text-orange-400 text-xs font-medium">
-                            {p.amount}
-                          </TableCell>
-                          <TableCell className="text-slate-400 text-xs">
-                            {p.method}
-                          </TableCell>
-                          <TableCell className="text-slate-400 text-xs">
-                            {p.date}
-                          </TableCell>
-                          <TableCell>{statusBadge(p.status)}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </div>
+                </TableBody>
+              </Table>
             </div>
-          </TabsContent>
+          </div>
+        );
 
-          {/* ── Quotations ── */}
-          <TabsContent value="quotations">
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Builder */}
-              <div>
-                <div
-                  className="rounded-2xl p-5 mb-4"
-                  style={{
-                    background: t.cardBg,
-                    border: `1px solid ${t.border}`,
-                  }}
-                >
-                  <h3 className="text-white font-semibold mb-4">
-                    Quick Quotation Builder
+      case "quotation":
+        return (
+          <div className="space-y-4">
+            <div
+              className="rounded-xl border p-5"
+              style={{
+                background: t.cardBg,
+                borderColor: t.border,
+                boxShadow: t.shadow,
+              }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="font-semibold" style={{ color: t.text }}>
+                    Quotation Builder
                   </h3>
-                  <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div>
-                      <Label className="text-slate-400 text-xs mb-1 block">
-                        Client Name
-                      </Label>
-                      <Input
-                        className="bg-white/5 border-white/10 text-white"
-                        value={quoteClient}
-                        onChange={(e) => setQuoteClient(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-slate-400 text-xs mb-1 block">
-                        Destination
-                      </Label>
-                      <Input
-                        className="bg-white/5 border-white/10 text-white"
-                        value={quoteDest}
-                        onChange={(e) => setQuoteDest(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-slate-400 text-xs mb-1 block">
-                        Travel Dates
-                      </Label>
-                      <Input
-                        className="bg-white/5 border-white/10 text-white"
-                        placeholder="e.g. 20-25 Mar"
-                        value={quoteDates}
-                        onChange={(e) => setQuoteDates(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-slate-400 text-xs mb-1 block">
-                        Pax
-                      </Label>
-                      <Input
-                        className="bg-white/5 border-white/10 text-white"
-                        placeholder="e.g. 2 Adults"
-                        value={quotePax}
-                        onChange={(e) => setQuotePax(e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 mb-3">
-                    {quoteServices.map((s, i) => (
-                      <div
-                        key={`${s.type}-${i}`}
-                        className="grid grid-cols-4 gap-2 items-center"
-                      >
-                        <span className="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400">
-                          {s.type}
-                        </span>
-                        <span className="text-slate-300 text-xs col-span-1 truncate">
-                          {s.desc}
-                        </span>
-                        <span className="text-slate-400 text-xs">
-                          ₹{s.cost.toLocaleString()}
-                        </span>
-                        <span className="text-emerald-400 text-xs font-medium">
-                          ₹{s.sell.toLocaleString()}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="border-dashed border-white/20 text-slate-400 hover:bg-white/5 w-full mb-4"
-                    onClick={() =>
-                      setQuoteServices((p) => [
-                        ...p,
-                        {
-                          type: "Hotel",
-                          desc: "New service",
-                          cost: 5000,
-                          markup: 10,
-                          sell: 5500,
-                        },
-                      ])
-                    }
-                    data-ocid="staff.quotation.add_service_button"
-                  >
-                    <Plus className="w-3 h-3 mr-1" /> Add Service Row
-                  </Button>
-
-                  <div
-                    className="rounded-xl p-3 mb-4"
-                    style={{ background: t.cardBg }}
-                  >
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-slate-400">Total Cost</span>
-                      <span className="text-red-400 font-medium">
-                        ₹{totalCost.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-slate-400">Total Markup</span>
-                      <span className="text-orange-400 font-medium">
-                        ₹{(grandTotal - totalCost).toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between font-bold border-t border-white/10 pt-2 mt-2">
-                      <span className="text-white">Grand Total</span>
-                      <span className="text-emerald-400">
-                        ₹{grandTotal.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-
-                  <Button
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
-                    onClick={() => setQuoteGenerated(true)}
-                    data-ocid="staff.quotation.generate_button"
-                  >
-                    <FileText className="w-4 h-4 mr-2" /> Generate Quote
-                  </Button>
-
-                  {quoteGenerated && (
-                    <div
-                      className="mt-4 rounded-xl p-4"
-                      style={{
-                        background: "rgba(16,185,129,0.1)",
-                        border: "1px solid rgba(16,185,129,0.3)",
-                      }}
-                      data-ocid="staff.quotation.preview_panel"
-                    >
-                      <p className="text-emerald-400 font-semibold mb-3">
-                        Quote Preview — QT-
-                        {Math.floor(100 + Math.random() * 900)}
-                      </p>
-                      <p className="text-slate-300 text-sm">
-                        Client: {quoteClient || "—"}
-                      </p>
-                      <p className="text-slate-300 text-sm">
-                        Destination: {quoteDest || "—"}
-                      </p>
-                      <p className="text-slate-300 text-sm">
-                        Dates: {quoteDates || "—"} | Pax: {quotePax || "—"}
-                      </p>
-                      <p className="text-emerald-400 font-bold mt-2">
-                        Total: ₹{grandTotal.toLocaleString()}
-                      </p>
-                      <div className="flex gap-2 mt-3">
-                        {[
-                          { label: "Email", icon: Mail },
-                          { label: "WhatsApp", icon: MessageSquare },
-                          { label: "PDF", icon: Download },
-                        ].map((b) => (
-                          <Button
-                            key={b.label}
-                            size="sm"
-                            className="flex-1 bg-white/10 text-white hover:bg-white/20 border-0 h-8 text-xs"
-                            data-ocid={`staff.quotation.send_${b.label.toLowerCase()}_button`}
-                          >
-                            <b.icon className="w-3 h-3 mr-1" /> {b.label}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  <p className="text-xs mt-0.5" style={{ color: t.muted }}>
+                    Ref: {quotRef}
+                  </p>
+                </div>
+                <Button style={{ background: TEAL, color: "#fff" }}>
+                  Export PDF
+                </Button>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-5">
+                <div>
+                  <Label style={{ color: t.text }}>Client Name</Label>
+                  <Input
+                    className="mt-1"
+                    value={quotClient}
+                    onChange={(e) => setQuotClient(e.target.value)}
+                    style={{
+                      background: t.inputBg,
+                      borderColor: t.border,
+                      color: t.text,
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label style={{ color: t.text }}>Valid Until</Label>
+                  <Input
+                    type="date"
+                    className="mt-1"
+                    style={{
+                      background: t.inputBg,
+                      borderColor: t.border,
+                      color: t.text,
+                    }}
+                  />
                 </div>
               </div>
-
-              {/* Saved Quotes */}
-              <div>
-                <div
-                  className="rounded-2xl overflow-hidden"
-                  style={{
-                    background: t.cardBg,
-                    border: `1px solid ${t.border}`,
-                  }}
-                >
-                  <div className="px-5 py-4 border-b border-white/10">
-                    <h4 className="text-white font-semibold">Saved Quotes</h4>
-                  </div>
-                  <Table>
-                    <TableHeader>
-                      <TableRow style={{ background: t.cardBg }}>
-                        {[
-                          "Quote ID",
-                          "Client",
-                          "Destination",
-                          "Total",
-                          "Date",
-                          "Status",
-                        ].map((h) => (
-                          <TableHead key={h} className="text-slate-400 text-xs">
-                            {h}
-                          </TableHead>
-                        ))}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {SAVED_QUOTES.map((q, i) => (
-                        <TableRow
-                          key={q.id}
-                          className="border-white/10"
-                          data-ocid={`staff.quote.row.${i + 1}`}
+              <div
+                className="rounded-lg overflow-hidden border mb-4"
+                style={{ borderColor: t.border }}
+              >
+                <Table>
+                  <TableHeader>
+                    <TableRow
+                      style={{ borderColor: t.border, background: t.inputBg }}
+                    >
+                      <TableHead style={{ color: t.muted }}>
+                        Description
+                      </TableHead>
+                      <TableHead style={{ color: t.muted }}>Cost (₹)</TableHead>
+                      <TableHead style={{ color: t.muted }}>Markup %</TableHead>
+                      <TableHead style={{ color: t.muted }}>
+                        Total (₹)
+                      </TableHead>
+                      <TableHead style={{ color: t.muted }}>Action</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {quotItems.map((item, i) => (
+                      <TableRow
+                        key={item.desc || `quot-${i}`}
+                        style={{ borderColor: t.border }}
+                      >
+                        <TableCell>
+                          <input
+                            className="bg-transparent text-sm outline-none w-full"
+                            value={item.desc}
+                            onChange={(e) =>
+                              setQuotItems((prev) =>
+                                prev.map((it, idx) =>
+                                  idx === i
+                                    ? { ...it, desc: e.target.value }
+                                    : it,
+                                ),
+                              )
+                            }
+                            style={{ color: t.text }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <input
+                            type="number"
+                            className="bg-transparent text-sm outline-none w-20"
+                            value={item.cost}
+                            onChange={(e) =>
+                              setQuotItems((prev) =>
+                                prev.map((it, idx) =>
+                                  idx === i
+                                    ? { ...it, cost: Number(e.target.value) }
+                                    : it,
+                                ),
+                              )
+                            }
+                            style={{ color: t.text }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <input
+                            type="number"
+                            className="bg-transparent text-sm outline-none w-16"
+                            value={item.markup}
+                            onChange={(e) =>
+                              setQuotItems((prev) =>
+                                prev.map((it, idx) =>
+                                  idx === i
+                                    ? { ...it, markup: Number(e.target.value) }
+                                    : it,
+                                ),
+                              )
+                            }
+                            style={{ color: t.text }}
+                          />
+                        </TableCell>
+                        <TableCell
+                          className="font-semibold text-sm"
+                          style={{ color: TEAL }}
                         >
-                          <TableCell className="text-emerald-400 text-xs font-mono">
-                            {q.id}
-                          </TableCell>
-                          <TableCell className="text-white text-sm">
-                            {q.client}
-                          </TableCell>
-                          <TableCell className="text-slate-300 text-sm">
-                            {q.dest}
-                          </TableCell>
-                          <TableCell className="text-orange-400 font-medium text-sm">
-                            {q.total}
-                          </TableCell>
-                          <TableCell className="text-slate-400 text-xs">
-                            {q.date}
-                          </TableCell>
-                          <TableCell>{statusBadge(q.status)}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                          ₹
+                          {(
+                            item.cost +
+                            (item.cost * item.markup) / 100
+                          ).toLocaleString()}
+                        </TableCell>
+                        <TableCell>
+                          <button
+                            type="button"
+                            className="text-xs"
+                            style={{ color: t.error }}
+                            onClick={() =>
+                              setQuotItems((prev) =>
+                                prev.filter((_, idx) => idx !== i),
+                              )
+                            }
+                          >
+                            Remove
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="flex items-center justify-between">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setQuotItems((prev) => [
+                      ...prev,
+                      { desc: "New Item", cost: 0, markup: 10 },
+                    ])
+                  }
+                >
+                  <Plus className="w-3.5 h-3.5 mr-1" /> Add Line Item
+                </Button>
+                <div className="text-right">
+                  <p className="text-xs" style={{ color: t.muted }}>
+                    Grand Total
+                  </p>
+                  <p className="text-2xl font-bold" style={{ color: TEAL }}>
+                    ₹{quotTotal.toLocaleString()}
+                  </p>
                 </div>
               </div>
             </div>
-          </TabsContent>
-        </Tabs>
-      </div>
+          </div>
+        );
 
-      {/* Footer */}
-      <footer className="text-center py-4 text-slate-600 text-xs border-t border-white/5">
-        © {new Date().getFullYear()}. Built with love using{" "}
-        <a
-          href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(typeof window !== "undefined" ? window.location.hostname : "")}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-emerald-600 hover:underline"
+      case "tickets":
+        return (
+          <div
+            className="rounded-xl border overflow-hidden"
+            style={{
+              background: t.cardBg,
+              borderColor: t.border,
+              boxShadow: t.shadow,
+            }}
+          >
+            <div className="p-4 border-b" style={{ borderColor: t.border }}>
+              <h3 className="font-semibold" style={{ color: t.text }}>
+                Assigned Support Tickets
+              </h3>
+            </div>
+            <Table>
+              <TableHeader>
+                <TableRow style={{ borderColor: t.border }}>
+                  <TableHead style={{ color: t.muted }}>Ticket ID</TableHead>
+                  <TableHead style={{ color: t.muted }}>From</TableHead>
+                  <TableHead style={{ color: t.muted }}>Subject</TableHead>
+                  <TableHead style={{ color: t.muted }}>Priority</TableHead>
+                  <TableHead style={{ color: t.muted }}>Date</TableHead>
+                  <TableHead style={{ color: t.muted }}>Status</TableHead>
+                  <TableHead style={{ color: t.muted }}>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {TICKET_DATA.map((tk) => (
+                  <TableRow
+                    key={tk.id}
+                    style={{ borderColor: t.border }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = t.sidebarHoverBg;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "";
+                    }}
+                  >
+                    <TableCell
+                      className="font-mono text-xs font-semibold"
+                      style={{ color: TEAL }}
+                    >
+                      {tk.id}
+                    </TableCell>
+                    <TableCell className="text-sm" style={{ color: t.text }}>
+                      {tk.from}
+                    </TableCell>
+                    <TableCell className="text-sm" style={{ color: t.text }}>
+                      {tk.subject}
+                    </TableCell>
+                    <TableCell>
+                      <StatusBadge status={tk.priority} />
+                    </TableCell>
+                    <TableCell className="text-xs" style={{ color: t.muted }}>
+                      {tk.date}
+                    </TableCell>
+                    <TableCell>
+                      <StatusBadge status={tk.status} />
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        <Button
+                          size="sm"
+                          className="text-xs h-7 px-2"
+                          style={{ background: TEAL, color: "#fff" }}
+                        >
+                          Resolve
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-xs h-7 px-2"
+                        >
+                          Escalate
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  const pageTitle: Record<StaffPage, string> = {
+    overview: "Staff Operations",
+    "manual-booking": "Manual Booking",
+    "offline-queue": "Offline Queue",
+    "task-board": "Task Board",
+    "supplier-tracker": "Supplier Tracker",
+    payments: "Payment Recording",
+    quotation: "Quotation Builder",
+    tickets: "Support Tickets",
+  };
+
+  return (
+    <div className="min-h-screen flex" style={{ background: t.pageBg }}>
+      <aside
+        className="w-64 flex-shrink-0 hidden md:flex flex-col border-r"
+        style={{ background: t.sidebarBg, borderColor: t.border }}
+      >
+        <div className="px-4 py-4 border-b" style={{ borderColor: t.border }}>
+          <div className="bg-white rounded-lg px-2 py-1.5 inline-flex items-center shadow-sm">
+            <img
+              src="/assets/uploads/image-3-1.png"
+              alt="FiveStar Travel"
+              className="h-8 w-auto object-contain"
+            />
+          </div>
+          <div className="mt-2 px-1">
+            <span
+              className="text-xs font-bold px-2 py-0.5 rounded"
+              style={{
+                background: `linear-gradient(135deg, ${TEAL}, #0E7490)`,
+                color: "#fff",
+              }}
+            >
+              STAFF PORTAL
+            </span>
+          </div>
+        </div>
+        <nav className="flex-1 overflow-y-auto px-3 py-3">
+          {sections.map((section) => (
+            <div key={section} className="mb-1">
+              <div className="px-3 pt-3 pb-1.5">
+                <span
+                  className="text-[9px] font-bold tracking-widest uppercase"
+                  style={{ color: t.sectionLabel }}
+                >
+                  {section}
+                </span>
+              </div>
+              {sectionMap[section].map((item, idx) => {
+                const isActive = activePage === item.key;
+                return (
+                  <button
+                    type="button"
+                    key={item.key}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150"
+                    style={{
+                      background: isActive ? `${TEAL}15` : "transparent",
+                      borderLeft: isActive
+                        ? `3px solid ${TEAL}`
+                        : "3px solid transparent",
+                      color: isActive ? TEAL : t.sidebarText,
+                      fontWeight: isActive ? 600 : 400,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isActive)
+                        (e.currentTarget as HTMLElement).style.background =
+                          t.sidebarHoverBg;
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive)
+                        (e.currentTarget as HTMLElement).style.background =
+                          "transparent";
+                    }}
+                    onClick={() => setActivePage(item.key)}
+                    data-ocid={`staff.nav.item.${idx + 1}`}
+                  >
+                    <item.icon
+                      className="w-4 h-4 flex-shrink-0"
+                      style={{ color: isActive ? TEAL : t.muted }}
+                    />
+                    <span className="flex-1 truncate text-left">
+                      {item.label}
+                    </span>
+                    {item.badge && (
+                      <span
+                        className="text-[9px] font-bold px-1.5 py-0.5 rounded-full"
+                        style={{
+                          background: "rgba(220,38,38,0.15)",
+                          color: t.error,
+                        }}
+                      >
+                        {item.badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </nav>
+        <div
+          className="px-3 pb-4 border-t pt-3"
+          style={{ borderColor: t.border }}
         >
-          caffeine.ai
-        </a>
-      </footer>
+          <div className="flex items-center gap-3 px-3 py-2 mb-1">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold"
+              style={{ background: `${TEAL}20`, color: TEAL }}
+            >
+              OP
+            </div>
+            <div className="min-w-0">
+              <p
+                className="text-xs font-semibold truncate"
+                style={{ color: t.text }}
+              >
+                Operations Staff
+              </p>
+              <p className="text-[10px]" style={{ color: t.muted }}>
+                Staff Account
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium"
+            style={{ color: t.error }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.background =
+                "rgba(220,38,38,0.08)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.background = "transparent";
+            }}
+            onClick={() => onNavigate("logout")}
+            data-ocid="staff.logout.button"
+          >
+            <LogOut className="w-4 h-4" /> Sign Out
+          </button>
+        </div>
+      </aside>
+
+      <div className="flex-1 flex flex-col min-w-0">
+        <header
+          className="h-16 flex items-center justify-between px-5 flex-shrink-0 border-b"
+          style={{
+            background: t.topbarBg,
+            borderColor: t.border,
+            boxShadow: t.shadow,
+          }}
+        >
+          <div className="flex-shrink-0">
+            <h1 className="font-semibold text-sm" style={{ color: t.text }}>
+              {pageTitle[activePage]}
+            </h1>
+            <p className="text-xs" style={{ color: t.muted }}>
+              Staff Portal
+            </p>
+          </div>
+          <div className="flex-1 max-w-md mx-6 hidden sm:block">
+            <div
+              className="flex items-center gap-2 px-3 py-2 rounded-lg"
+              style={{ background: t.inputBg, border: `1px solid ${t.border}` }}
+            >
+              <Search className="w-4 h-4" style={{ color: t.muted }} />
+              <input
+                type="text"
+                placeholder="Search bookings, tasks, agents..."
+                className="flex-1 bg-transparent text-sm outline-none"
+                style={{ color: t.text }}
+                data-ocid="staff.search_input"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="w-9 h-9 rounded-lg flex items-center justify-center"
+              style={{ background: t.inputBg, border: `1px solid ${t.border}` }}
+              data-ocid="staff.theme.toggle"
+            >
+              {theme === "light" ? (
+                <Moon className="w-4 h-4" style={{ color: t.muted }} />
+              ) : (
+                <Sun className="w-4 h-4" style={{ color: t.muted }} />
+              )}
+            </button>
+            <button
+              type="button"
+              className="relative w-9 h-9 rounded-lg flex items-center justify-center"
+              style={{ background: t.inputBg, border: `1px solid ${t.border}` }}
+              data-ocid="staff.notifications.button"
+            >
+              <Bell className="w-4 h-4" style={{ color: t.muted }} />
+              <span
+                className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full text-[9px] font-bold flex items-center justify-center"
+                style={{ background: t.error, color: "#fff" }}
+              >
+                2
+              </span>
+            </button>
+            <div
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
+              style={{ background: `${TEAL}15`, border: `1px solid ${TEAL}40` }}
+            >
+              <Clock className="w-4 h-4" style={{ color: TEAL }} />
+              <span className="text-sm font-semibold" style={{ color: TEAL }}>
+                Staff
+              </span>
+            </div>
+          </div>
+        </header>
+        <main className="flex-1 p-5 overflow-y-auto">{renderContent()}</main>
+      </div>
     </div>
   );
 }
